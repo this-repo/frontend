@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MiniPlayer - Spotify-like Music Player</title>
-    <script src="https://cdn.tailwindcss.com">
-    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class', // Mengaktifkan mode gelap berbasis class
             theme: {
                 extend: {
                     colors: {
@@ -31,13 +31,19 @@
             width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #121212;
+            background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: #535353;
+            background: #a0a0a0;
             border-radius: 4px;
         }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #535353;
+        }
         ::-webkit-scrollbar-thumb:hover {
+            background: #707070;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
             background: #b3b3b3;
         }
 
@@ -49,9 +55,13 @@
             width: 100%;
             height: 4px;
             border-radius: 2px;
-            background: #4d4d4d;
+            background: #d1d5db; /* gray-300 */
             outline: none;
             cursor: pointer;
+        }
+        .dark .progress-bar,
+        .dark .volume-slider {
+            background: #4d4d4d;
         }
         .progress-bar::-webkit-slider-thumb,
         .volume-slider::-webkit-slider-thumb {
@@ -60,10 +70,14 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #fff;
+            background: #111827; /* gray-900 */
             cursor: pointer;
             opacity: 0;
             transition: opacity 0.2s;
+        }
+        .dark .progress-bar::-webkit-slider-thumb,
+        .dark .volume-slider::-webkit-slider-thumb {
+            background: #fff;
         }
         .progress-container:hover .progress-bar::-webkit-slider-thumb,
         .volume-container:hover .volume-slider::-webkit-slider-thumb {
@@ -73,9 +87,6 @@
         /* Song item */
         .song-item {
             transition: all 0.2s ease;
-        }
-        .song-item:hover {
-            background: rgba(255, 255, 255, 0.1);
         }
         .song-item.active {
             background: rgba(29, 185, 84, 0.15);
@@ -90,38 +101,17 @@
             cursor: grabbing;
         }
         .queue-item.dragging {
-            opacity: 0.4;
-            background: #2a2a2a;
+            opacity: 0.5;
+            background: rgba(156, 163, 175, 0.5); /* gray-400 fallback */
         }
         .queue-item.drag-over {
             border-top: 2px solid #1DB954;
         }
 
-        /* Now Playing overlay */
-        #nowPlayingOverlay {
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(20px);
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-        #nowPlayingOverlay.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        #nowPlayingOverlay:not(.hidden) {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
         /* Spin animation */
         @keyframes spin-slow {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         .spin-slow {
             animation: spin-slow 8s linear infinite;
@@ -156,39 +146,33 @@
             pointer-events: none;
         }
         .toast-item {
-            background: #282828;
-            border: 1px solid #3e3e3e;
+            background: #fff;
+            color: #111827;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
             padding: 10px 20px;
-            color: white;
             font-size: 0.9rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             animation: toastIn 0.3s ease-out forwards;
             pointer-events: auto;
             margin-bottom: 8px;
+        }
+        .dark .toast-item {
+            background: #282828;
+            color: white;
+            border-color: #3e3e3e;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         .toast-item.out {
             animation: toastOut 0.3s ease-in forwards;
         }
         @keyframes toastIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes toastOut {
-            from {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-20px) scale(0.95);
-            }
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(-20px) scale(0.95); }
         }
 
         /* Tooltip */
@@ -216,31 +200,6 @@
             opacity: 1;
         }
 
-        /* Skeleton */
-        .skeleton {
-            background: #2a2a2a;
-            border-radius: 8px;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 0.4;
-            }
-            50% {
-                opacity: 0.8;
-            }
-        }
-        .skeleton-text {
-            height: 12px;
-            background: #2a2a2a;
-            border-radius: 4px;
-            margin-bottom: 6px;
-        }
-        .skeleton-text:last-child {
-            width: 70%;
-        }
-
         .button-transition {
             transition: transform 0.15s, color 0.2s;
         }
@@ -250,13 +209,11 @@
     </style>
 </head>
 
-<body class="bg-spotify-darker text-white font-sans h-screen flex flex-col justify-between overflow-hidden">
+<body class="bg-gray-100 dark:bg-spotify-darker text-gray-900 dark:text-white font-sans h-screen flex flex-col justify-between overflow-hidden transition-colors duration-300">
 
-    <!-- Main Layout -->
     <div class="flex flex-1 overflow-hidden relative">
 
-        <!-- Sidebar -->
-        <aside class="w-64 bg-spotify-darker p-6 flex-col border-r border-gray-800 hidden md:flex flex-shrink-0">
+        <aside class="w-64 bg-white dark:bg-spotify-darker p-6 flex-col border-r border-gray-300 dark:border-gray-800 hidden md:flex flex-shrink-0 transition-colors duration-300">
             <div class="flex items-center gap-2 mb-8">
                 <svg class="w-8 h-8 text-spotify-green" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 14.36c-.18.28-.56.36-.84.18-2.3-1.4-5.2-1.72-8.6-.94-.34.08-.66-.14-.74-.46-.08-.34.14-.66.46-.74 3.74-.86 6.94-.48 9.52 1.08.3.18.38.58.2.88zm1.22-2.72c-.22.36-.7.46-1.06.24-2.64-1.62-6.66-2.1-9.78-1.14-.4.12-.82-.1-.94-.5-.12-.4.1-.82.5-.94 3.56-1.08 7.98-.56 11.02 1.3.36.22.48.7.26 1.04zm.1-2.84c-3.16-1.88-8.36-2.06-11.38-1.14-.48.14-1-.12-1.14-.6-.14-.48.12-1 .6-1.14 3.46-1.06 9.22-.84 12.82 1.3.44.26.58.84.32 1.28-.26.42-.84.56-1.22.3z" />
@@ -264,57 +221,64 @@
                 <span class="text-xl font-bold">MiniPlayer</span>
             </div>
             <nav class="space-y-4 sidebar-nav">
-                <a href="#" onclick="showWelcome()" class="flex items-center gap-3 text-white font-semibold hover:text-spotify-green transition">
+                <a href="#" onclick="showWelcome()" class="flex items-center gap-3 font-semibold hover:text-spotify-green transition">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12.5 3.247a1 1 0 00-1 0L4 7.577V20h4.5v-6a1 1 0 011-1h5a1 1 0 011 1v6H20V7.577l-7.5-4.33zm-2-1.732a3 3 0 013 0l7.5 4.33a2 2 0 011 1.732V21a1 1 0 01-1 1h-6.5a1 1 0 01-1-1v-6h-3v6a1 1 0 01-1 1H3a1 1 0 01-1-1V7.577a2 2 0 011-1.732l7.5-4.33z" />
                     </svg>
                     Beranda
                 </a>
-                <button onclick="toggleQueuePanel()" class="flex items-center gap-3 text-white font-semibold hover:text-spotify-green transition w-full text-left">
+                <button onclick="toggleQueuePanel()" class="flex items-center gap-3 font-semibold hover:text-spotify-green transition w-full text-left">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" />
                     </svg>
                     Antrian
                 </button>
-                <button onclick="showFavorites()" class="flex items-center gap-3 text-white font-semibold hover:text-spotify-green transition w-full text-left">
+                <button onclick="showFavorites()" class="flex items-center gap-3 font-semibold hover:text-spotify-green transition w-full text-left">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                     </svg>
                     Favorit
                 </button>
             </nav>
+            <div class="mt-auto pt-6 border-t border-gray-300 dark:border-gray-800">
+                <button id="themeToggleSidebar" class="flex items-center gap-3 font-semibold hover:text-spotify-green transition w-full text-left">
+                    <svg id="themeIconSidebar" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        </svg>
+                    <span id="themeLabel">Tema</span>
+                </button>
+            </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 bg-gradient-to-b from-gray-900 to-spotify-dark overflow-y-auto w-full">
+        <main class="flex-1 bg-gradient-to-b from-gray-200 to-gray-100 dark:from-gray-900 dark:to-spotify-dark overflow-y-auto w-full transition-colors duration-300">
 
-            <!-- Header -->
-            <header class="sticky top-0 z-10 bg-gradient-to-b from-black/90 to-transparent backdrop-blur-md p-4 md:p-6">
+            <header class="sticky top-0 z-10 bg-white/80 dark:bg-black/80 backdrop-blur-md p-4 md:p-6 border-b border-gray-200 dark:border-transparent transition-colors duration-300">
                 <div class="flex items-center justify-between gap-4 max-w-7xl mx-auto">
                     <div class="relative flex-1 max-w-md">
-                        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" id="searchInput" placeholder="Cari lagu atau artis..." class="w-full pl-10 pr-8 py-2.5 text-sm md:text-base bg-spotify-hover rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-spotify-green transition" />
-                        <button id="clearSearch" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white hidden">
+                        <input type="text" id="searchInput" placeholder="Cari lagu atau artis..." class="w-full pl-10 pr-8 py-2.5 text-sm md:text-base bg-gray-200 dark:bg-spotify-hover rounded-full text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-spotify-green transition-colors duration-300" />
+                        <button id="clearSearch" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hidden">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
                         </button>
                     </div>
-                    <button onclick="toggleQueuePanel()" class="md:hidden text-white p-2">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-spotify-hover transition" data-tooltip="Toggle tema">
+                            <svg id="themeIcon" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"></svg>
+                        </button>
+                        <button onclick="toggleQueuePanel()" class="md:hidden p-2">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
+                        </button>
+                    </div>
                 </div>
             </header>
 
-            <!-- Container Body -->
             <div class="p-4 md:p-6 pb-40 md:pb-32 max-w-7xl mx-auto">
 
-                <!-- Welcome Section -->
                 <div id="welcomeSection">
                     <h1 class="text-2xl md:text-3xl font-bold mb-1 md:mb-2">Selamat Datang 👋</h1>
-                    <p class="text-xs md:text-sm text-spotify-light mb-6">Cari atau pilih lagu favoritmu dari daftar di bawah.</p>
+                    <p class="text-xs md:text-sm text-gray-600 dark:text-spotify-light mb-6">Cari atau pilih lagu favoritmu dari daftar di bawah.</p>
 
-                    <!-- Recently Played -->
                     <div id="recentlyPlayedSection" class="mb-8 hidden">
                         <h2 class="text-lg md:text-xl font-bold mb-4">🕒 Baru Didengar</h2>
                         <div id="recentlyPlayedList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"></div>
@@ -322,83 +286,77 @@
 
                     <h2 class="text-lg md:text-xl font-bold mb-4">🎧 Coba Dengarkan</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4" id="quickPicks">
-                        <!-- Skeleton akan diisi oleh JS -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Search Results -->
                 <div id="searchResults" class="hidden">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg md:text-xl font-bold">Hasil Pencarian</h2>
-                        <span id="resultCount" class="text-xs md:text-sm text-spotify-light"></span>
+                        <span id="resultCount" class="text-xs md:text-sm text-gray-600 dark:text-spotify-light"></span>
                     </div>
                     <div id="songList" class="space-y-1"></div>
                 </div>
 
-                <!-- Favorites Section -->
                 <div id="favoritesSection" class="hidden">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg md:text-xl font-bold">❤️ Lagu Favorit</h2>
-                        <span id="favCount" class="text-xs md:text-sm text-spotify-light"></span>
+                        <span id="favCount" class="text-xs md:text-sm text-gray-600 dark:text-spotify-light"></span>
                     </div>
                     <div id="favoritesList" class="space-y-1"></div>
                 </div>
 
-                <!-- States -->
                 <div id="loadingState" class="hidden text-center py-12">
                     <div class="inline-block w-8 h-8 border-2 border-spotify-green border-t-transparent rounded-full animate-spin"></div>
-                    <p class="mt-4 text-sm text-spotify-light">Mencari lagu...</p>
+                    <p class="mt-4 text-sm text-gray-600 dark:text-spotify-light">Mencari lagu...</p>
                 </div>
                 <div id="emptyState" class="hidden text-center py-12">
-                    <p class="text-spotify-light text-base">Tidak ada hasil ditemukan</p>
+                    <p class="text-gray-600 dark:text-spotify-light text-base">Tidak ada hasil ditemukan</p>
                 </div>
                 <div id="errorState" class="hidden text-center py-12">
-                    <p class="text-red-400 text-base font-semibold">Gagal terhubung ke server</p>
+                    <p class="text-red-500 dark:text-red-400 text-base font-semibold">Gagal terhubung ke server</p>
                 </div>
 
             </div>
         </main>
     </div>
 
-    <!-- QUEUE PANEL -->
-    <div id="queueOverlay" class="fixed inset-0 bg-black/60 z-50 hidden" onclick="toggleQueuePanel()"></div>
-    <div id="queuePanel" class="fixed top-0 right-0 h-full w-80 md:w-96 bg-spotify-card border-l border-gray-800 z-50 shadow-2xl overflow-y-auto p-4">
+    <div id="queueOverlay" class="fixed inset-0 bg-black/50 z-50 hidden" onclick="toggleQueuePanel()"></div>
+    <div id="queuePanel" class="fixed top-0 right-0 h-full w-80 md:w-96 bg-white dark:bg-spotify-card border-l border-gray-300 dark:border-gray-800 z-50 shadow-2xl overflow-y-auto p-4 transition-colors duration-300">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-xl font-bold">Antrian</h2>
-            <button onclick="toggleQueuePanel()" class="text-gray-400 hover:text-white p-1">
+            <button onclick="toggleQueuePanel()" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
             </button>
         </div>
         <div id="queueList" class="space-y-1">
-            <p class="text-spotify-light text-sm">Antrian kosong</p>
+            <p class="text-gray-600 dark:text-spotify-light text-sm">Antrian kosong</p>
         </div>
-        <div class="mt-4 text-xs text-spotify-light border-t border-gray-800 pt-3">
+        <div class="mt-4 text-xs text-gray-600 dark:text-spotify-light border-t border-gray-300 dark:border-gray-800 pt-3">
             <p>Seret lagu untuk mengubah urutan</p>
-            <button onclick="clearQueue()" class="text-red-400 hover:text-red-300 mt-1">Kosongkan Antrian</button>
+            <button onclick="clearQueue()" class="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 mt-1">Kosongkan Antrian</button>
         </div>
     </div>
 
-    <!-- MODAL DETAIL LAGU -->
-    <div id="detailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-spotify-card border border-gray-800 rounded-2xl p-5 md:p-6 w-full max-w-md relative shadow-2xl">
-            <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1">
+    <div id="detailModal" class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-spotify-card border border-gray-300 dark:border-gray-800 rounded-2xl p-5 md:p-6 w-full max-w-md relative shadow-2xl transition-colors duration-300">
+            <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
             </button>
             <div class="flex flex-col items-center text-center">
-                <div id="modalCover" class="w-40 h-40 md:w-48 md:h-48 rounded-xl bg-gray-800 shadow-lg overflow-hidden mb-4 flex items-center justify-center">
-                    <svg class="w-12 h-12 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>
+                <div id="modalCover" class="w-40 h-40 md:w-48 md:h-48 rounded-xl bg-gray-200 dark:bg-gray-800 shadow-lg overflow-hidden mb-4 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-gray-400 dark:text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>
                 </div>
-                <h3 id="modalTitle" class="text-xl font-bold text-white truncate w-full mb-1">-</h3>
+                <h3 id="modalTitle" class="text-xl font-bold truncate w-full mb-1">-</h3>
                 <p id="modalArtist" class="text-spotify-green text-sm font-medium mb-4 truncate w-full">-</p>
-                <div class="w-full bg-spotify-darker/60 rounded-lg p-3 grid grid-cols-2 gap-3 text-left text-xs md:text-sm">
-                    <div><span class="text-gray-500 block">Album</span><span id="modalAlbum" class="text-white font-medium truncate block">-</span></div>
-                    <div><span class="text-gray-500 block">Tahun</span><span id="modalYear" class="text-white font-medium truncate block">-</span></div>
-                    <div><span class="text-gray-500 block">Genre</span><span id="modalGenre" class="text-white font-medium truncate block">-</span></div>
-                    <div><span class="text-gray-500 block">Durasi</span><span id="modalDuration" class="text-white font-medium truncate block">--:--</span></div>
+                <div class="w-full bg-gray-100 dark:bg-spotify-darker/60 rounded-lg p-3 grid grid-cols-2 gap-3 text-left text-xs md:text-sm">
+                    <div><span class="text-gray-500 block">Album</span><span id="modalAlbum" class="font-medium truncate block">-</span></div>
+                    <div><span class="text-gray-500 block">Tahun</span><span id="modalYear" class="font-medium truncate block">-</span></div>
+                    <div><span class="text-gray-500 block">Genre</span><span id="modalGenre" class="font-medium truncate block">-</span></div>
+                    <div><span class="text-gray-500 block">Durasi</span><span id="modalDuration" class="font-medium truncate block">--:--</span></div>
                 </div>
-                <button id="modalPlayBtn" class="mt-5 w-full bg-spotify-green text-black font-bold py-2.5 rounded-full hover:scale-105 transition">Putar Sekarang</button>
-                <button onclick="addCurrentSongToQueueFromModal()" class="mt-2 w-full bg-gray-700 text-white font-bold py-2 rounded-full hover:bg-gray-600 transition">Tambah ke Antrian</button>
-                <button id="modalLikeBtn" class="mt-2 w-full bg-gray-700 text-white font-bold py-2 rounded-full hover:bg-gray-600 transition flex items-center justify-center gap-2">
+                <button id="modalPlayBtn" class="mt-5 w-full bg-spotify-green text-white dark:text-black font-bold py-2.5 rounded-full hover:scale-105 transition">Putar Sekarang</button>
+                <button onclick="addCurrentSongToQueueFromModal()" class="mt-2 w-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2 rounded-full transition">Tambah ke Antrian</button>
+                <button id="modalLikeBtn" class="mt-2 w-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2 rounded-full transition flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
                     <span id="modalLikeText">Like</span>
                 </button>
@@ -406,15 +364,13 @@
         </div>
     </div>
 
-    <!-- NOW PLAYING OVERLAY -->
-    <div id="nowPlayingOverlay" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+    <div id="nowPlayingOverlay" class="fixed inset-0 z-50 hidden flex-col items-center justify-center p-6 bg-white/95 dark:bg-black/90 backdrop-blur-xl transition-colors duration-300">
         <div class="relative z-10 flex flex-col items-center max-w-lg w-full">
-            <button onclick="closeNowPlaying()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+            <button onclick="closeNowPlaying()" class="absolute -top-10 right-0 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
             </button>
 
-            <div id="npCover" class="w-56 h-56 md:w-72 md:h-72 rounded-2xl shadow-2xl overflow-hidden bg-gray-800 relative">
+            <div id="npCover" class="w-56 h-56 md:w-72 md:h-72 rounded-2xl shadow-2xl overflow-hidden bg-gray-200 dark:bg-gray-800 relative">
                 <img id="npCoverImg" src="" alt="cover" class="w-full h-full object-cover spin-slow spin-paused" />
             </div>
 
@@ -422,7 +378,7 @@
             <p id="npArtist" class="text-spotify-green text-lg truncate w-full text-center">-</p>
 
             <div class="w-full mt-4">
-                <div class="flex items-center gap-2 text-xs text-spotify-light">
+                <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-spotify-light">
                     <span id="npCurrentTime">0:00</span>
                     <div class="progress-container flex-1">
                         <input type="range" id="npProgressBar" class="progress-bar" min="0" max="100" value="0" step="0.1" />
@@ -431,97 +387,93 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-6 mt-4">
-                <button id="npShuffleBtn" class="text-gray-400 hover:text-white transition text-2xl" data-tooltip="Shuffle">
+            <div class="flex items-center gap-6 mt-6">
+                <button id="npShuffleBtn" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition text-2xl" data-tooltip="Shuffle">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" /></svg>
                 </button>
-                <button id="npPrevBtn" class="text-gray-400 hover:text-white transition text-2xl" data-tooltip="Previous">
+                <button id="npPrevBtn" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition text-2xl" data-tooltip="Previous">
                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
                 </button>
-                <button id="npPlayPauseBtn" class="w-16 h-16 bg-white rounded-full flex items-center justify-center hover:scale-105 transition shadow-2xl" data-tooltip="Play/Pause">
-                    <svg id="npPlayIcon" class="w-8 h-8 text-black ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                    <svg id="npPauseIcon" class="w-8 h-8 text-black hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                <button id="npPlayPauseBtn" class="w-16 h-16 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center hover:scale-105 transition shadow-xl" data-tooltip="Play/Pause">
+                    <svg id="npPlayIcon" class="w-8 h-8 text-white dark:text-black ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                    <svg id="npPauseIcon" class="w-8 h-8 text-white dark:text-black hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                 </button>
-                <button id="npNextBtn" class="text-gray-400 hover:text-white transition text-2xl" data-tooltip="Next">
+                <button id="npNextBtn" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition text-2xl" data-tooltip="Next">
                     <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
                 </button>
-                <button id="npRepeatBtn" class="text-gray-400 hover:text-white transition text-2xl" data-tooltip="Repeat">
+                <button id="npRepeatBtn" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition text-2xl" data-tooltip="Repeat">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" /></svg>
                 </button>
             </div>
 
-            <div class="flex items-center gap-4 mt-4">
-                <button onclick="addCurrentSongToQueue()" class="text-spotify-light hover:text-white text-sm flex items-center gap-2" data-tooltip="Tambah ke antrian">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
+            <div class="flex items-center gap-4 mt-6">
+                <button onclick="addCurrentSongToQueue()" class="text-gray-500 hover:text-gray-900 dark:text-spotify-light dark:hover:text-white text-sm flex items-center gap-2" data-tooltip="Tambah ke antrian">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
                 </button>
-                <button id="npLikeBtn" onclick="toggleLikeCurrent()" class="text-spotify-light hover:text-white text-sm flex items-center gap-2" data-tooltip="Like">
-                    <svg id="npLikeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                <button id="npLikeBtn" onclick="toggleLikeCurrent()" class="text-gray-500 hover:text-gray-900 dark:text-spotify-light dark:hover:text-white text-sm flex items-center gap-2" data-tooltip="Like">
+                    <svg id="npLikeIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Player Bar -->
-    <div id="playerBar" class="fixed bottom-0 left-0 right-0 bg-spotify-card border-t border-gray-800 px-3 md:px-6 py-2 md:py-3 z-40 transform translate-y-full transition-transform duration-300">
+    <div id="playerBar" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-spotify-card border-t border-gray-300 dark:border-gray-800 px-3 md:px-6 py-2 md:py-3 z-40 transform translate-y-full transition-all duration-300">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-2 md:gap-4 max-w-7xl mx-auto">
 
-            <!-- Song Info -->
             <div class="flex items-center gap-3 w-full sm:w-1/4 min-w-0 justify-between sm:justify-start">
                 <div class="flex items-center gap-3 min-w-0 cursor-pointer" onclick="openNowPlaying()">
-                    <div id="playerArtwork" class="w-10 h-10 md:w-12 md:h-12 rounded bg-spotify-hover flex-shrink-0 overflow-hidden flex items-center justify-center">
-                        <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>
+                    <div id="playerArtwork" class="w-10 h-10 md:w-12 md:h-12 rounded bg-gray-200 dark:bg-spotify-hover flex-shrink-0 overflow-hidden flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>
                     </div>
                     <div class="min-w-0">
                         <p id="playerTitle" class="text-xs md:text-sm font-medium truncate">-</p>
-                        <p id="playerArtist" class="text-[10px] md:text-xs text-spotify-light truncate">-</p>
+                        <p id="playerArtist" class="text-[10px] md:text-xs text-gray-600 dark:text-spotify-light truncate">-</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-1">
-                    <button id="playerLikeBtn" onclick="toggleLikeCurrent()" class="text-gray-400 hover:text-white p-1">
-                        <svg id="playerLikeIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                    <button id="playerLikeBtn" onclick="toggleLikeCurrent()" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1">
+                        <svg id="playerLikeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                     </button>
-                    <button id="mobilePlayPauseBtn" onclick="togglePlayPause()" class="sm:hidden text-white p-1">
+                    <button id="mobilePlayPauseBtn" onclick="togglePlayPause()" class="sm:hidden p-1">
                         <svg id="mobilePlayIcon" class="w-7 h-7 text-spotify-green" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                         <svg id="mobilePauseIcon" class="w-7 h-7 text-spotify-green hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                     </button>
                 </div>
             </div>
 
-            <!-- Player Controls Desktop -->
             <div class="hidden sm:flex flex-col items-center w-full sm:w-2/4 max-w-xl">
                 <div class="flex items-center gap-4 mb-1">
-                    <button id="shuffleBtn" class="text-gray-400 hover:text-white transition" data-tooltip="Shuffle">
+                    <button id="shuffleBtn" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition" data-tooltip="Shuffle">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" /></svg>
                     </button>
-                    <button id="prevBtn" class="text-gray-400 hover:text-white transition" data-tooltip="Previous">
+                    <button id="prevBtn" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition" data-tooltip="Previous">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
                     </button>
-                    <button id="playPauseBtn" class="w-8 h-8 md:w-9 md:h-9 bg-white rounded-full flex items-center justify-center hover:scale-105 transition" data-tooltip="Play/Pause">
-                        <svg id="playIcon" class="w-4 h-4 md:w-5 md:h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                        <svg id="pauseIcon" class="w-4 h-4 md:w-5 md:h-5 text-black hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                    <button id="playPauseBtn" class="w-8 h-8 md:w-9 md:h-9 bg-gray-900 dark:bg-white rounded-full flex items-center justify-center hover:scale-105 transition" data-tooltip="Play/Pause">
+                        <svg id="playIcon" class="w-4 h-4 md:w-5 md:h-5 text-white dark:text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                        <svg id="pauseIcon" class="w-4 h-4 md:w-5 md:h-5 text-white dark:text-black hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                     </button>
-                    <button id="nextBtn" class="text-gray-400 hover:text-white transition" data-tooltip="Next">
+                    <button id="nextBtn" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition" data-tooltip="Next">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
                     </button>
-                    <button id="repeatBtn" class="text-gray-400 hover:text-white transition" data-tooltip="Repeat">
+                    <button id="repeatBtn" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition" data-tooltip="Repeat">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" /></svg>
                     </button>
-                    <button onclick="toggleQueuePanel()" class="text-gray-400 hover:text-white transition ml-2" data-tooltip="Queue">
+                    <button onclick="toggleQueuePanel()" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition ml-2" data-tooltip="Queue">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
                     </button>
                 </div>
                 <div class="flex items-center gap-2 w-full text-xs">
-                    <span id="currentTime" class="text-spotify-light w-8 text-right">0:00</span>
+                    <span id="currentTime" class="text-gray-600 dark:text-spotify-light w-8 text-right">0:00</span>
                     <div class="progress-container flex-1">
                         <input type="range" id="progressBar" class="progress-bar" min="0" max="100" value="0" step="0.1" />
                     </div>
-                    <span id="duration" class="text-spotify-light w-8">0:00</span>
+                    <span id="duration" class="text-gray-600 dark:text-spotify-light w-8">0:00</span>
                 </div>
             </div>
 
-            <!-- Volume -->
             <div class="hidden sm:flex items-center justify-end gap-2 w-1/4">
-                <button id="volumeBtn" class="text-gray-400 hover:text-white" data-tooltip="Volume">
+                <button id="volumeBtn" class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" data-tooltip="Volume">
                     <svg id="volumeIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" /></svg>
                 </button>
                 <div class="volume-container w-20">
@@ -532,8 +484,6 @@
     </div>
 
     <audio id="audioPlayer" preload="auto"></audio>
-
-    <!-- Toast Container -->
     <div id="toastContainer"></div>
 
     <script>
@@ -607,8 +557,50 @@
         const queuePanel = document.getElementById('queuePanel');
         const queueOverlay = document.getElementById('queueOverlay');
         const queueList = document.getElementById('queueList');
-
         const toastContainer = document.getElementById('toastContainer');
+
+        // ========== XSS SANITIZER ==========
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, 
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
+        // ========== TEMA ==========
+        let currentTheme = localStorage.getItem('theme') || 'dark';
+
+        function applyTheme(theme) {
+            const isLight = theme === 'light';
+            if (isLight) {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+            
+            const iconPath = isLight ?
+                '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />' // Matahari
+                :
+                '<path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 18a8 8 0 010-16 8 8 0 000 16z"/>'; // Bulan
+            
+            document.getElementById('themeIcon').innerHTML = iconPath;
+            document.getElementById('themeIconSidebar').innerHTML = iconPath;
+            document.getElementById('themeLabel').textContent = isLight ? 'Mode Terang' : 'Mode Gelap';
+            
+            localStorage.setItem('theme', theme);
+            currentTheme = theme;
+        }
+
+        function toggleTheme() {
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+        }
 
         // ========== DURATION CACHE ==========
         const durationCache = {};
@@ -676,7 +668,6 @@
         function updateFavoriteUI() {
             const song = currentSongList[currentSongIndex];
             if (song) updateLikeIcon(song);
-            // Re-render current visible list
             if (!welcomeSection.classList.contains('hidden')) {
                 renderQuickPicks(defaultSongsList);
                 renderRecentlyPlayed();
@@ -685,7 +676,6 @@
             } else if (!favoritesSection.classList.contains('hidden')) {
                 renderFavorites();
             }
-            // Update modal like text if modal is visible
             const modalLikeText = document.getElementById('modalLikeText');
             if (modalLikeText && !document.getElementById('detailModal').classList.contains('hidden')) {
                 const modalSong = currentSongList[currentSongIndex];
@@ -702,7 +692,7 @@
 
         function renderFavorites() {
             if (favorites.length === 0) {
-                favoritesList.innerHTML = '<p class="text-spotify-light text-sm">Belum ada lagu favorit</p>';
+                favoritesList.innerHTML = '<p class="text-gray-500 dark:text-spotify-light text-sm">Belum ada lagu favorit</p>';
                 favCount.textContent = '0 lagu';
                 return;
             }
@@ -711,26 +701,26 @@
                 const durId = `fav-dur-${index}`;
                 autoCalculateDuration(song.url, durId);
                 return `
-                <div class="song-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group" onclick="playFavorite(${index})">
+                <div class="song-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group hover:bg-gray-200 dark:hover:bg-white/10" onclick="playFavorite(${index})">
                     <div class="flex items-center gap-3 min-w-0 flex-1">
-                        <span class="text-xs text-spotify-light w-4 text-center">${index+1}</span>
-                        <div class="w-9 h-9 rounded bg-gray-800 flex-shrink-0 overflow-hidden">
-                            ${song.cover ? `<img src="${song.cover}" class="w-full h-full object-cover">` : ''}
+                        <span class="text-xs text-gray-500 dark:text-spotify-light w-4 text-center">${index+1}</span>
+                        <div class="w-9 h-9 rounded bg-gray-200 dark:bg-gray-800 flex-shrink-0 overflow-hidden">
+                            ${song.cover ? `<img src="${escapeHTML(song.cover)}" class="w-full h-full object-cover">` : ''}
                         </div>
                         <div class="min-w-0">
-                            <p class="text-sm font-medium truncate text-white">${song.title}</p>
-                            <p class="text-xs text-spotify-light truncate">${song.artist}</p>
+                            <p class="text-sm font-medium truncate text-gray-900 dark:text-white">${escapeHTML(song.title)}</p>
+                            <p class="text-xs text-gray-600 dark:text-spotify-light truncate">${escapeHTML(song.artist)}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <span id="${durId}" class="text-xs text-spotify-light">--:--</span>
+                        <span id="${durId}" class="text-xs text-gray-500 dark:text-spotify-light">--:--</span>
                         <button onclick="event.stopPropagation(); toggleFavoriteByIndex(${index}, 'favorites')" class="p-1 text-spotify-green" data-tooltip="Hapus favorit">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
                         </button>
                         <button onclick="event.stopPropagation(); addToQueueByIndex(${index}, 'favorites')" class="p-1 text-gray-400 hover:text-spotify-green" data-tooltip="Tambah ke antrian">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
                         </button>
-                        <button onclick="event.stopPropagation(); openDetailModalByIndex(${index}, 'favorites')" class="p-1 text-gray-400 hover:text-white" data-tooltip="Detail">
+                        <button onclick="event.stopPropagation(); openDetailModalByIndex(${index}, 'favorites')" class="p-1 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" data-tooltip="Detail">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </button>
                     </div>
@@ -776,17 +766,17 @@
                 const durId = `recent-dur-${i}`;
                 autoCalculateDuration(song.url, durId);
                 return `
-                <div class="song-item flex items-center justify-between bg-spotify-card hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group" onclick="playRecent(${i})">
+                <div class="song-item flex items-center justify-between bg-white dark:bg-spotify-card hover:bg-gray-200 dark:hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group shadow-sm dark:shadow-none" onclick="playRecent(${i})">
                     <div class="flex items-center gap-3 min-w-0 flex-1">
-                        <div class="w-11 h-11 rounded bg-gray-800 flex-shrink-0 overflow-hidden">
-                            ${song.cover ? `<img src="${song.cover}" class="w-full h-full object-cover">` : ''}
+                        <div class="w-11 h-11 rounded bg-gray-200 dark:bg-gray-800 flex-shrink-0 overflow-hidden">
+                            ${song.cover ? `<img src="${escapeHTML(song.cover)}" class="w-full h-full object-cover">` : ''}
                         </div>
                         <div class="min-w-0 pr-2">
-                            <p class="text-xs md:text-sm font-medium text-white truncate">${song.title}</p>
-                            <p class="text-[11px] text-spotify-light truncate">${song.artist}</p>
+                            <p class="text-xs md:text-sm font-medium text-gray-900 dark:text-white truncate">${escapeHTML(song.title)}</p>
+                            <p class="text-[11px] text-gray-600 dark:text-spotify-light truncate">${escapeHTML(song.artist)}</p>
                         </div>
                     </div>
-                    <span id="${durId}" class="text-xs text-spotify-light hidden sm:inline">--:--</span>
+                    <span id="${durId}" class="text-xs text-gray-500 dark:text-spotify-light hidden sm:inline">--:--</span>
                 </div>`;
             }).join('');
         }
@@ -813,19 +803,19 @@
 
         function renderQueue() {
             if (queue.length === 0) {
-                queueList.innerHTML = '<p class="text-spotify-light text-sm">Antrian kosong</p>';
+                queueList.innerHTML = '<p class="text-gray-500 dark:text-spotify-light text-sm">Antrian kosong</p>';
                 return;
             }
             queueList.innerHTML = queue.map((song, index) => `
-                <div class="queue-item flex items-center justify-between px-2 py-1.5 rounded hover:bg-spotify-hover" draggable="true" data-index="${index}">
-                    <div class="flex items-center gap-2 min-w-0 flex-1" onclick="playQueueItem(${index})">
-                        <span class="text-xs text-spotify-light w-4 text-center">${index+1}</span>
+                <div class="queue-item flex items-center justify-between px-2 py-1.5 rounded hover:bg-gray-200 dark:hover:bg-spotify-hover" draggable="true" data-index="${index}">
+                    <div class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer" onclick="playQueueItem(${index})">
+                        <span class="text-xs text-gray-500 dark:text-spotify-light w-4 text-center">${index+1}</span>
                         <div class="min-w-0">
-                            <p class="text-sm truncate">${song.title}</p>
-                            <p class="text-xs text-spotify-light truncate">${song.artist}</p>
+                            <p class="text-sm truncate font-medium">${escapeHTML(song.title)}</p>
+                            <p class="text-xs text-gray-600 dark:text-spotify-light truncate">${escapeHTML(song.artist)}</p>
                         </div>
                     </div>
-                    <button onclick="removeFromQueue(${index})" class="text-gray-500 hover:text-red-400 p-1">
+                    <button onclick="removeFromQueue(${index})" class="text-gray-500 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400 p-1">
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
                     </button>
                 </div>
@@ -855,8 +845,7 @@
             document.querySelectorAll('.queue-item').forEach(el => el.classList.remove('drag-over'));
         }
 
-        function handleDragOver(e) { e.preventDefault();
-            e.dataTransfer.dropEffect = 'move'; }
+        function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
 
         function handleDragEnter(e) {
             e.preventDefault();
@@ -879,12 +868,11 @@
             draggedIndex = null;
         }
 
-        // ----- Queue actions (public) -----
         function addToQueue(song) {
             if (!song) return;
             queue.push(song);
             renderQueue();
-            showToast(`"${song.title}" ditambahkan ke antrian`);
+            showToast(`"${escapeHTML(song.title)}" ditambahkan ke antrian`);
         }
 
         function addToQueueByIndex(index, listType) {
@@ -922,21 +910,13 @@
             if (song) addToQueue(song);
         }
 
-        // ========== HELPER: get song by index and list type ==========
         function getSongByIndex(index, listType) {
             let list;
             switch (listType) {
-                case 'default':
-                    list = defaultSongsList;
-                    break;
-                case 'current':
-                    list = currentSongList;
-                    break;
-                case 'favorites':
-                    list = favorites;
-                    break;
-                default:
-                    list = currentSongList;
+                case 'default': list = defaultSongsList; break;
+                case 'current': list = currentSongList; break;
+                case 'favorites': list = favorites; break;
+                default: list = currentSongList;
             }
             return list && list[index] ? list[index] : null;
         }
@@ -945,6 +925,7 @@
         function openNowPlaying() {
             if (!audio.src) return;
             nowPlayingOverlay.classList.remove('hidden');
+            nowPlayingOverlay.classList.add('flex');
             const song = currentSongList[currentSongIndex];
             if (song) {
                 npTitle.textContent = song.title;
@@ -963,6 +944,7 @@
 
         function closeNowPlaying() {
             nowPlayingOverlay.classList.add('hidden');
+            nowPlayingOverlay.classList.remove('flex');
         }
 
         function updateNpPlayPause() {
@@ -978,8 +960,8 @@
         }
 
         function updateNpShuffleRepeat() {
-            npShuffleBtn.style.color = isShuffle ? '#1DB954' : '#b3b3b3';
-            npRepeatBtn.style.color = repeatMode === 0 ? '#b3b3b3' : '#1DB954';
+            npShuffleBtn.style.color = isShuffle ? '#1DB954' : '';
+            npRepeatBtn.style.color = repeatMode === 0 ? '' : '#1DB954';
         }
 
         // ========== MAIN PLAYER ==========
@@ -993,7 +975,7 @@
             playerTitle.textContent = song.title;
             playerArtist.textContent = song.artist;
             if (song.cover) {
-                playerArtwork.innerHTML = `<img src="${song.cover}" class="w-full h-full object-cover">`;
+                playerArtwork.innerHTML = `<img src="${escapeHTML(song.cover)}" class="w-full h-full object-cover">`;
             } else {
                 playerArtwork.innerHTML =
                     `<svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>`;
@@ -1001,10 +983,20 @@
             updateLikeIcon(song);
 
             audio.src = song.url;
+            
+            // Evaluasi keamanan Promise dari .play()
             audio.play().then(() => {
                 setPlayingState(true);
                 addToRecentlyPlayed(song);
                 updateMediaSession(song);
+                
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(`🎵 ${song.title}`, {
+                        body: `oleh ${song.artist}`,
+                        icon: song.cover || '',
+                        tag: 'now-playing'
+                    });
+                }
                 if (!nowPlayingOverlay.classList.contains('hidden')) {
                     npTitle.textContent = song.title;
                     npArtist.textContent = song.artist;
@@ -1013,7 +1005,16 @@
                     else npCoverImg.style.display = 'none';
                     updateNpPlayPause();
                 }
-            }).catch(() => setPlayingState(false));
+            }).catch((err) => {
+                if (err.name === 'AbortError') {
+                    // Diabaikan: Sering terjadi kalau berganti lagu dengan sangat cepat
+                    console.warn("Playback interrupted by a new track.");
+                } else {
+                    console.error("Gagal memutar audio:", err);
+                    setPlayingState(false);
+                    showToast("Gagal memutar lagu");
+                }
+            });
 
             // Re-render lists
             if (!welcomeSection.classList.contains('hidden')) {
@@ -1028,9 +1029,12 @@
 
         function togglePlayPause() {
             if (!audio.src) return;
-            if (isPlaying) { audio.pause();
-                setPlayingState(false); } else { audio.play();
-                setPlayingState(true); }
+            if (isPlaying) { 
+                audio.pause();
+                setPlayingState(false); 
+            } else { 
+                audio.play().then(() => setPlayingState(true)).catch(console.error);
+            }
         }
 
         function setPlayingState(playing) {
@@ -1099,8 +1103,7 @@
                 navigator.mediaSession.setActionHandler('pause', () => togglePlayPause());
                 navigator.mediaSession.setActionHandler('nexttrack', () => nextSong());
                 navigator.mediaSession.setActionHandler('previoustrack', () => prevSong());
-                navigator.mediaSession.setActionHandler('stop', () => { audio.pause();
-                    setPlayingState(false); });
+                navigator.mediaSession.setActionHandler('stop', () => { audio.pause(); setPlayingState(false); });
             }
         }
 
@@ -1116,11 +1119,15 @@
         async function searchSongs(query) {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/songs?q=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                
                 const result = await response.json();
                 currentSongList = result.data || result;
+                
                 if (currentSongList.length === 0) showEmpty();
                 else showResults(currentSongList);
             } catch (error) {
+                console.error("Gagal mencari lagu:", error);
                 showError();
             }
         }
@@ -1131,27 +1138,27 @@
                 autoCalculateDuration(song.url, durationId);
                 const liked = isFavorite(song);
                 return `
-                <div class="song-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group ${currentSongIndex === index ? 'active' : ''}"
+                <div class="song-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group hover:bg-gray-200 dark:hover:bg-white/10 ${currentSongIndex === index ? 'active' : ''}"
                      onclick="playSong(${index})">
                     <div class="flex items-center gap-3 min-w-0 flex-1">
-                        <span class="text-xs text-spotify-light w-4 text-center">${index + 1}</span>
-                        <div class="w-9 h-9 rounded bg-gray-800 flex-shrink-0 overflow-hidden">
-                            ${song.cover ? `<img src="${song.cover}" class="w-full h-full object-cover">` : ''}
+                        <span class="text-xs text-gray-500 dark:text-spotify-light w-4 text-center">${index + 1}</span>
+                        <div class="w-9 h-9 rounded bg-gray-200 dark:bg-gray-800 flex-shrink-0 overflow-hidden">
+                            ${song.cover ? `<img src="${escapeHTML(song.cover)}" class="w-full h-full object-cover">` : ''}
                         </div>
                         <div class="min-w-0">
-                            <p class="text-sm font-medium truncate ${currentSongIndex === index ? 'text-spotify-green' : 'text-white'}">${song.title}</p>
-                            <p class="text-xs text-spotify-light truncate">${song.artist}</p>
+                            <p class="text-sm font-medium truncate ${currentSongIndex === index ? 'text-spotify-green' : 'text-gray-900 dark:text-white'}">${escapeHTML(song.title)}</p>
+                            <p class="text-xs text-gray-600 dark:text-spotify-light truncate">${escapeHTML(song.artist)}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
-                        <span id="${durationId}" class="text-xs text-spotify-light">--:--</span>
+                        <span id="${durationId}" class="text-xs text-gray-500 dark:text-spotify-light">--:--</span>
                         <button onclick="event.stopPropagation(); toggleFavoriteByIndex(${index}, 'current')" class="p-1 ${liked ? 'text-spotify-green' : 'text-gray-400 hover:text-spotify-green'}" data-tooltip="Like">
                             <svg class="w-4 h-4" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                         </button>
                         <button onclick="event.stopPropagation(); addToQueueByIndex(${index}, 'current')" class="p-1 text-gray-400 hover:text-spotify-green" data-tooltip="Tambah ke antrian">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
                         </button>
-                        <button onclick="event.stopPropagation(); openDetailModalByIndex(${index}, 'current')" class="p-1 text-gray-400 hover:text-white" data-tooltip="Detail">
+                        <button onclick="event.stopPropagation(); openDetailModalByIndex(${index}, 'current')" class="p-1 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" data-tooltip="Detail">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </button>
                     </div>
@@ -1164,13 +1171,13 @@
             quickPicks.innerHTML = '';
             for (let i = 0; i < 8; i++) {
                 const div = document.createElement('div');
-                div.className = 'bg-spotify-card rounded-lg p-2.5 animate-pulse';
+                div.className = 'bg-white dark:bg-spotify-card rounded-lg p-2.5 animate-pulse shadow-sm dark:shadow-none';
                 div.innerHTML = `
                     <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded bg-gray-700 flex-shrink-0"></div>
+                        <div class="w-11 h-11 rounded bg-gray-200 dark:bg-gray-700 flex-shrink-0"></div>
                         <div class="flex-1">
-                            <div class="skeleton-text w-3/4"></div>
-                            <div class="skeleton-text w-1/2"></div>
+                            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                            <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
                         </div>
                     </div>
                 `;
@@ -1183,18 +1190,20 @@
             renderSkeleton();
             try {
                 const response = await fetch(`${API_BASE_URL}/api/songs`);
-                if (!response.ok) throw new Error('Gagal koneksi');
+                if (!response.ok) throw new Error('Gagal koneksi server');
+                
                 const result = await response.json();
                 defaultSongsList = result.data || result;
                 renderQuickPicks(defaultSongsList);
             } catch (error) {
-                quickPicks.innerHTML = '<p class="text-red-400 col-span-full">Gagal memuat lagu dari server.</p>';
+                console.error("Gagal memuat lagu:", error);
+                quickPicks.innerHTML = '<p class="text-red-500 dark:text-red-400 col-span-full">Gagal memuat lagu dari server.</p>';
             }
         }
 
         function renderQuickPicks(songs) {
             if (!songs || songs.length === 0) {
-                quickPicks.innerHTML = '<p class="text-spotify-light col-span-full">Tidak ada lagu tersedia.</p>';
+                quickPicks.innerHTML = '<p class="text-gray-500 dark:text-spotify-light col-span-full">Tidak ada lagu tersedia.</p>';
                 return;
             }
             quickPicks.innerHTML = songs.map((song, i) => {
@@ -1202,26 +1211,26 @@
                 autoCalculateDuration(song.url, durationId);
                 const liked = isFavorite(song);
                 return `
-                <div class="song-item flex items-center justify-between bg-spotify-card hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group">
+                <div class="song-item flex items-center justify-between bg-white dark:bg-spotify-card hover:bg-gray-200 dark:hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group shadow-sm dark:shadow-none">
                     <div class="flex items-center gap-3 min-w-0 flex-1" onclick="playFromQuickPicks(${i})">
-                        <div class="w-11 h-11 rounded bg-gray-800 flex-shrink-0 overflow-hidden relative">
-                            ${song.cover ? `<img src="${song.cover}" class="w-full h-full object-cover">` :
-                            `<div class="w-full h-full flex items-center justify-center text-gray-500"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg></div>`}
+                        <div class="w-11 h-11 rounded bg-gray-200 dark:bg-gray-800 flex-shrink-0 overflow-hidden relative">
+                            ${song.cover ? `<img src="${escapeHTML(song.cover)}" class="w-full h-full object-cover">` :
+                            `<div class="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg></div>`}
                         </div>
                         <div class="min-w-0 pr-2">
-                            <p class="text-xs md:text-sm font-medium text-white truncate">${song.title}</p>
-                            <p class="text-[11px] text-spotify-light truncate">${song.artist}</p>
+                            <p class="text-xs md:text-sm font-medium text-gray-900 dark:text-white truncate">${escapeHTML(song.title)}</p>
+                            <p class="text-[11px] text-gray-600 dark:text-spotify-light truncate">${escapeHTML(song.artist)}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span id="${durationId}" class="text-xs text-spotify-light hidden sm:inline">--:--</span>
+                        <span id="${durationId}" class="text-xs text-gray-500 dark:text-spotify-light hidden sm:inline">--:--</span>
                         <button onclick="event.stopPropagation(); toggleFavoriteByIndex(${i}, 'default')" class="p-1.5 ${liked ? 'text-spotify-green' : 'text-gray-400 hover:text-spotify-green'}" data-tooltip="Like">
                             <svg class="w-4 h-4" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                         </button>
                         <button onclick="event.stopPropagation(); addToQueueByIndex(${i}, 'default')" class="p-1.5 text-gray-400 hover:text-spotify-green" data-tooltip="Tambah ke antrian">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
                         </button>
-                        <button onclick="event.stopPropagation(); openDetailModalByIndex(${i}, 'default')" class="p-1.5 text-gray-400 hover:text-white" data-tooltip="Detail">
+                        <button onclick="event.stopPropagation(); openDetailModalByIndex(${i}, 'default')" class="p-1.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white" data-tooltip="Detail">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </button>
                     </div>
@@ -1234,15 +1243,15 @@
             playSong(index);
         }
 
-        // ========== DETAIL MODAL (by index and list type) ==========
+        // ========== DETAIL MODAL ==========
         function openDetailModalByIndex(index, listType) {
             const song = getSongByIndex(index, listType);
             if (!song) return;
-            // Simpan referensi untuk modal play & like
             window._modalSong = song;
             window._modalListType = listType;
             window._modalIndex = index;
 
+            // textContent otomatis aman dari XSS
             document.getElementById('modalTitle').textContent = song.title || '-';
             document.getElementById('modalArtist').textContent = song.artist || '-';
             document.getElementById('modalAlbum').textContent = song.album || 'Single';
@@ -1251,19 +1260,17 @@
 
             const coverContainer = document.getElementById('modalCover');
             if (song.cover) {
-                coverContainer.innerHTML = `<img src="${song.cover}" class="w-full h-full object-cover">`;
+                coverContainer.innerHTML = `<img src="${escapeHTML(song.cover)}" class="w-full h-full object-cover">`;
             } else {
                 coverContainer.innerHTML =
-                    `<svg class="w-12 h-12 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>`;
+                    `<svg class="w-12 h-12 text-gray-400 dark:text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>`;
             }
 
-            document.getElementById('modalDuration').textContent = durationCache[song.url] ? formatTime(durationCache[song
-                .url]) : '--:--';
+            document.getElementById('modalDuration').textContent = durationCache[song.url] ? formatTime(durationCache[song.url]) : '--:--';
 
             document.getElementById('modalPlayBtn').onclick = () => {
                 const songToPlay = getSongByIndex(window._modalIndex, window._modalListType);
                 if (songToPlay) {
-                    // Set currentSongList to the appropriate list
                     if (window._modalListType === 'default') currentSongList = [...defaultSongsList];
                     else if (window._modalListType === 'current') currentSongList = [...currentSongList];
                     else if (window._modalListType === 'favorites') currentSongList = [...favorites];
@@ -1286,7 +1293,6 @@
             document.getElementById('detailModal').classList.add('hidden');
         }
 
-        // ========== FAVORITE / QUEUE BY INDEX (global functions) ==========
         function toggleFavoriteByIndex(index, listType) {
             const song = getSongByIndex(index, listType);
             if (song) toggleFavorite(song);
@@ -1341,7 +1347,7 @@
         function showToast(msg) {
             const el = document.createElement('div');
             el.className = 'toast-item';
-            el.textContent = msg;
+            el.textContent = msg; // Aman dari XSS
             toastContainer.appendChild(el);
             setTimeout(() => {
                 el.classList.add('out');
@@ -1352,20 +1358,20 @@
         // ========== EVENT LISTENERS ==========
         function setupEventListeners() {
             searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
-            clearSearch.addEventListener('click', () => { searchInput.value = '';
-                showWelcome(); });
+            clearSearch.addEventListener('click', () => { searchInput.value = ''; showWelcome(); });
+            
             playPauseBtn.addEventListener('click', togglePlayPause);
             document.getElementById('prevBtn').addEventListener('click', prevSong);
             document.getElementById('nextBtn').addEventListener('click', nextSong);
 
             document.getElementById('shuffleBtn').addEventListener('click', () => {
                 isShuffle = !isShuffle;
-                document.getElementById('shuffleBtn').style.color = isShuffle ? '#1DB954' : '#b3b3b3';
+                document.getElementById('shuffleBtn').style.color = isShuffle ? '#1DB954' : '';
                 updateNpShuffleRepeat();
             });
             document.getElementById('repeatBtn').addEventListener('click', () => {
                 repeatMode = (repeatMode + 1) % 3;
-                document.getElementById('repeatBtn').style.color = repeatMode === 0 ? '#b3b3b3' : '#1DB954';
+                document.getElementById('repeatBtn').style.color = repeatMode === 0 ? '' : '#1DB954';
                 updateNpShuffleRepeat();
             });
 
@@ -1375,12 +1381,12 @@
             npShuffleBtn.addEventListener('click', () => {
                 isShuffle = !isShuffle;
                 updateNpShuffleRepeat();
-                document.getElementById('shuffleBtn').style.color = isShuffle ? '#1DB954' : '#b3b3b3';
+                document.getElementById('shuffleBtn').style.color = isShuffle ? '#1DB954' : '';
             });
             npRepeatBtn.addEventListener('click', () => {
                 repeatMode = (repeatMode + 1) % 3;
                 updateNpShuffleRepeat();
-                document.getElementById('repeatBtn').style.color = repeatMode === 0 ? '#b3b3b3' : '#1DB954';
+                document.getElementById('repeatBtn').style.color = repeatMode === 0 ? '' : '#1DB954';
             });
 
             progressBar.addEventListener('input', () => {
@@ -1422,43 +1428,47 @@
                 else setPlayingState(false);
             });
 
-            // Keyboard shortcuts
+            // ===== KEYBOARD SHORTCUTS SENTRALISASI =====
             document.addEventListener('keydown', (e) => {
-                if (e.target.tagName === 'INPUT') return;
-                switch (e.key) {
-                    case ' ':
-                        e.preventDefault();
-                        togglePlayPause();
-                        break;
-                    case 'ArrowRight':
-                        if (audio.duration) audio.currentTime += 5;
-                        break;
-                    case 'ArrowLeft':
-                        if (audio.duration) audio.currentTime -= 5;
-                        break;
-                    case 'ArrowUp':
-                        volumeSlider.value = Math.min(100, +volumeSlider.value + 5);
-                        audio.volume = volumeSlider.value / 100;
-                        break;
-                    case 'ArrowDown':
-                        volumeSlider.value = Math.max(0, +volumeSlider.value - 5);
-                        audio.volume = volumeSlider.value / 100;
-                        break;
-                    case 'f':
-                    case 'F':
-                        if (!nowPlayingOverlay.classList.contains('hidden')) closeNowPlaying();
-                        else openNowPlaying();
-                        break;
-                    case 'l':
-                    case 'L':
-                        toggleLikeCurrent();
-                        break;
-                    case 'q':
-                    case 'Q':
-                        toggleQueuePanel();
-                        break;
+                // Abaikan jika user sedang mengetik di input
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    if (e.key === 'Escape') {
+                        e.target.blur();
+                        closeAllModals();
+                    }
+                    return;
+                }
+
+                // Ctrl+F / Cmd+F -> Fokus pencarian
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
+                    e.preventDefault();
+                    searchInput.focus();
+                    searchInput.select();
+                }
+                // Ctrl+Space -> Play/Pause (Atau Space murni tanpa modifikasi pencarian)
+                else if ((e.ctrlKey && e.key === ' ') || (e.key === ' ' && !e.metaKey)) {
+                    e.preventDefault(); // Cegah halaman scroll ke bawah
+                    togglePlayPause();
+                }
+                // Arrow Kanan -> Next Track
+                else if (e.key === 'ArrowRight') {
+                    nextSong();
+                }
+                // Arrow Kiri -> Previous Track
+                else if (e.key === 'ArrowLeft') {
+                    prevSong();
+                }
+                // Escape -> Tutup semua overlay
+                else if (e.key === 'Escape') {
+                    closeAllModals();
                 }
             });
+        }
+
+        function closeAllModals() {
+            if (!document.getElementById('detailModal').classList.contains('hidden')) closeDetailModal();
+            if (!nowPlayingOverlay.classList.contains('hidden')) closeNowPlaying();
+            if (queuePanel.classList.contains('open')) toggleQueuePanel();
         }
 
         // ========== FORMAT TIME ==========
@@ -1476,11 +1486,19 @@
             loadDefaultSongs();
             setupEventListeners();
             audio.volume = 0.8;
+
+            // Minta izin notifikasi
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+
+            // Terapkan tema
+            applyTheme(currentTheme);
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('themeToggleSidebar').addEventListener('click', toggleTheme);
         }
 
         init();
     </script>
-
 </body>
-
 </html>
