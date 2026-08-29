@@ -2,10 +2,11 @@
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MiniPlayer - Spotify-like Music Player</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
     <script>
         tailwind.config = {
             theme: {
@@ -25,23 +26,22 @@
         }
     </script>
     <style>
+        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
-
         ::-webkit-scrollbar-track {
             background: #121212;
         }
-
         ::-webkit-scrollbar-thumb {
             background: #535353;
             border-radius: 4px;
         }
-
         ::-webkit-scrollbar-thumb:hover {
             background: #b3b3b3;
         }
 
+        /* Slider */
         .progress-bar,
         .volume-slider {
             -webkit-appearance: none;
@@ -53,7 +53,6 @@
             outline: none;
             cursor: pointer;
         }
-
         .progress-bar::-webkit-slider-thumb,
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -66,22 +65,187 @@
             opacity: 0;
             transition: opacity 0.2s;
         }
-
         .progress-container:hover .progress-bar::-webkit-slider-thumb,
         .volume-container:hover .volume-slider::-webkit-slider-thumb {
             opacity: 1;
         }
 
+        /* Song item */
         .song-item {
             transition: all 0.2s ease;
         }
-
         .song-item:hover {
             background: rgba(255, 255, 255, 0.1);
         }
-
         .song-item.active {
             background: rgba(29, 185, 84, 0.15);
+        }
+
+        /* Queue drag */
+        .queue-item {
+            transition: background 0.2s;
+            cursor: grab;
+        }
+        .queue-item:active {
+            cursor: grabbing;
+        }
+        .queue-item.dragging {
+            opacity: 0.4;
+            background: #2a2a2a;
+        }
+        .queue-item.drag-over {
+            border-top: 2px solid #1DB954;
+        }
+
+        /* Now Playing overlay */
+        #nowPlayingOverlay {
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(20px);
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #nowPlayingOverlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #nowPlayingOverlay:not(.hidden) {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Spin animation */
+        @keyframes spin-slow {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .spin-slow {
+            animation: spin-slow 8s linear infinite;
+        }
+        .spin-paused {
+            animation-play-state: paused;
+        }
+
+        /* Queue panel slide */
+        #queuePanel {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(100%);
+        }
+        #queuePanel.open {
+            transform: translateX(0);
+        }
+        #queueOverlay {
+            transition: opacity 0.3s;
+        }
+        #queueOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Toast */
+        #toastContainer {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            pointer-events: none;
+        }
+        .toast-item {
+            background: #282828;
+            border: 1px solid #3e3e3e;
+            border-radius: 8px;
+            padding: 10px 20px;
+            color: white;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: toastIn 0.3s ease-out forwards;
+            pointer-events: auto;
+            margin-bottom: 8px;
+        }
+        .toast-item.out {
+            animation: toastOut 0.3s ease-in forwards;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+        }
+
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+        }
+        [data-tooltip]:before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 100;
+        }
+        [data-tooltip]:hover:before {
+            opacity: 1;
+        }
+
+        /* Skeleton */
+        .skeleton {
+            background: #2a2a2a;
+            border-radius: 8px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+        .skeleton-text {
+            height: 12px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+        .skeleton-text:last-child {
+            width: 70%;
+        }
+
+        .button-transition {
+            transition: transform 0.15s, color 0.2s;
+        }
+        .button-transition:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -91,50 +255,54 @@
     <!-- Main Layout -->
     <div class="flex flex-1 overflow-hidden relative">
 
-        <!-- Sidebar (Desktop) -->
+        <!-- Sidebar -->
         <aside class="w-64 bg-spotify-darker p-6 flex-col border-r border-gray-800 hidden md:flex flex-shrink-0">
             <div class="flex items-center gap-2 mb-8">
                 <svg class="w-8 h-8 text-spotify-green" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 14.36c-.18.28-.56.36-.84.18-2.3-1.4-5.2-1.72-8.6-.94-.34.08-.66-.14-.74-.46-.08-.34.14-.66.46-.74 3.74-.86 6.94-.48 9.52 1.08.3.18.38.58.2.88zm1.22-2.72c-.22.36-.7.46-1.06.24-2.64-1.62-6.66-2.1-9.78-1.14-.4.12-.82-.1-.94-.5-.12-.4.1-.82.5-.94 3.56-1.08 7.98-.56 11.02 1.3.36.22.48.7.26 1.04zm.1-2.84c-3.16-1.88-8.36-2.06-11.38-1.14-.48.14-1-.12-1.14-.6-.14-.48.12-1 .6-1.14 3.46-1.06 9.22-.84 12.82 1.3.44.26.58.84.32 1.28-.26.42-.84.56-1.22.3z" />
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 14.36c-.18.28-.56.36-.84.18-2.3-1.4-5.2-1.72-8.6-.94-.34.08-.66-.14-.74-.46-.08-.34.14-.66.46-.74 3.74-.86 6.94-.48 9.52 1.08.3.18.38.58.2.88zm1.22-2.72c-.22.36-.7.46-1.06.24-2.64-1.62-6.66-2.1-9.78-1.14-.4.12-.82-.1-.94-.5-.12-.4.1-.82.5-.94 3.56-1.08 7.98-.56 11.02 1.3.36.22.48.7.26 1.04zm.1-2.84c-3.16-1.88-8.36-2.06-11.38-1.14-.48.14-1-.12-1.14-.6-.14-.48.12-1 .6-1.14 3.46-1.06 9.22-.84 12.82 1.3.44.26.58.84.32 1.28-.26.42-.84.56-1.22.3z" />
                 </svg>
                 <span class="text-xl font-bold">MiniPlayer</span>
             </div>
-
-            <nav class="space-y-4">
-                <a href="#" onclick="showWelcome()"
-                    class="flex items-center gap-3 text-white font-semibold hover:text-spotify-green transition">
+            <nav class="space-y-4 sidebar-nav">
+                <a href="#" onclick="showWelcome()" class="flex items-center gap-3 text-white font-semibold hover:text-spotify-green transition">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M12.5 3.247a1 1 0 00-1 0L4 7.577V20h4.5v-6a1 1 0 011-1h5a1 1 0 011 1v6H20V7.577l-7.5-4.33zm-2-1.732a3 3 0 013 0l7.5 4.33a2 2 0 011 1.732V21a1 1 0 01-1 1h-6.5a1 1 0 01-1-1v-6h-3v6a1 1 0 01-1 1H3a1 1 0 01-1-1V7.577a2 2 0 011-1.732l7.5-4.33z" />
+                        <path d="M12.5 3.247a1 1 0 00-1 0L4 7.577V20h4.5v-6a1 1 0 011-1h5a1 1 0 011 1v6H20V7.577l-7.5-4.33zm-2-1.732a3 3 0 013 0l7.5 4.33a2 2 0 011 1.732V21a1 1 0 01-1 1h-6.5a1 1 0 01-1-1v-6h-3v6a1 1 0 01-1 1H3a1 1 0 01-1-1V7.577a2 2 0 011-1.732l7.5-4.33z" />
                     </svg>
                     Beranda
                 </a>
+                <button onclick="toggleQueuePanel()" class="flex items-center gap-3 text-white font-semibold hover:text-spotify-green transition w-full text-left">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" />
+                    </svg>
+                    Antrian
+                </button>
+                <button onclick="showFavorites()" class="flex items-center gap-3 text-white font-semibold hover:text-spotify-green transition w-full text-left">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                    Favorit
+                </button>
             </nav>
         </aside>
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <main class="flex-1 bg-gradient-to-b from-gray-900 to-spotify-dark overflow-y-auto w-full">
 
             <!-- Header -->
             <header class="sticky top-0 z-10 bg-gradient-to-b from-black/90 to-transparent backdrop-blur-md p-4 md:p-6">
                 <div class="flex items-center justify-between gap-4 max-w-7xl mx-auto">
                     <div class="relative flex-1 max-w-md">
-                        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        <input type="text" id="searchInput" placeholder="Cari lagu atau artis..."
-                            class="w-full pl-10 pr-8 py-2.5 text-sm md:text-base bg-spotify-hover rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-spotify-green transition">
-                        <button id="clearSearch"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white hidden">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                            </svg>
+                        <input type="text" id="searchInput" placeholder="Cari lagu atau artis..." class="w-full pl-10 pr-8 py-2.5 text-sm md:text-base bg-spotify-hover rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-spotify-green transition" />
+                        <button id="clearSearch" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white hidden">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
                         </button>
                     </div>
+                    <button onclick="toggleQueuePanel()" class="md:hidden text-white p-2">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
+                    </button>
                 </div>
             </header>
 
@@ -144,17 +312,21 @@
                 <!-- Welcome Section -->
                 <div id="welcomeSection">
                     <h1 class="text-2xl md:text-3xl font-bold mb-1 md:mb-2">Selamat Datang 👋</h1>
-                    <p class="text-xs md:text-sm text-spotify-light mb-6">Cari atau pilih lagu favoritmu dari daftar di
-                        bawah.</p>
+                    <p class="text-xs md:text-sm text-spotify-light mb-6">Cari atau pilih lagu favoritmu dari daftar di bawah.</p>
+
+                    <!-- Recently Played -->
+                    <div id="recentlyPlayedSection" class="mb-8 hidden">
+                        <h2 class="text-lg md:text-xl font-bold mb-4">🕒 Baru Didengar</h2>
+                        <div id="recentlyPlayedList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"></div>
+                    </div>
 
                     <h2 class="text-lg md:text-xl font-bold mb-4">🎧 Coba Dengarkan</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"
-                        id="quickPicks">
-                        <p class="text-spotify-light col-span-full text-sm">Memuat daftar lagu...</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4" id="quickPicks">
+                        <!-- Skeleton akan diisi oleh JS -->
                     </div>
                 </div>
 
-                <!-- Search Results Section -->
+                <!-- Search Results -->
                 <div id="searchResults" class="hidden">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg md:text-xl font-bold">Hasil Pencarian</h2>
@@ -163,18 +335,23 @@
                     <div id="songList" class="space-y-1"></div>
                 </div>
 
-                <!-- States -->
-                <div id="loadingState" class="hidden text-center py-12">
-                    <div
-                        class="inline-block w-8 h-8 border-2 border-spotify-green border-t-transparent rounded-full animate-spin">
+                <!-- Favorites Section -->
+                <div id="favoritesSection" class="hidden">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg md:text-xl font-bold">❤️ Lagu Favorit</h2>
+                        <span id="favCount" class="text-xs md:text-sm text-spotify-light"></span>
                     </div>
-                    <p class="mt-4 text-sm text-spotify-light">Mencari lagu...</p>
+                    <div id="favoritesList" class="space-y-1"></div>
                 </div>
 
+                <!-- States -->
+                <div id="loadingState" class="hidden text-center py-12">
+                    <div class="inline-block w-8 h-8 border-2 border-spotify-green border-t-transparent rounded-full animate-spin"></div>
+                    <p class="mt-4 text-sm text-spotify-light">Mencari lagu...</p>
+                </div>
                 <div id="emptyState" class="hidden text-center py-12">
                     <p class="text-spotify-light text-base">Tidak ada hasil ditemukan</p>
                 </div>
-
                 <div id="errorState" class="hidden text-center py-12">
                     <p class="text-red-400 text-base font-semibold">Gagal terhubung ke server</p>
                 </div>
@@ -183,155 +360,181 @@
         </main>
     </div>
 
+    <!-- QUEUE PANEL -->
+    <div id="queueOverlay" class="fixed inset-0 bg-black/60 z-50 hidden" onclick="toggleQueuePanel()"></div>
+    <div id="queuePanel" class="fixed top-0 right-0 h-full w-80 md:w-96 bg-spotify-card border-l border-gray-800 z-50 shadow-2xl overflow-y-auto p-4">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold">Antrian</h2>
+            <button onclick="toggleQueuePanel()" class="text-gray-400 hover:text-white p-1">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+            </button>
+        </div>
+        <div id="queueList" class="space-y-1">
+            <p class="text-spotify-light text-sm">Antrian kosong</p>
+        </div>
+        <div class="mt-4 text-xs text-spotify-light border-t border-gray-800 pt-3">
+            <p>Seret lagu untuk mengubah urutan</p>
+            <button onclick="clearQueue()" class="text-red-400 hover:text-red-300 mt-1">Kosongkan Antrian</button>
+        </div>
+    </div>
+
     <!-- MODAL DETAIL LAGU -->
-    <div id="detailModal"
-        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="detailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-spotify-card border border-gray-800 rounded-2xl p-5 md:p-6 w-full max-w-md relative shadow-2xl">
             <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-                </svg>
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
             </button>
-
             <div class="flex flex-col items-center text-center">
-                <div id="modalCover"
-                    class="w-40 h-40 md:w-48 md:h-48 rounded-xl bg-gray-800 shadow-lg overflow-hidden mb-4 flex items-center justify-center">
-                    <svg class="w-12 h-12 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
-                    </svg>
+                <div id="modalCover" class="w-40 h-40 md:w-48 md:h-48 rounded-xl bg-gray-800 shadow-lg overflow-hidden mb-4 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>
                 </div>
                 <h3 id="modalTitle" class="text-xl font-bold text-white truncate w-full mb-1">-</h3>
                 <p id="modalArtist" class="text-spotify-green text-sm font-medium mb-4 truncate w-full">-</p>
-
-                <!-- Grid Details -->
-                <div
-                    class="w-full bg-spotify-darker/60 rounded-lg p-3 grid grid-cols-2 gap-3 text-left text-xs md:text-sm">
-                    <div>
-                        <span class="text-gray-500 block">Album</span>
-                        <span id="modalAlbum" class="text-white font-medium truncate block">-</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-500 block">Tahun</span>
-                        <span id="modalYear" class="text-white font-medium truncate block">-</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-500 block">Genre</span>
-                        <span id="modalGenre" class="text-white font-medium truncate block">-</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-500 block">Durasi</span>
-                        <span id="modalDuration" class="text-white font-medium truncate block">--:--</span>
-                    </div>
+                <div class="w-full bg-spotify-darker/60 rounded-lg p-3 grid grid-cols-2 gap-3 text-left text-xs md:text-sm">
+                    <div><span class="text-gray-500 block">Album</span><span id="modalAlbum" class="text-white font-medium truncate block">-</span></div>
+                    <div><span class="text-gray-500 block">Tahun</span><span id="modalYear" class="text-white font-medium truncate block">-</span></div>
+                    <div><span class="text-gray-500 block">Genre</span><span id="modalGenre" class="text-white font-medium truncate block">-</span></div>
+                    <div><span class="text-gray-500 block">Durasi</span><span id="modalDuration" class="text-white font-medium truncate block">--:--</span></div>
                 </div>
-
-                <button id="modalPlayBtn"
-                    class="mt-5 w-full bg-spotify-green text-black font-bold py-2.5 rounded-full hover:scale-105 transition">
-                    Putar Sekarang
+                <button id="modalPlayBtn" class="mt-5 w-full bg-spotify-green text-black font-bold py-2.5 rounded-full hover:scale-105 transition">Putar Sekarang</button>
+                <button onclick="addCurrentSongToQueueFromModal()" class="mt-2 w-full bg-gray-700 text-white font-bold py-2 rounded-full hover:bg-gray-600 transition">Tambah ke Antrian</button>
+                <button id="modalLikeBtn" class="mt-2 w-full bg-gray-700 text-white font-bold py-2 rounded-full hover:bg-gray-600 transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                    <span id="modalLikeText">Like</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Player Bar (Responsive) -->
-    <div id="playerBar"
-        class="fixed bottom-0 left-0 right-0 bg-spotify-card border-t border-gray-800 px-3 md:px-6 py-2 md:py-3 z-40 transform translate-y-full transition-transform duration-300">
+    <!-- NOW PLAYING OVERLAY -->
+    <div id="nowPlayingOverlay" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-xl"></div>
+        <div class="relative z-10 flex flex-col items-center max-w-lg w-full">
+            <button onclick="closeNowPlaying()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+            </button>
+
+            <div id="npCover" class="w-56 h-56 md:w-72 md:h-72 rounded-2xl shadow-2xl overflow-hidden bg-gray-800 relative">
+                <img id="npCoverImg" src="" alt="cover" class="w-full h-full object-cover spin-slow spin-paused" />
+            </div>
+
+            <h2 id="npTitle" class="text-2xl font-bold mt-6 truncate w-full text-center">-</h2>
+            <p id="npArtist" class="text-spotify-green text-lg truncate w-full text-center">-</p>
+
+            <div class="w-full mt-4">
+                <div class="flex items-center gap-2 text-xs text-spotify-light">
+                    <span id="npCurrentTime">0:00</span>
+                    <div class="progress-container flex-1">
+                        <input type="range" id="npProgressBar" class="progress-bar" min="0" max="100" value="0" step="0.1" />
+                    </div>
+                    <span id="npDuration">0:00</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6 mt-4">
+                <button id="npShuffleBtn" class="text-gray-400 hover:text-white transition text-2xl" data-tooltip="Shuffle">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" /></svg>
+                </button>
+                <button id="npPrevBtn" class="text-gray-400 hover:text-white transition text-2xl" data-tooltip="Previous">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
+                </button>
+                <button id="npPlayPauseBtn" class="w-16 h-16 bg-white rounded-full flex items-center justify-center hover:scale-105 transition shadow-2xl" data-tooltip="Play/Pause">
+                    <svg id="npPlayIcon" class="w-8 h-8 text-black ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                    <svg id="npPauseIcon" class="w-8 h-8 text-black hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                </button>
+                <button id="npNextBtn" class="text-gray-400 hover:text-white transition text-2xl" data-tooltip="Next">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
+                </button>
+                <button id="npRepeatBtn" class="text-gray-400 hover:text-white transition text-2xl" data-tooltip="Repeat">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" /></svg>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-4 mt-4">
+                <button onclick="addCurrentSongToQueue()" class="text-spotify-light hover:text-white text-sm flex items-center gap-2" data-tooltip="Tambah ke antrian">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
+                </button>
+                <button id="npLikeBtn" onclick="toggleLikeCurrent()" class="text-spotify-light hover:text-white text-sm flex items-center gap-2" data-tooltip="Like">
+                    <svg id="npLikeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Player Bar -->
+    <div id="playerBar" class="fixed bottom-0 left-0 right-0 bg-spotify-card border-t border-gray-800 px-3 md:px-6 py-2 md:py-3 z-40 transform translate-y-full transition-transform duration-300">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-2 md:gap-4 max-w-7xl mx-auto">
 
             <!-- Song Info -->
             <div class="flex items-center gap-3 w-full sm:w-1/4 min-w-0 justify-between sm:justify-start">
-                <div class="flex items-center gap-3 min-w-0">
-                    <div id="playerArtwork"
-                        class="w-10 h-10 md:w-12 md:h-12 rounded bg-spotify-hover flex-shrink-0 overflow-hidden flex items-center justify-center">
-                        <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
-                        </svg>
+                <div class="flex items-center gap-3 min-w-0 cursor-pointer" onclick="openNowPlaying()">
+                    <div id="playerArtwork" class="w-10 h-10 md:w-12 md:h-12 rounded bg-spotify-hover flex-shrink-0 overflow-hidden flex items-center justify-center">
+                        <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>
                     </div>
                     <div class="min-w-0">
                         <p id="playerTitle" class="text-xs md:text-sm font-medium truncate">-</p>
                         <p id="playerArtist" class="text-[10px] md:text-xs text-spotify-light truncate">-</p>
                     </div>
                 </div>
-
-                <!-- Quick Controls Mobile Only -->
-                <button id="mobilePlayPauseBtn" onclick="togglePlayPause()" class="sm:hidden text-white p-1">
-                    <svg id="mobilePlayIcon" class="w-7 h-7 text-spotify-green" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
-                    <svg id="mobilePauseIcon" class="w-7 h-7 text-spotify-green hidden" fill="currentColor"
-                        viewBox="0 0 24 24">
-                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Player Controls (Desktop & Expanded Mobile) -->
-            <div class="hidden sm:flex flex-col items-center w-full sm:w-2/4 max-w-xl">
-                <div class="flex items-center gap-4 mb-1">
-                    <button id="shuffleBtn" class="text-gray-400 hover:text-white transition">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" />
-                        </svg>
+                <div class="flex items-center gap-1">
+                    <button id="playerLikeBtn" onclick="toggleLikeCurrent()" class="text-gray-400 hover:text-white p-1">
+                        <svg id="playerLikeIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                     </button>
-                    <button id="prevBtn" class="text-gray-400 hover:text-white transition">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
-                        </svg>
-                    </button>
-                    <button id="playPauseBtn"
-                        class="w-8 h-8 md:w-9 md:h-9 bg-white rounded-full flex items-center justify-center hover:scale-105 transition">
-                        <svg id="playIcon" class="w-4 h-4 md:w-5 md:h-5 text-black ml-0.5" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                        </svg>
-                        <svg id="pauseIcon" class="w-4 h-4 md:w-5 md:h-5 text-black hidden" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                        </svg>
-                    </button>
-                    <button id="nextBtn" class="text-gray-400 hover:text-white transition">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-                        </svg>
-                    </button>
-                    <button id="repeatBtn" class="text-gray-400 hover:text-white transition">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" />
-                        </svg>
+                    <button id="mobilePlayPauseBtn" onclick="togglePlayPause()" class="sm:hidden text-white p-1">
+                        <svg id="mobilePlayIcon" class="w-7 h-7 text-spotify-green" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                        <svg id="mobilePauseIcon" class="w-7 h-7 text-spotify-green hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                     </button>
                 </div>
+            </div>
 
+            <!-- Player Controls Desktop -->
+            <div class="hidden sm:flex flex-col items-center w-full sm:w-2/4 max-w-xl">
+                <div class="flex items-center gap-4 mb-1">
+                    <button id="shuffleBtn" class="text-gray-400 hover:text-white transition" data-tooltip="Shuffle">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z" /></svg>
+                    </button>
+                    <button id="prevBtn" class="text-gray-400 hover:text-white transition" data-tooltip="Previous">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" /></svg>
+                    </button>
+                    <button id="playPauseBtn" class="w-8 h-8 md:w-9 md:h-9 bg-white rounded-full flex items-center justify-center hover:scale-105 transition" data-tooltip="Play/Pause">
+                        <svg id="playIcon" class="w-4 h-4 md:w-5 md:h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                        <svg id="pauseIcon" class="w-4 h-4 md:w-5 md:h-5 text-black hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
+                    </button>
+                    <button id="nextBtn" class="text-gray-400 hover:text-white transition" data-tooltip="Next">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" /></svg>
+                    </button>
+                    <button id="repeatBtn" class="text-gray-400 hover:text-white transition" data-tooltip="Repeat">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z" /></svg>
+                    </button>
+                    <button onclick="toggleQueuePanel()" class="text-gray-400 hover:text-white transition ml-2" data-tooltip="Queue">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
+                    </button>
+                </div>
                 <div class="flex items-center gap-2 w-full text-xs">
                     <span id="currentTime" class="text-spotify-light w-8 text-right">0:00</span>
                     <div class="progress-container flex-1">
-                        <input type="range" id="progressBar" class="progress-bar" min="0" max="100" value="0"
-                            step="0.1">
+                        <input type="range" id="progressBar" class="progress-bar" min="0" max="100" value="0" step="0.1" />
                     </div>
                     <span id="duration" class="text-spotify-light w-8">0:00</span>
                 </div>
             </div>
 
-            <!-- Volume (Desktop) -->
+            <!-- Volume -->
             <div class="hidden sm:flex items-center justify-end gap-2 w-1/4">
-                <button id="volumeBtn" class="text-gray-400 hover:text-white">
-                    <svg id="volumeIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
-                    </svg>
+                <button id="volumeBtn" class="text-gray-400 hover:text-white" data-tooltip="Volume">
+                    <svg id="volumeIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" /></svg>
                 </button>
                 <div class="volume-container w-20">
-                    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="80">
+                    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="80" />
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- Hidden Audio -->
     <audio id="audioPlayer" preload="auto"></audio>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
 
     <script>
         const API_BASE_URL = 'https://music-backend-sooty.vercel.app';
@@ -344,10 +547,12 @@
         let repeatMode = 0;
         let searchTimeout = null;
 
-        // Cache untuk menyimpan durasi yang sudah dihitung secara otomatis
-        const durationCache = {};
+        let queue = [];
+        let recentlyPlayed = [];
+        const RECENT_MAX = 20;
+        let favorites = [];
 
-        // DOM Elements
+        // DOM refs
         const searchInput = document.getElementById('searchInput');
         const clearSearch = document.getElementById('clearSearch');
         const welcomeSection = document.getElementById('welcomeSection');
@@ -358,11 +563,18 @@
         const emptyState = document.getElementById('emptyState');
         const errorState = document.getElementById('errorState');
         const quickPicks = document.getElementById('quickPicks');
+        const recentlyPlayedSection = document.getElementById('recentlyPlayedSection');
+        const recentlyPlayedList = document.getElementById('recentlyPlayedList');
+        const favoritesSection = document.getElementById('favoritesSection');
+        const favoritesList = document.getElementById('favoritesList');
+        const favCount = document.getElementById('favCount');
 
         const playerBar = document.getElementById('playerBar');
         const playerTitle = document.getElementById('playerTitle');
         const playerArtist = document.getElementById('playerArtist');
         const playerArtwork = document.getElementById('playerArtwork');
+        const playerLikeBtn = document.getElementById('playerLikeBtn');
+        const playerLikeIcon = document.getElementById('playerLikeIcon');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const playIcon = document.getElementById('playIcon');
         const pauseIcon = document.getElementById('pauseIcon');
@@ -375,20 +587,38 @@
         const volumeSlider = document.getElementById('volumeSlider');
         const audio = document.getElementById('audioPlayer');
 
-        function init() {
-            loadDefaultSongs();
-            setupEventListeners();
-            audio.volume = 0.8;
-        }
+        const nowPlayingOverlay = document.getElementById('nowPlayingOverlay');
+        const npCoverImg = document.getElementById('npCoverImg');
+        const npTitle = document.getElementById('npTitle');
+        const npArtist = document.getElementById('npArtist');
+        const npCurrentTime = document.getElementById('npCurrentTime');
+        const npDuration = document.getElementById('npDuration');
+        const npProgressBar = document.getElementById('npProgressBar');
+        const npPlayPauseBtn = document.getElementById('npPlayPauseBtn');
+        const npPlayIcon = document.getElementById('npPlayIcon');
+        const npPauseIcon = document.getElementById('npPauseIcon');
+        const npPrevBtn = document.getElementById('npPrevBtn');
+        const npNextBtn = document.getElementById('npNextBtn');
+        const npShuffleBtn = document.getElementById('npShuffleBtn');
+        const npRepeatBtn = document.getElementById('npRepeatBtn');
+        const npLikeBtn = document.getElementById('npLikeBtn');
+        const npLikeIcon = document.getElementById('npLikeIcon');
 
-        // FITUR 1: HITUNG DURASI AUDIO OTOMATIS
+        const queuePanel = document.getElementById('queuePanel');
+        const queueOverlay = document.getElementById('queueOverlay');
+        const queueList = document.getElementById('queueList');
+
+        const toastContainer = document.getElementById('toastContainer');
+
+        // ========== DURATION CACHE ==========
+        const durationCache = {};
+
         function autoCalculateDuration(songUrl, elementId) {
             if (durationCache[songUrl]) {
                 const el = document.getElementById(elementId);
                 if (el) el.textContent = formatTime(durationCache[songUrl]);
                 return;
             }
-
             const tempAudio = new Audio();
             tempAudio.src = songUrl;
             tempAudio.addEventListener('loadedmetadata', () => {
@@ -398,95 +628,483 @@
             });
         }
 
-        // FETCH DATA SERVER
-        async function loadDefaultSongs() {
+        // ========== FAVORITES ==========
+        function loadFavorites() {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/songs`);
-                if (!response.ok) throw new Error('Gagal koneksi');
-                const result = await response.json();
-                defaultSongsList = result.data || result;
+                const data = localStorage.getItem('favorites');
+                favorites = data ? JSON.parse(data) : [];
+            } catch { favorites = []; }
+        }
+
+        function saveFavorites() {
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
+
+        function isFavorite(song) {
+            if (!song) return false;
+            return favorites.some(s => s.url === song.url);
+        }
+
+        function toggleFavorite(song) {
+            if (!song) return;
+            const idx = favorites.findIndex(s => s.url === song.url);
+            if (idx > -1) {
+                favorites.splice(idx, 1);
+                showToast('❤️ Dihapus dari favorit');
+            } else {
+                favorites.push(song);
+                showToast('❤️ Ditambahkan ke favorit');
+            }
+            saveFavorites();
+            updateFavoriteUI();
+        }
+
+        function toggleLikeCurrent() {
+            const song = currentSongList[currentSongIndex];
+            if (song) toggleFavorite(song);
+        }
+
+        function updateLikeIcon(song) {
+            if (!song) return;
+            const liked = isFavorite(song);
+            playerLikeIcon.style.fill = liked ? '#1DB954' : 'none';
+            playerLikeIcon.style.stroke = liked ? '#1DB954' : 'currentColor';
+            npLikeIcon.style.fill = liked ? '#1DB954' : 'none';
+            npLikeIcon.style.stroke = liked ? '#1DB954' : 'currentColor';
+        }
+
+        function updateFavoriteUI() {
+            const song = currentSongList[currentSongIndex];
+            if (song) updateLikeIcon(song);
+            // Re-render current visible list
+            if (!welcomeSection.classList.contains('hidden')) {
                 renderQuickPicks(defaultSongsList);
-            } catch (error) {
-                quickPicks.innerHTML = '<p class="text-red-400 col-span-full">Gagal memuat lagu dari server.</p>';
+                renderRecentlyPlayed();
+            } else if (!searchResults.classList.contains('hidden')) {
+                renderSongList(currentSongList);
+            } else if (!favoritesSection.classList.contains('hidden')) {
+                renderFavorites();
+            }
+            // Update modal like text if modal is visible
+            const modalLikeText = document.getElementById('modalLikeText');
+            if (modalLikeText && !document.getElementById('detailModal').classList.contains('hidden')) {
+                const modalSong = currentSongList[currentSongIndex];
+                if (modalSong) modalLikeText.textContent = isFavorite(modalSong) ? 'Hapus Favorit' : 'Like';
             }
         }
 
-        function renderQuickPicks(songs) {
-            if (!songs || songs.length === 0) {
-                quickPicks.innerHTML = '<p class="text-spotify-light col-span-full">Tidak ada lagu tersedia.</p>';
+        function showFavorites() {
+            welcomeSection.classList.add('hidden');
+            searchResults.classList.add('hidden');
+            favoritesSection.classList.remove('hidden');
+            renderFavorites();
+        }
+
+        function renderFavorites() {
+            if (favorites.length === 0) {
+                favoritesList.innerHTML = '<p class="text-spotify-light text-sm">Belum ada lagu favorit</p>';
+                favCount.textContent = '0 lagu';
                 return;
             }
-
-            quickPicks.innerHTML = songs.map((song, i) => {
-                const durationId = `pick-duration-${i}`;
-                autoCalculateDuration(song.url, durationId);
-
+            favCount.textContent = `${favorites.length} lagu`;
+            favoritesList.innerHTML = favorites.map((song, index) => {
+                const durId = `fav-dur-${index}`;
+                autoCalculateDuration(song.url, durId);
                 return `
-                <div class="song-item flex items-center justify-between bg-spotify-card hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group">
-                    <div class="flex items-center gap-3 min-w-0 flex-1" onclick="playFromQuickPicks(${i})">
-                        <div class="w-11 h-11 rounded bg-gray-800 flex-shrink-0 overflow-hidden relative">
-                            ${song.cover
-                        ? `<img src="${song.cover}" class="w-full h-full object-cover">`
-                        : `<div class="w-full h-full flex items-center justify-center text-gray-500"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>`
-                    }
+                <div class="song-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group" onclick="playFavorite(${index})">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <span class="text-xs text-spotify-light w-4 text-center">${index+1}</span>
+                        <div class="w-9 h-9 rounded bg-gray-800 flex-shrink-0 overflow-hidden">
+                            ${song.cover ? `<img src="${song.cover}" class="w-full h-full object-cover">` : ''}
                         </div>
-                        <div class="min-w-0 pr-2">
-                            <p class="text-xs md:text-sm font-medium text-white truncate">${song.title}</p>
-                            <p class="text-[11px] text-spotify-light truncate">${song.artist}</p>
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium truncate text-white">${song.title}</p>
+                            <p class="text-xs text-spotify-light truncate">${song.artist}</p>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center gap-2">
-                        <span id="${durationId}" class="text-xs text-spotify-light hidden sm:inline">--:--</span>
-                        <button onclick="event.stopPropagation(); openDetailModal(${i}, 'default')" class="p-1.5 text-gray-400 hover:text-spotify-green transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div class="flex items-center gap-4">
+                        <span id="${durId}" class="text-xs text-spotify-light">--:--</span>
+                        <button onclick="event.stopPropagation(); toggleFavoriteByIndex(${index}, 'favorites')" class="p-1 text-spotify-green" data-tooltip="Hapus favorit">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                        </button>
+                        <button onclick="event.stopPropagation(); addToQueueByIndex(${index}, 'favorites')" class="p-1 text-gray-400 hover:text-spotify-green" data-tooltip="Tambah ke antrian">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
+                        </button>
+                        <button onclick="event.stopPropagation(); openDetailModalByIndex(${index}, 'favorites')" class="p-1 text-gray-400 hover:text-white" data-tooltip="Detail">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </button>
                     </div>
                 </div>`;
             }).join('');
         }
 
-        function playFromQuickPicks(index) {
-            currentSongList = [...defaultSongsList];
-            playSong(index);
+        function playFavorite(index) {
+            const song = favorites[index];
+            if (!song) return;
+            currentSongList = [song];
+            playSong(0);
         }
 
-        // FITUR 2: MODAL DETAIL & PREVIEW LAGU
-        function openDetailModal(index, listType = 'current') {
-            const list = listType === 'default' ? defaultSongsList : currentSongList;
-            const song = list[index];
+        // ========== RECENTLY PLAYED ==========
+        function loadRecentlyPlayed() {
+            try {
+                const data = localStorage.getItem('recentlyPlayed');
+                recentlyPlayed = data ? JSON.parse(data) : [];
+            } catch { recentlyPlayed = []; }
+        }
+
+        function saveRecentlyPlayed() {
+            localStorage.setItem('recentlyPlayed', JSON.stringify(recentlyPlayed));
+        }
+
+        function addToRecentlyPlayed(song) {
+            if (!song) return;
+            recentlyPlayed = recentlyPlayed.filter(s => s.url !== song.url);
+            recentlyPlayed.unshift(song);
+            if (recentlyPlayed.length > RECENT_MAX) recentlyPlayed = recentlyPlayed.slice(0, RECENT_MAX);
+            saveRecentlyPlayed();
+            renderRecentlyPlayed();
+        }
+
+        function renderRecentlyPlayed() {
+            if (recentlyPlayed.length === 0) {
+                recentlyPlayedSection.classList.add('hidden');
+                return;
+            }
+            recentlyPlayedSection.classList.remove('hidden');
+            recentlyPlayedList.innerHTML = recentlyPlayed.map((song, i) => {
+                const durId = `recent-dur-${i}`;
+                autoCalculateDuration(song.url, durId);
+                return `
+                <div class="song-item flex items-center justify-between bg-spotify-card hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group" onclick="playRecent(${i})">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-11 h-11 rounded bg-gray-800 flex-shrink-0 overflow-hidden">
+                            ${song.cover ? `<img src="${song.cover}" class="w-full h-full object-cover">` : ''}
+                        </div>
+                        <div class="min-w-0 pr-2">
+                            <p class="text-xs md:text-sm font-medium text-white truncate">${song.title}</p>
+                            <p class="text-[11px] text-spotify-light truncate">${song.artist}</p>
+                        </div>
+                    </div>
+                    <span id="${durId}" class="text-xs text-spotify-light hidden sm:inline">--:--</span>
+                </div>`;
+            }).join('');
+        }
+
+        function playRecent(index) {
+            const song = recentlyPlayed[index];
+            if (!song) return;
+            currentSongList = [song];
+            playSong(0);
+        }
+
+        // ========== QUEUE ==========
+        function toggleQueuePanel() {
+            const isOpen = queuePanel.classList.contains('open');
+            if (isOpen) {
+                queuePanel.classList.remove('open');
+                queueOverlay.classList.add('hidden');
+            } else {
+                queuePanel.classList.add('open');
+                queueOverlay.classList.remove('hidden');
+                renderQueue();
+            }
+        }
+
+        function renderQueue() {
+            if (queue.length === 0) {
+                queueList.innerHTML = '<p class="text-spotify-light text-sm">Antrian kosong</p>';
+                return;
+            }
+            queueList.innerHTML = queue.map((song, index) => `
+                <div class="queue-item flex items-center justify-between px-2 py-1.5 rounded hover:bg-spotify-hover" draggable="true" data-index="${index}">
+                    <div class="flex items-center gap-2 min-w-0 flex-1" onclick="playQueueItem(${index})">
+                        <span class="text-xs text-spotify-light w-4 text-center">${index+1}</span>
+                        <div class="min-w-0">
+                            <p class="text-sm truncate">${song.title}</p>
+                            <p class="text-xs text-spotify-light truncate">${song.artist}</p>
+                        </div>
+                    </div>
+                    <button onclick="removeFromQueue(${index})" class="text-gray-500 hover:text-red-400 p-1">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
+                    </button>
+                </div>
+            `).join('');
+
+            const items = queueList.querySelectorAll('.queue-item');
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('dragenter', handleDragEnter);
+                item.addEventListener('dragleave', handleDragLeave);
+                item.addEventListener('drop', handleDrop);
+            });
+        }
+
+        let draggedIndex = null;
+
+        function handleDragStart(e) {
+            draggedIndex = parseInt(e.currentTarget.dataset.index);
+            e.currentTarget.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+            document.querySelectorAll('.queue-item').forEach(el => el.classList.remove('drag-over'));
+        }
+
+        function handleDragOver(e) { e.preventDefault();
+            e.dataTransfer.dropEffect = 'move'; }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            const target = e.currentTarget;
+            if (target.dataset.index != draggedIndex) target.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const target = e.currentTarget;
+            target.classList.remove('drag-over');
+            const targetIndex = parseInt(target.dataset.index);
+            if (draggedIndex !== null && draggedIndex !== targetIndex) {
+                const [moved] = queue.splice(draggedIndex, 1);
+                queue.splice(targetIndex, 0, moved);
+                renderQueue();
+            }
+            draggedIndex = null;
+        }
+
+        // ----- Queue actions (public) -----
+        function addToQueue(song) {
+            if (!song) return;
+            queue.push(song);
+            renderQueue();
+            showToast(`"${song.title}" ditambahkan ke antrian`);
+        }
+
+        function addToQueueByIndex(index, listType) {
+            const song = getSongByIndex(index, listType);
+            if (song) addToQueue(song);
+        }
+
+        function removeFromQueue(index) {
+            queue.splice(index, 1);
+            renderQueue();
+        }
+
+        function clearQueue() {
+            queue = [];
+            renderQueue();
+            showToast('Antrian dikosongkan');
+        }
+
+        function playQueueItem(index) {
+            const song = queue[index];
+            if (!song) return;
+            currentSongList = [...queue];
+            playSong(index);
+            toggleQueuePanel();
+        }
+
+        function addCurrentSongToQueueFromModal() {
+            const song = currentSongList[currentSongIndex];
+            if (song) addToQueue(song);
+            closeDetailModal();
+        }
+
+        function addCurrentSongToQueue() {
+            const song = currentSongList[currentSongIndex];
+            if (song) addToQueue(song);
+        }
+
+        // ========== HELPER: get song by index and list type ==========
+        function getSongByIndex(index, listType) {
+            let list;
+            switch (listType) {
+                case 'default':
+                    list = defaultSongsList;
+                    break;
+                case 'current':
+                    list = currentSongList;
+                    break;
+                case 'favorites':
+                    list = favorites;
+                    break;
+                default:
+                    list = currentSongList;
+            }
+            return list && list[index] ? list[index] : null;
+        }
+
+        // ========== NOW PLAYING ==========
+        function openNowPlaying() {
+            if (!audio.src) return;
+            nowPlayingOverlay.classList.remove('hidden');
+            const song = currentSongList[currentSongIndex];
+            if (song) {
+                npTitle.textContent = song.title;
+                npArtist.textContent = song.artist;
+                npCoverImg.src = song.cover || '';
+                if (song.cover) npCoverImg.style.display = 'block';
+                else npCoverImg.style.display = 'none';
+                updateLikeIcon(song);
+            }
+            npProgressBar.value = progressBar.value;
+            npCurrentTime.textContent = currentTimeEl.textContent;
+            npDuration.textContent = durationEl.textContent;
+            updateNpPlayPause();
+            updateNpShuffleRepeat();
+        }
+
+        function closeNowPlaying() {
+            nowPlayingOverlay.classList.add('hidden');
+        }
+
+        function updateNpPlayPause() {
+            if (isPlaying) {
+                npPlayIcon.classList.add('hidden');
+                npPauseIcon.classList.remove('hidden');
+                npCoverImg.classList.remove('spin-paused');
+            } else {
+                npPlayIcon.classList.remove('hidden');
+                npPauseIcon.classList.add('hidden');
+                npCoverImg.classList.add('spin-paused');
+            }
+        }
+
+        function updateNpShuffleRepeat() {
+            npShuffleBtn.style.color = isShuffle ? '#1DB954' : '#b3b3b3';
+            npRepeatBtn.style.color = repeatMode === 0 ? '#b3b3b3' : '#1DB954';
+        }
+
+        // ========== MAIN PLAYER ==========
+        function playSong(index) {
+            if (index < 0 || index >= currentSongList.length) return;
+            currentSongIndex = index;
+            const song = currentSongList[index];
             if (!song) return;
 
-            document.getElementById('modalTitle').textContent = song.title || '-';
-            document.getElementById('modalArtist').textContent = song.artist || '-';
-            document.getElementById('modalAlbum').textContent = song.album || 'Single';
-            document.getElementById('modalYear').textContent = song.year || 'N/A';
-            document.getElementById('modalGenre').textContent = song.genre || 'Musik';
-
-            const coverContainer = document.getElementById('modalCover');
+            playerBar.classList.remove('translate-y-full');
+            playerTitle.textContent = song.title;
+            playerArtist.textContent = song.artist;
             if (song.cover) {
-                coverContainer.innerHTML = `<img src="${song.cover}" class="w-full h-full object-cover">`;
+                playerArtwork.innerHTML = `<img src="${song.cover}" class="w-full h-full object-cover">`;
             } else {
-                coverContainer.innerHTML = `<svg class="w-12 h-12 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`;
+                playerArtwork.innerHTML =
+                    `<svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>`;
             }
+            updateLikeIcon(song);
 
-            // Gunakan durasi dari cache otomatis
-            document.getElementById('modalDuration').textContent = durationCache[song.url] ? formatTime(durationCache[song.url]) : '--:--';
+            audio.src = song.url;
+            audio.play().then(() => {
+                setPlayingState(true);
+                addToRecentlyPlayed(song);
+                updateMediaSession(song);
+                if (!nowPlayingOverlay.classList.contains('hidden')) {
+                    npTitle.textContent = song.title;
+                    npArtist.textContent = song.artist;
+                    npCoverImg.src = song.cover || '';
+                    if (song.cover) npCoverImg.style.display = 'block';
+                    else npCoverImg.style.display = 'none';
+                    updateNpPlayPause();
+                }
+            }).catch(() => setPlayingState(false));
 
-            document.getElementById('modalPlayBtn').onclick = () => {
-                if (listType === 'default') currentSongList = [...defaultSongsList];
-                playSong(index);
-                closeDetailModal();
-            };
-
-            document.getElementById('detailModal').classList.remove('hidden');
+            // Re-render lists
+            if (!welcomeSection.classList.contains('hidden')) {
+                renderQuickPicks(defaultSongsList);
+                renderRecentlyPlayed();
+            } else if (!searchResults.classList.contains('hidden')) {
+                renderSongList(currentSongList);
+            } else if (!favoritesSection.classList.contains('hidden')) {
+                renderFavorites();
+            }
         }
 
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('hidden');
+        function togglePlayPause() {
+            if (!audio.src) return;
+            if (isPlaying) { audio.pause();
+                setPlayingState(false); } else { audio.play();
+                setPlayingState(true); }
         }
 
-        // SEARCH & LIST RENDER
+        function setPlayingState(playing) {
+            isPlaying = playing;
+            if (playing) {
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+                mobilePlayIcon.classList.add('hidden');
+                mobilePauseIcon.classList.remove('hidden');
+                if (!nowPlayingOverlay.classList.contains('hidden')) {
+                    npPlayIcon.classList.add('hidden');
+                    npPauseIcon.classList.remove('hidden');
+                    npCoverImg.classList.remove('spin-paused');
+                }
+            } else {
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                mobilePlayIcon.classList.remove('hidden');
+                mobilePauseIcon.classList.add('hidden');
+                if (!nowPlayingOverlay.classList.contains('hidden')) {
+                    npPlayIcon.classList.remove('hidden');
+                    npPauseIcon.classList.add('hidden');
+                    npCoverImg.classList.add('spin-paused');
+                }
+            }
+        }
+
+        function nextSong() {
+            if (queue.length > 0) {
+                const next = queue.shift();
+                currentSongList = queue.slice();
+                queue = [];
+                playSong(0);
+                renderQueue();
+                return;
+            }
+            if (repeatMode === 2) {
+                playSong(currentSongIndex);
+                return;
+            }
+            let nextIndex = currentSongIndex + 1;
+            if (nextIndex >= currentSongList.length) {
+                if (repeatMode === 1) nextIndex = 0;
+                else { setPlayingState(false); return; }
+            }
+            playSong(nextIndex);
+        }
+
+        function prevSong() {
+            if (audio.currentTime > 3) { audio.currentTime = 0; return; }
+            let prevIndex = currentSongIndex - 1;
+            if (prevIndex < 0) prevIndex = 0;
+            playSong(prevIndex);
+        }
+
+        // ========== MEDIA SESSION ==========
+        function updateMediaSession(song) {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: song.title || '',
+                    artist: song.artist || '',
+                    album: song.album || '',
+                    artwork: song.cover ? [{ src: song.cover, sizes: '512x512', type: 'image/jpeg' }] : []
+                });
+                navigator.mediaSession.setActionHandler('play', () => togglePlayPause());
+                navigator.mediaSession.setActionHandler('pause', () => togglePlayPause());
+                navigator.mediaSession.setActionHandler('nexttrack', () => nextSong());
+                navigator.mediaSession.setActionHandler('previoustrack', () => prevSong());
+                navigator.mediaSession.setActionHandler('stop', () => { audio.pause();
+                    setPlayingState(false); });
+            }
+        }
+
+        // ========== SEARCH ==========
         function handleSearch(query) {
             if (!query.trim()) { showWelcome(); return; }
             clearSearch.classList.remove('hidden');
@@ -511,11 +1129,10 @@
             songList.innerHTML = songs.map((song, index) => {
                 const durationId = `search-duration-${index}`;
                 autoCalculateDuration(song.url, durationId);
-
+                const liked = isFavorite(song);
                 return `
                 <div class="song-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group ${currentSongIndex === index ? 'active' : ''}"
                      onclick="playSong(${index})">
-
                     <div class="flex items-center gap-3 min-w-0 flex-1">
                         <span class="text-xs text-spotify-light w-4 text-center">${index + 1}</span>
                         <div class="w-9 h-9 rounded bg-gray-800 flex-shrink-0 overflow-hidden">
@@ -526,98 +1143,178 @@
                             <p class="text-xs text-spotify-light truncate">${song.artist}</p>
                         </div>
                     </div>
-
                     <div class="flex items-center gap-4">
                         <span id="${durationId}" class="text-xs text-spotify-light">--:--</span>
-                        <button onclick="event.stopPropagation(); openDetailModal(${index}, 'current')" class="p-1 text-gray-400 hover:text-white">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <button onclick="event.stopPropagation(); toggleFavoriteByIndex(${index}, 'current')" class="p-1 ${liked ? 'text-spotify-green' : 'text-gray-400 hover:text-spotify-green'}" data-tooltip="Like">
+                            <svg class="w-4 h-4" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        </button>
+                        <button onclick="event.stopPropagation(); addToQueueByIndex(${index}, 'current')" class="p-1 text-gray-400 hover:text-spotify-green" data-tooltip="Tambah ke antrian">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
+                        </button>
+                        <button onclick="event.stopPropagation(); openDetailModalByIndex(${index}, 'current')" class="p-1 text-gray-400 hover:text-white" data-tooltip="Detail">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         </button>
                     </div>
                 </div>`;
             }).join('');
         }
 
-        // PLAYER CONTROLS
-        function playSong(index) {
-            currentSongIndex = index;
-            const song = currentSongList[index];
+        // ========== SKELETON ==========
+        function renderSkeleton() {
+            quickPicks.innerHTML = '';
+            for (let i = 0; i < 8; i++) {
+                const div = document.createElement('div');
+                div.className = 'bg-spotify-card rounded-lg p-2.5 animate-pulse';
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded bg-gray-700 flex-shrink-0"></div>
+                        <div class="flex-1">
+                            <div class="skeleton-text w-3/4"></div>
+                            <div class="skeleton-text w-1/2"></div>
+                        </div>
+                    </div>
+                `;
+                quickPicks.appendChild(div);
+            }
+        }
+
+        // ========== FETCH SONGS ==========
+        async function loadDefaultSongs() {
+            renderSkeleton();
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/songs`);
+                if (!response.ok) throw new Error('Gagal koneksi');
+                const result = await response.json();
+                defaultSongsList = result.data || result;
+                renderQuickPicks(defaultSongsList);
+            } catch (error) {
+                quickPicks.innerHTML = '<p class="text-red-400 col-span-full">Gagal memuat lagu dari server.</p>';
+            }
+        }
+
+        function renderQuickPicks(songs) {
+            if (!songs || songs.length === 0) {
+                quickPicks.innerHTML = '<p class="text-spotify-light col-span-full">Tidak ada lagu tersedia.</p>';
+                return;
+            }
+            quickPicks.innerHTML = songs.map((song, i) => {
+                const durationId = `pick-duration-${i}`;
+                autoCalculateDuration(song.url, durationId);
+                const liked = isFavorite(song);
+                return `
+                <div class="song-item flex items-center justify-between bg-spotify-card hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group">
+                    <div class="flex items-center gap-3 min-w-0 flex-1" onclick="playFromQuickPicks(${i})">
+                        <div class="w-11 h-11 rounded bg-gray-800 flex-shrink-0 overflow-hidden relative">
+                            ${song.cover ? `<img src="${song.cover}" class="w-full h-full object-cover">` :
+                            `<div class="w-full h-full flex items-center justify-center text-gray-500"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg></div>`}
+                        </div>
+                        <div class="min-w-0 pr-2">
+                            <p class="text-xs md:text-sm font-medium text-white truncate">${song.title}</p>
+                            <p class="text-[11px] text-spotify-light truncate">${song.artist}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="${durationId}" class="text-xs text-spotify-light hidden sm:inline">--:--</span>
+                        <button onclick="event.stopPropagation(); toggleFavoriteByIndex(${i}, 'default')" class="p-1.5 ${liked ? 'text-spotify-green' : 'text-gray-400 hover:text-spotify-green'}" data-tooltip="Like">
+                            <svg class="w-4 h-4" fill="${liked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        </button>
+                        <button onclick="event.stopPropagation(); addToQueueByIndex(${i}, 'default')" class="p-1.5 text-gray-400 hover:text-spotify-green" data-tooltip="Tambah ke antrian">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" /></svg>
+                        </button>
+                        <button onclick="event.stopPropagation(); openDetailModalByIndex(${i}, 'default')" class="p-1.5 text-gray-400 hover:text-white" data-tooltip="Detail">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function playFromQuickPicks(index) {
+            currentSongList = [...defaultSongsList];
+            playSong(index);
+        }
+
+        // ========== DETAIL MODAL (by index and list type) ==========
+        function openDetailModalByIndex(index, listType) {
+            const song = getSongByIndex(index, listType);
             if (!song) return;
+            // Simpan referensi untuk modal play & like
+            window._modalSong = song;
+            window._modalListType = listType;
+            window._modalIndex = index;
 
-            playerBar.classList.remove('translate-y-full');
-            playerTitle.textContent = song.title;
-            playerArtist.textContent = song.artist;
+            document.getElementById('modalTitle').textContent = song.title || '-';
+            document.getElementById('modalArtist').textContent = song.artist || '-';
+            document.getElementById('modalAlbum').textContent = song.album || 'Single';
+            document.getElementById('modalYear').textContent = song.year || 'N/A';
+            document.getElementById('modalGenre').textContent = song.genre || 'Musik';
 
+            const coverContainer = document.getElementById('modalCover');
             if (song.cover) {
-                playerArtwork.innerHTML = `<img src="${song.cover}" class="w-full h-full object-cover">`;
-            }
-
-            audio.src = song.url;
-            audio.play().then(() => setPlayingState(true)).catch(() => setPlayingState(false));
-
-            if (!welcomeSection.classList.contains('hidden')) renderQuickPicks(defaultSongsList);
-            else renderSongList(currentSongList);
-        }
-
-        function togglePlayPause() {
-            if (!audio.src) return;
-            if (isPlaying) { audio.pause(); setPlayingState(false); }
-            else { audio.play(); setPlayingState(true); }
-        }
-
-        function setPlayingState(playing) {
-            isPlaying = playing;
-            if (playing) {
-                playIcon.classList.add('hidden'); pauseIcon.classList.remove('hidden');
-                mobilePlayIcon.classList.add('hidden'); mobilePauseIcon.classList.remove('hidden');
+                coverContainer.innerHTML = `<img src="${song.cover}" class="w-full h-full object-cover">`;
             } else {
-                playIcon.classList.remove('hidden'); pauseIcon.classList.add('hidden');
-                mobilePlayIcon.classList.remove('hidden'); mobilePauseIcon.classList.add('hidden');
+                coverContainer.innerHTML =
+                    `<svg class="w-12 h-12 text-gray-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>`;
             }
+
+            document.getElementById('modalDuration').textContent = durationCache[song.url] ? formatTime(durationCache[song
+                .url]) : '--:--';
+
+            document.getElementById('modalPlayBtn').onclick = () => {
+                const songToPlay = getSongByIndex(window._modalIndex, window._modalListType);
+                if (songToPlay) {
+                    // Set currentSongList to the appropriate list
+                    if (window._modalListType === 'default') currentSongList = [...defaultSongsList];
+                    else if (window._modalListType === 'current') currentSongList = [...currentSongList];
+                    else if (window._modalListType === 'favorites') currentSongList = [...favorites];
+                    playSong(window._modalIndex);
+                }
+                closeDetailModal();
+            };
+
+            const modalLikeText = document.getElementById('modalLikeText');
+            modalLikeText.textContent = isFavorite(song) ? 'Hapus Favorit' : 'Like';
+            document.getElementById('modalLikeBtn').onclick = () => {
+                toggleFavorite(song);
+                modalLikeText.textContent = isFavorite(song) ? 'Hapus Favorit' : 'Like';
+            };
+
+            document.getElementById('detailModal').classList.remove('hidden');
         }
 
-        // AUDIO EVENTS
-        audio.addEventListener('timeupdate', () => {
-            if (audio.duration) {
-                progressBar.value = (audio.currentTime / audio.duration) * 100;
-                currentTimeEl.textContent = formatTime(audio.currentTime);
-            }
-        });
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
 
-        audio.addEventListener('loadedmetadata', () => {
-            durationEl.textContent = formatTime(audio.duration);
-        });
+        // ========== FAVORITE / QUEUE BY INDEX (global functions) ==========
+        function toggleFavoriteByIndex(index, listType) {
+            const song = getSongByIndex(index, listType);
+            if (song) toggleFavorite(song);
+        }
 
-        audio.addEventListener('ended', () => {
-            if (currentSongIndex < currentSongList.length - 1) {
-                playSong(currentSongIndex + 1);
-            } else { setPlayingState(false); }
-        });
-
-        progressBar.addEventListener('input', () => {
-            if (audio.duration) audio.currentTime = (progressBar.value / 100) * audio.duration;
-        });
-
-        volumeSlider.addEventListener('input', () => {
-            audio.volume = volumeSlider.value / 100;
-        });
-
-        // UI HELPERS
+        // ========== UI HELPERS ==========
         function showWelcome() {
             welcomeSection.classList.remove('hidden');
             searchResults.classList.add('hidden');
+            favoritesSection.classList.add('hidden');
             loadingState.classList.add('hidden');
             emptyState.classList.add('hidden');
             errorState.classList.add('hidden');
+            clearSearch.classList.add('hidden');
+            renderRecentlyPlayed();
+            renderQuickPicks(defaultSongsList);
         }
 
         function showLoading() {
             welcomeSection.classList.add('hidden');
             searchResults.classList.add('hidden');
+            favoritesSection.classList.add('hidden');
             loadingState.classList.remove('hidden');
         }
 
         function showResults(songs) {
             welcomeSection.classList.add('hidden');
+            favoritesSection.classList.add('hidden');
             searchResults.classList.remove('hidden');
             loadingState.classList.add('hidden');
             resultCount.textContent = `${songs.length} lagu`;
@@ -626,6 +1323,7 @@
 
         function showEmpty() {
             welcomeSection.classList.add('hidden');
+            favoritesSection.classList.add('hidden');
             searchResults.classList.add('hidden');
             loadingState.classList.add('hidden');
             emptyState.classList.remove('hidden');
@@ -633,17 +1331,137 @@
 
         function showError() {
             welcomeSection.classList.add('hidden');
+            favoritesSection.classList.add('hidden');
             searchResults.classList.add('hidden');
             loadingState.classList.add('hidden');
             errorState.classList.remove('hidden');
         }
 
-        function setupEventListeners() {
-            searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
-            clearSearch.addEventListener('click', () => { searchInput.value = ''; showWelcome(); });
-            playPauseBtn.addEventListener('click', togglePlayPause);
+        // ========== TOAST ==========
+        function showToast(msg) {
+            const el = document.createElement('div');
+            el.className = 'toast-item';
+            el.textContent = msg;
+            toastContainer.appendChild(el);
+            setTimeout(() => {
+                el.classList.add('out');
+                setTimeout(() => el.remove(), 300);
+            }, 2500);
         }
 
+        // ========== EVENT LISTENERS ==========
+        function setupEventListeners() {
+            searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
+            clearSearch.addEventListener('click', () => { searchInput.value = '';
+                showWelcome(); });
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            document.getElementById('prevBtn').addEventListener('click', prevSong);
+            document.getElementById('nextBtn').addEventListener('click', nextSong);
+
+            document.getElementById('shuffleBtn').addEventListener('click', () => {
+                isShuffle = !isShuffle;
+                document.getElementById('shuffleBtn').style.color = isShuffle ? '#1DB954' : '#b3b3b3';
+                updateNpShuffleRepeat();
+            });
+            document.getElementById('repeatBtn').addEventListener('click', () => {
+                repeatMode = (repeatMode + 1) % 3;
+                document.getElementById('repeatBtn').style.color = repeatMode === 0 ? '#b3b3b3' : '#1DB954';
+                updateNpShuffleRepeat();
+            });
+
+            npPlayPauseBtn.addEventListener('click', togglePlayPause);
+            npPrevBtn.addEventListener('click', prevSong);
+            npNextBtn.addEventListener('click', nextSong);
+            npShuffleBtn.addEventListener('click', () => {
+                isShuffle = !isShuffle;
+                updateNpShuffleRepeat();
+                document.getElementById('shuffleBtn').style.color = isShuffle ? '#1DB954' : '#b3b3b3';
+            });
+            npRepeatBtn.addEventListener('click', () => {
+                repeatMode = (repeatMode + 1) % 3;
+                updateNpShuffleRepeat();
+                document.getElementById('repeatBtn').style.color = repeatMode === 0 ? '#b3b3b3' : '#1DB954';
+            });
+
+            progressBar.addEventListener('input', () => {
+                if (audio.duration) audio.currentTime = (progressBar.value / 100) * audio.duration;
+                npProgressBar.value = progressBar.value;
+            });
+            npProgressBar.addEventListener('input', () => {
+                if (audio.duration) audio.currentTime = (npProgressBar.value / 100) * audio.duration;
+                progressBar.value = npProgressBar.value;
+            });
+
+            volumeSlider.addEventListener('input', () => {
+                audio.volume = volumeSlider.value / 100;
+            });
+
+            audio.addEventListener('timeupdate', () => {
+                if (audio.duration) {
+                    const val = (audio.currentTime / audio.duration) * 100;
+                    progressBar.value = val;
+                    npProgressBar.value = val;
+                    const time = formatTime(audio.currentTime);
+                    currentTimeEl.textContent = time;
+                    npCurrentTime.textContent = time;
+                }
+            });
+
+            audio.addEventListener('loadedmetadata', () => {
+                const dur = formatTime(audio.duration);
+                durationEl.textContent = dur;
+                npDuration.textContent = dur;
+            });
+
+            audio.addEventListener('ended', () => {
+                if (repeatMode === 2) { playSong(currentSongIndex); return; }
+                if (queue.length > 0) { nextSong(); return; }
+                let nextIdx = currentSongIndex + 1;
+                if (nextIdx < currentSongList.length) playSong(nextIdx);
+                else if (repeatMode === 1) playSong(0);
+                else setPlayingState(false);
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT') return;
+                switch (e.key) {
+                    case ' ':
+                        e.preventDefault();
+                        togglePlayPause();
+                        break;
+                    case 'ArrowRight':
+                        if (audio.duration) audio.currentTime += 5;
+                        break;
+                    case 'ArrowLeft':
+                        if (audio.duration) audio.currentTime -= 5;
+                        break;
+                    case 'ArrowUp':
+                        volumeSlider.value = Math.min(100, +volumeSlider.value + 5);
+                        audio.volume = volumeSlider.value / 100;
+                        break;
+                    case 'ArrowDown':
+                        volumeSlider.value = Math.max(0, +volumeSlider.value - 5);
+                        audio.volume = volumeSlider.value / 100;
+                        break;
+                    case 'f':
+                    case 'F':
+                        if (!nowPlayingOverlay.classList.contains('hidden')) closeNowPlaying();
+                        else openNowPlaying();
+                        break;
+                    case 'l':
+                    case 'L':
+                        toggleLikeCurrent();
+                        break;
+                    case 'q':
+                    case 'Q':
+                        toggleQueuePanel();
+                        break;
+                }
+            });
+        }
+
+        // ========== FORMAT TIME ==========
         function formatTime(seconds) {
             if (!seconds || isNaN(seconds)) return '0:00';
             const mins = Math.floor(seconds / 60);
@@ -651,8 +1469,18 @@
             return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
+        // ========== INIT ==========
+        function init() {
+            loadFavorites();
+            loadRecentlyPlayed();
+            loadDefaultSongs();
+            setupEventListeners();
+            audio.volume = 0.8;
+        }
+
         init();
     </script>
+
 </body>
 
 </html>
