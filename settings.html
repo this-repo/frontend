@@ -71,7 +71,24 @@
                 <button id="installFromSettingsBtn" type="button"
                     class="px-4 py-2 bg-spotify-green text-white rounded-full font-semibold hover:scale-105 transition hidden">Pasang
                     Aplikasi</button>
-                <span id="installInfo" class="text-sm text-gray-600 dark:text-spotify-light"></span>
+                <button id="checkInstallBtn" type="button"
+                    class="px-4 py-2 bg-gray-200 text-gray-900 rounded-full font-semibold hover:scale-105 transition">Periksa
+                    Kesiapan</button>
+                <button id="installInstructionsBtn" type="button"
+                    class="px-4 py-2 bg-gray-100 text-gray-900 rounded-full font-semibold hover:scale-105 transition">Cara
+                    Pasang</button>
+            </div>
+            <p id="installInfo" class="mt-3 text-sm text-gray-600 dark:text-spotify-light"></p>
+            <div id="installInstructions" class="mt-3 text-sm text-gray-700 dark:text-spotify-light hidden">
+                <p>Jika tombol pasang tidak muncul, coba langkah berikut:</p>
+                <ol class="list-decimal ml-5 mt-2">
+                    <li>Pastikan membuka lewat <strong>HTTPS</strong> atau <strong>localhost</strong>.</li>
+                    <li>Pastikan Service Worker terdaftar (Kembali ke Beranda lalu tunggu pesan 'ServiceWorker
+                        registered' di console).</li>
+                    <li>Di browser desktop (Chrome) buka menu (⋮) → <em>Install</em> atau <em>Install app</em>.</li>
+                    <li>Jika sudah pernah di-uninstall, muat ulang halaman dan tunggu koneksi, lalu gunakan tombol
+                        "Periksa Kesiapan" di atas.</li>
+                </ol>
             </div>
         </section>
 
@@ -201,6 +218,10 @@
             const installBtn = document.getElementById('installFromSettingsBtn');
             const installInfo = document.getElementById('installInfo');
 
+            const checkBtn = document.getElementById('checkInstallBtn');
+            const instructionsBtn = document.getElementById('installInstructionsBtn');
+            const instructionsPanel = document.getElementById('installInstructions');
+
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
@@ -225,6 +246,41 @@
                 deferredPrompt = null;
                 installBtn.classList.add('hidden');
                 if (installInfo) installInfo.textContent = '';
+            });
+
+            if (checkBtn) checkBtn.addEventListener('click', async () => {
+                // Verify manifest reachable and service worker registered
+                let ok = true;
+                try {
+                    const m = await fetch('./manifest.json', { method: 'GET', cache: 'no-store' });
+                    if (!m.ok) ok = false;
+                } catch (err) { ok = false; }
+
+                let swRegistered = false;
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        swRegistered = regs && regs.length > 0;
+                    } catch (e) { swRegistered = false; }
+                }
+
+                if (!ok) {
+                    showStatus('cacheStatus', 'Manifest tidak ditemukan. Pastikan manifest.json tersedia.');
+                    if (installInfo) installInfo.textContent = 'Manifest tidak dapat diakses.';
+                    return;
+                }
+                if (!swRegistered) {
+                    showStatus('cacheStatus', 'Service worker belum terdaftar. Muat ulang beranda untuk memicu pendaftaran.');
+                    if (installInfo) installInfo.textContent = 'Service worker belum terdaftar.';
+                    return;
+                }
+                // If we reached here, browser should be able to fire beforeinstallprompt again (subject to browser heuristics)
+                showStatus('cacheStatus', 'Situs siap untuk dipasang — jika tombol tidak muncul, gunakan menu browser (⋮) → Install.');
+                if (installInfo) installInfo.textContent = 'Situs memenuhi syarat PWA. Jika tombol masih tidak muncul, coba muat ulang halaman atau gunakan menu browser.';
+            });
+
+            if (instructionsBtn) instructionsBtn.addEventListener('click', () => {
+                if (instructionsPanel) instructionsPanel.classList.toggle('hidden');
             });
 
             window.addEventListener('appinstalled', () => {
