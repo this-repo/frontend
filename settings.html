@@ -149,17 +149,29 @@
                 const state = JSON.parse(raw);
                 if (!state || !state.songUrl) return;
 
-                settingsAudio.src = state.songUrl;
-                settingsAudio.load();
                 const resumeFrom = Number(state.currentTime) || 0;
-                settingsAudio.addEventListener('loadedmetadata', () => {
-                    if (settingsAudio.duration > 0) {
+                const resumeIfReady = (attemptsLeft = 6) => {
+                    if (Number.isFinite(settingsAudio.duration) && settingsAudio.duration > 0) {
                         settingsAudio.currentTime = Math.min(resumeFrom, settingsAudio.duration);
                     }
-                }, { once: true });
 
-                if (state.isPlaying) {
-                    settingsAudio.play().catch(() => { });
+                    if (state.isPlaying) {
+                        settingsAudio.play().catch(() => {
+                            if (attemptsLeft > 0) {
+                                setTimeout(() => resumeIfReady(attemptsLeft - 1), 250);
+                            }
+                        });
+                    }
+                };
+
+                settingsAudio.src = state.songUrl;
+                settingsAudio.load();
+
+                if (settingsAudio.readyState >= 1) {
+                    resumeIfReady();
+                } else {
+                    settingsAudio.addEventListener('loadedmetadata', () => resumeIfReady(), { once: true });
+                    settingsAudio.addEventListener('canplay', () => resumeIfReady(), { once: true });
                 }
             } catch (e) {
                 // ignore

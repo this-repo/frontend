@@ -984,20 +984,43 @@
                 currentSongIndex = currentSongList.findIndex((item) => item.url === state.songUrl);
                 if (currentSongIndex < 0) return;
 
-                audio.src = song.url;
-                audio.load();
                 const resumeFrom = Number(state.currentTime) || 0;
-                audio.addEventListener('loadedmetadata', function restoreTime() {
+                const resumeIfReady = (attemptsLeft = 6) => {
+                    if (!audio || !audio.src) return;
+
                     if (Number.isFinite(audio.duration) && audio.duration > 0) {
                         audio.currentTime = Math.min(resumeFrom, audio.duration);
                     }
-                    audio.removeEventListener('loadedmetadata', restoreTime);
-                }, { once: true });
 
-                if (state.isPlaying) {
-                    audio.play().then(() => setPlayingState(true)).catch(() => setPlayingState(false));
+                    if (state.isPlaying) {
+                        audio.play().then(() => {
+                            setPlayingState(true);
+                            const activeSong = currentSongList[currentSongIndex];
+                            if (activeSong) {
+                                playerTitle.textContent = activeSong.title;
+                                playerArtist.textContent = activeSong.artist;
+                                updateLikeIcon(activeSong);
+                            }
+                        }).catch(() => {
+                            if (attemptsLeft > 0) {
+                                setTimeout(() => resumeIfReady(attemptsLeft - 1), 250);
+                            } else {
+                                setPlayingState(false);
+                            }
+                        });
+                    } else {
+                        setPlayingState(false);
+                    }
+                };
+
+                audio.src = song.url;
+                audio.load();
+
+                if (audio.readyState >= 1) {
+                    resumeIfReady();
                 } else {
-                    setPlayingState(false);
+                    audio.addEventListener('loadedmetadata', () => resumeIfReady(), { once: true });
+                    audio.addEventListener('canplay', () => resumeIfReady(), { once: true });
                 }
             } catch (err) {
                 console.warn('Restore playback state failed:', err);
