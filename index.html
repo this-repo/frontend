@@ -970,6 +970,22 @@
             localStorage.removeItem(PLAYBACK_STATE_KEY);
         }
 
+        function updatePlayerBarFromSong(song) {
+            if (!song) return;
+            playerBar.classList.remove('translate-y-full');
+            playerTitle.textContent = song.title || '-';
+            playerArtist.textContent = song.artist || '-';
+
+            const safeCover = getSafeImageUrl(song.cover);
+            if (safeCover) {
+                playerArtwork.innerHTML = `<img src="${escapeHTML(safeCover)}" alt="${escapeHTML(song.title || song.artist || 'cover')}" loading="lazy" class="w-full h-full object-cover">`;
+            } else {
+                playerArtwork.innerHTML =
+                    `<svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" /></svg>`;
+            }
+            updateLikeIcon(song);
+        }
+
         function restorePlaybackState() {
             try {
                 const raw = localStorage.getItem(PLAYBACK_STATE_KEY);
@@ -984,6 +1000,8 @@
                 currentSongIndex = currentSongList.findIndex((item) => item.url === state.songUrl);
                 if (currentSongIndex < 0) return;
 
+                updatePlayerBarFromSong(song);
+
                 const resumeFrom = Number(state.currentTime) || 0;
                 const resumeIfReady = (attemptsLeft = 6) => {
                     if (!audio || !audio.src) return;
@@ -996,11 +1014,7 @@
                         audio.play().then(() => {
                             setPlayingState(true);
                             const activeSong = currentSongList[currentSongIndex];
-                            if (activeSong) {
-                                playerTitle.textContent = activeSong.title;
-                                playerArtist.textContent = activeSong.artist;
-                                updateLikeIcon(activeSong);
-                            }
+                            if (activeSong) updatePlayerBarFromSong(activeSong);
                         }).catch(() => {
                             if (attemptsLeft > 0) {
                                 setTimeout(() => resumeIfReady(attemptsLeft - 1), 250);
