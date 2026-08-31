@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Pengaturan - MiniPlayer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Mengaktifkan mode gelap berbasis class
+            theme: {
+                extend: {
+                    colors: {
+                        spotify: {
+                            green: '#1DB954',
+                            dark: '#121212',
+                            darker: '#0a0a0a',
+                            card: '#181818',
+                            hover: '#282828',
+                            light: '#b3b3b3',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-100 dark:bg-spotify-darker text-gray-900 dark:text-white font-sans min-h-screen p-6">
+    <main class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-4">Pengaturan MiniPlayer</h1>
+
+        <section class="mb-6 bg-white dark:bg-spotify-card p-4 rounded-lg shadow-sm">
+            <h2 class="font-semibold mb-2">Tema</h2>
+            <p class="text-sm text-gray-600 dark:text-spotify-light mb-3">Pilih tema tampilan aplikasi.</p>
+            <div class="flex gap-3">
+                <button id="setDark" type="button"
+                    class="px-4 py-2 bg-spotify-green text-white rounded-full font-semibold hover:scale-105 transition">Mode
+                    Gelap</button>
+                <button id="setLight" type="button"
+                    class="px-4 py-2 bg-gray-200 text-gray-900 rounded-full font-semibold hover:scale-105 transition">Mode
+                    Terang</button>
+            </div>
+            <p id="themeStatus" class="mt-3 text-sm text-green-600 dark:text-green-400 hidden">Tema diperbarui.</p>
+        </section>
+
+        <section class="mb-6 bg-white dark:bg-spotify-card p-4 rounded-lg shadow-sm">
+            <h2 class="font-semibold mb-2">Cache & Offline</h2>
+            <p class="text-sm text-gray-600 dark:text-spotify-light mb-3">Bersihkan cache yang disimpan oleh service
+                worker untuk mengambil versi terbaru dari server.</p>
+            <div class="flex gap-3">
+                <button id="clearCache" type="button"
+                    class="px-4 py-2 bg-red-500 text-white rounded-full font-semibold hover:opacity-95 transition">Kosongkan
+                    Cache</button>
+                <button id="unregisterSW" type="button"
+                    class="px-4 py-2 bg-gray-300 text-gray-900 rounded-full font-semibold hover:opacity-95 transition">Unregister
+                    SW</button>
+                <button id="clearHistory" type="button"
+                    class="px-4 py-2 bg-red-600 text-white rounded-full font-semibold hover:opacity-95 transition">Hapus
+                    Riwayat</button>
+            </div>
+            <p id="cacheStatus" class="mt-3 text-sm text-green-600 dark:text-green-400 hidden">Cache dikosongkan.</p>
+        </section>
+
+        <a href="./index.html" class="inline-block mt-3 text-sm text-spotify-green hover:underline">Kembali ke
+            MiniPlayer</a>
+    </main>
+
+    <!-- Confirmation modal for clearing history -->
+    <div id="confirmHistoryModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 p-4"
+        role="dialog" aria-modal="true" aria-labelledby="confirmHistoryTitle">
+        <div class="bg-white dark:bg-spotify-card rounded-lg p-4 max-w-md w-full">
+            <h3 id="confirmHistoryTitle" class="text-lg font-semibold mb-2">Konfirmasi Hapus Riwayat</h3>
+            <p class="text-sm text-gray-600 dark:text-spotify-light mb-4">Apakah Anda yakin ingin menghapus riwayat
+                pemutaran? Tindakan ini tidak dapat dikembalikan.</p>
+            <div class="flex justify-end gap-3">
+                <button id="cancelClearHistory" type="button"
+                    class="px-4 py-2 bg-gray-200 text-gray-900 rounded-md">Batal</button>
+                <button id="confirmClearHistory" type="button"
+                    class="px-4 py-2 bg-red-600 text-white rounded-md">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+            // apply saved theme from localStorage on load
+            (function () {
+                try {
+                    const theme = localStorage.getItem('theme') || 'dark';
+                    if (theme === 'dark') document.documentElement.classList.add('dark');
+                    else document.documentElement.classList.remove('dark');
+                } catch (e) {
+                    /* ignore */
+                }
+            })();
+        function showStatus(id, msg) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 3000);
+        }
+
+        document.getElementById('setDark').addEventListener('click', () => {
+            localStorage.setItem('theme', 'dark');
+            // notify other tabs
+            localStorage.setItem('theme_updated_at', Date.now());
+            showStatus('themeStatus', 'Mode gelap diaktifkan');
+            document.documentElement.classList.add('dark');
+        });
+
+        document.getElementById('setLight').addEventListener('click', () => {
+            localStorage.setItem('theme', 'light');
+            localStorage.setItem('theme_updated_at', Date.now());
+            showStatus('themeStatus', 'Mode terang diaktifkan');
+            document.documentElement.classList.remove('dark');
+        });
+
+        document.getElementById('clearCache').addEventListener('click', async () => {
+            if (!('caches' in window)) {
+                showStatus('cacheStatus', 'Browser tidak mendukung Cache API');
+                return;
+            }
+            try {
+                const keys = await caches.keys();
+                for (const key of keys) {
+                    if (key.startsWith('miniplayer-')) await caches.delete(key);
+                }
+                // Notify other pages
+                localStorage.setItem('cacheCleared', Date.now());
+                showStatus('cacheStatus', 'Cache berhasil dikosongkan');
+            } catch (err) {
+                console.error(err);
+                showStatus('cacheStatus', 'Gagal mengosongkan cache');
+            }
+        });
+
+        document.getElementById('unregisterSW').addEventListener('click', async () => {
+            if (!('serviceWorker' in navigator)) {
+                showStatus('cacheStatus', 'Service worker tidak tersedia');
+                return;
+            }
+            try {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                for (const r of regs) await r.unregister();
+                localStorage.setItem('cacheCleared', Date.now());
+                showStatus('cacheStatus', 'Service worker di-unregister');
+            } catch (err) {
+                console.error(err);
+                showStatus('cacheStatus', 'Gagal unregister service worker');
+            }
+        });
+
+        // Clear playback history (recentlyPlayed) - open confirmation modal first
+        document.getElementById('clearHistory').addEventListener('click', () => {
+            const modal = document.getElementById('confirmHistoryModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        });
+
+        // Modal actions
+        function closeConfirmationModal() {
+            const modal = document.getElementById('confirmHistoryModal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.getElementById('cancelClearHistory').addEventListener('click', () => {
+            closeConfirmationModal();
+        });
+
+        document.getElementById('confirmClearHistory').addEventListener('click', () => {
+            try {
+                localStorage.removeItem('recentlyPlayed');
+                localStorage.setItem('historyCleared', Date.now());
+                closeConfirmationModal();
+                showStatus('cacheStatus', 'Riwayat pemutaran dihapus');
+            } catch (err) {
+                console.error(err);
+                showStatus('cacheStatus', 'Gagal menghapus riwayat');
+            }
+        });
+    </script>
+</body>
+
+</html>
