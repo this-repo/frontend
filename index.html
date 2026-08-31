@@ -1511,6 +1511,7 @@
                 const result = await response.json();
                 defaultSongsList = result.data || result;
                 renderQuickPicks(defaultSongsList);
+                restorePlaybackState();
             } catch (error) {
                 console.error("Gagal memuat lagu:", error);
                 quickPicks.innerHTML = '<p class="text-red-500 dark:text-red-400 col-span-full">Gagal memuat lagu dari server.</p>';
@@ -1914,7 +1915,6 @@
             applyTheme(currentTheme);
             window.addEventListener('beforeunload', savePlaybackState);
             window.addEventListener('pagehide', savePlaybackState);
-            restorePlaybackState();
         }
 
         init();
