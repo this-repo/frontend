@@ -28,6 +28,7 @@
 </head>
 
 <body class="bg-gray-100 dark:bg-spotify-darker text-gray-900 dark:text-white font-sans min-h-screen p-6">
+    <audio id="settingsAudioPlayer" preload="auto" class="hidden"></audio>
     <main class="max-w-2xl mx-auto">
         <h1 class="text-2xl font-bold mb-4">Pengaturan MiniPlayer</h1>
 
@@ -123,12 +124,61 @@
                     /* ignore */
                 }
             })();
+        const settingsAudio = document.getElementById('settingsAudioPlayer');
+        const PLAYBACK_STATE_KEY = 'miniPlayerPlaybackState';
+
+        function savePlaybackStateForSettings() {
+            if (!settingsAudio || !settingsAudio.src) return;
+            try {
+                const state = {
+                    songUrl: settingsAudio.src,
+                    currentTime: Number.isFinite(settingsAudio.currentTime) ? settingsAudio.currentTime : 0,
+                    isPlaying: !settingsAudio.paused,
+                    updatedAt: Date.now()
+                };
+                localStorage.setItem(PLAYBACK_STATE_KEY, JSON.stringify(state));
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        function restorePlaybackStateForSettings() {
+            try {
+                const raw = localStorage.getItem(PLAYBACK_STATE_KEY);
+                if (!raw || !settingsAudio) return;
+                const state = JSON.parse(raw);
+                if (!state || !state.songUrl) return;
+
+                settingsAudio.src = state.songUrl;
+                settingsAudio.load();
+                const resumeFrom = Number(state.currentTime) || 0;
+                settingsAudio.addEventListener('loadedmetadata', () => {
+                    if (settingsAudio.duration > 0) {
+                        settingsAudio.currentTime = Math.min(resumeFrom, settingsAudio.duration);
+                    }
+                }, { once: true });
+
+                if (state.isPlaying) {
+                    settingsAudio.play().catch(() => { });
+                }
+            } catch (e) {
+                // ignore
+            }
+        }
+
         function showStatus(id, msg) {
             const el = document.getElementById(id);
             el.textContent = msg;
             el.classList.remove('hidden');
             setTimeout(() => el.classList.add('hidden'), 3000);
         }
+
+        settingsAudio.addEventListener('timeupdate', savePlaybackStateForSettings);
+        settingsAudio.addEventListener('play', savePlaybackStateForSettings);
+        settingsAudio.addEventListener('pause', savePlaybackStateForSettings);
+        window.addEventListener('beforeunload', savePlaybackStateForSettings);
+        window.addEventListener('pagehide', savePlaybackStateForSettings);
+        restorePlaybackStateForSettings();
 
         document.getElementById('setDark').addEventListener('click', () => {
             localStorage.setItem('theme', 'dark');
@@ -217,10 +267,23 @@
             let deferredPrompt = null;
             const installBtn = document.getElementById('installFromSettingsBtn');
             const installInfo = document.getElementById('installInfo');
+            const playbackStatus = document.getElementById('playbackStatus');
 
             const checkBtn = document.getElementById('checkInstallBtn');
             const instructionsBtn = document.getElementById('installInstructionsBtn');
             const instructionsPanel = document.getElementById('installInstructions');
+
+            try {
+                const saved = localStorage.getItem('miniPlayerPlaybackState');
+                if (saved && playbackStatus) {
+                    const state = JSON.parse(saved);
+                    if (state && state.songUrl) {
+                        playbackStatus.textContent = 'Lagu terakhir: ' + state.songUrl + ' • akan dilanjutkan saat kembali ke beranda.';
+                    }
+                }
+            } catch (e) {
+                // ignore
+            }
 
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();

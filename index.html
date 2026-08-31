@@ -770,6 +770,7 @@
         let recentlyPlayed = [];
         const RECENT_MAX = 20;
         let favorites = [];
+        const PLAYBACK_STATE_KEY = 'miniPlayerPlaybackState';
         // Pagination for full music list
         let musicPageSize = 20;
         let musicCurrentPage = 1;
@@ -951,6 +952,56 @@
             playerLikeIcon.style.stroke = liked ? '#1DB954' : 'currentColor';
             npLikeIcon.style.fill = liked ? '#1DB954' : 'none';
             npLikeIcon.style.stroke = liked ? '#1DB954' : 'currentColor';
+        }
+
+        function savePlaybackState() {
+            const song = currentSongList[currentSongIndex];
+            if (!song) return;
+            const state = {
+                songUrl: song.url,
+                currentTime: Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
+                isPlaying: isPlaying,
+                updatedAt: Date.now()
+            };
+            localStorage.setItem(PLAYBACK_STATE_KEY, JSON.stringify(state));
+        }
+
+        function clearPlaybackState() {
+            localStorage.removeItem(PLAYBACK_STATE_KEY);
+        }
+
+        function restorePlaybackState() {
+            try {
+                const raw = localStorage.getItem(PLAYBACK_STATE_KEY);
+                if (!raw) return;
+                const state = JSON.parse(raw);
+                if (!state || !state.songUrl) return;
+
+                const song = defaultSongsList.find((item) => item.url === state.songUrl);
+                if (!song) return;
+
+                currentSongList = [...defaultSongsList];
+                currentSongIndex = currentSongList.findIndex((item) => item.url === state.songUrl);
+                if (currentSongIndex < 0) return;
+
+                audio.src = song.url;
+                audio.load();
+                const resumeFrom = Number(state.currentTime) || 0;
+                audio.addEventListener('loadedmetadata', function restoreTime() {
+                    if (Number.isFinite(audio.duration) && audio.duration > 0) {
+                        audio.currentTime = Math.min(resumeFrom, audio.duration);
+                    }
+                    audio.removeEventListener('loadedmetadata', restoreTime);
+                }, { once: true });
+
+                if (state.isPlaying) {
+                    audio.play().then(() => setPlayingState(true)).catch(() => setPlayingState(false));
+                } else {
+                    setPlayingState(false);
+                }
+            } catch (err) {
+                console.warn('Restore playback state failed:', err);
+            }
         }
 
         function updateFavoriteUI() {
@@ -1750,6 +1801,7 @@
                     const time = formatTime(audio.currentTime);
                     currentTimeEl.textContent = time;
                     npCurrentTime.textContent = time;
+                    savePlaybackState();
                 }
             });
 
@@ -1757,6 +1809,15 @@
                 const dur = formatTime(audio.duration);
                 durationEl.textContent = dur;
                 npDuration.textContent = dur;
+                savePlaybackState();
+            });
+
+            audio.addEventListener('play', () => {
+                savePlaybackState();
+            });
+
+            audio.addEventListener('pause', () => {
+                savePlaybackState();
             });
 
             audio.addEventListener('ended', () => {
@@ -1851,6 +1912,9 @@
             }
 
             applyTheme(currentTheme);
+            window.addEventListener('beforeunload', savePlaybackState);
+            window.addEventListener('pagehide', savePlaybackState);
+            restorePlaybackState();
         }
 
         init();
