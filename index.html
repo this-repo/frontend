@@ -887,9 +887,12 @@
                 :
                 '<path d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 18a8 8 0 010-16 8 8 0 000 16z"/>'; // Bulan
 
-            document.getElementById('themeIcon').innerHTML = iconPath;
-            document.getElementById('themeIconSidebar').innerHTML = iconPath;
-            document.getElementById('themeLabel').textContent = isLight ? 'Mode Terang' : 'Mode Gelap';
+            const themeIconEl = document.getElementById('themeIcon');
+            const themeIconSidebarEl = document.getElementById('themeIconSidebar');
+            const themeLabelEl = document.getElementById('themeLabel');
+            if (themeIconEl) themeIconEl.innerHTML = iconPath;
+            if (themeIconSidebarEl) themeIconSidebarEl.innerHTML = iconPath;
+            if (themeLabelEl) themeLabelEl.textContent = isLight ? 'Mode Terang' : 'Mode Gelap';
 
             localStorage.setItem('theme', theme);
             currentTheme = theme;
