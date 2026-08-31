@@ -3,7 +3,10 @@ const RUNTIME_CACHE = 'miniplayer-runtime-v1';
 
 const PRECACHE_URLS = [
     './',
-    './index.html'
+    './index.html',
+    './settings.html',
+    './manifest.json',
+    './favicon.ico'
 ];
 
 self.addEventListener('install', (event) => {

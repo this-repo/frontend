@@ -5,8 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MiniPlayer - Spotify-like Music Player</title>
-
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#121212">
     <script>
         tailwind.config = {
             darkMode: 'class', // Mengaktifkan mode gelap berbasis class
@@ -371,6 +373,9 @@
                                     id="mobileMenuSettings">Pengaturan</button>
                             </div>
                         </div>
+                        <button type="button" id="installBtn"
+                            class="hidden ml-2 px-3 py-1 text-sm bg-spotify-green text-white rounded">Install
+                            App</button>
                         <!-- Desktop/Tablet controls can remain here if needed -->
                     </div>
                 </div>
@@ -1851,6 +1856,37 @@
         init();
 
         // Register service worker for offline caching and improved performance
+        // ===== PWA install prompt handling =====
+        let deferredInstallPrompt = null;
+        const installBtnEl = document.getElementById('installBtn');
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            if (installBtnEl) installBtnEl.classList.remove('hidden');
+        });
+
+        function promptInstall() {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            deferredInstallPrompt.userChoice.then((choice) => {
+                if (choice.outcome === 'accepted') showToast('Terima kasih! Aplikasi terpasang.');
+                else showToast('Instalasi dibatalkan.');
+                deferredInstallPrompt = null;
+                if (installBtnEl) installBtnEl.classList.add('hidden');
+            }).catch(() => {
+                deferredInstallPrompt = null;
+                if (installBtnEl) installBtnEl.classList.add('hidden');
+            });
+        }
+
+        if (installBtnEl) installBtnEl.addEventListener('click', promptInstall);
+
+        window.addEventListener('appinstalled', () => {
+            showToast('Aplikasi berhasil dipasang.');
+            deferredInstallPrompt = null;
+            if (installBtnEl) installBtnEl.classList.add('hidden');
+        });
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
