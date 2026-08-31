@@ -63,6 +63,18 @@
             <p id="cacheStatus" class="mt-3 text-sm text-green-600 dark:text-green-400 hidden">Cache dikosongkan.</p>
         </section>
 
+        <section class="mb-6 bg-white dark:bg-spotify-card p-4 rounded-lg shadow-sm">
+            <h2 class="font-semibold mb-2">Aplikasi</h2>
+            <p class="text-sm text-gray-600 dark:text-spotify-light mb-3">Pasang MiniPlayer sebagai aplikasi pada
+                perangkat Anda.</p>
+            <div class="flex gap-3 items-center">
+                <button id="installFromSettingsBtn" type="button"
+                    class="px-4 py-2 bg-spotify-green text-white rounded-full font-semibold hover:scale-105 transition hidden">Pasang
+                    Aplikasi</button>
+                <span id="installInfo" class="text-sm text-gray-600 dark:text-spotify-light"></span>
+            </div>
+        </section>
+
         <a href="./index.html" class="inline-block mt-3 text-sm text-spotify-green hover:underline">Kembali ke
             MiniPlayer</a>
     </main>
@@ -182,6 +194,46 @@
                 showStatus('cacheStatus', 'Gagal menghapus riwayat');
             }
         });
+
+        // PWA install prompt handling on settings page
+        (function () {
+            let deferredPrompt = null;
+            const installBtn = document.getElementById('installFromSettingsBtn');
+            const installInfo = document.getElementById('installInfo');
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                if (installBtn) installBtn.classList.remove('hidden');
+                if (installInfo) installInfo.textContent = 'Aplikasi dapat dipasang pada perangkat ini.';
+            });
+
+            if (installBtn) installBtn.addEventListener('click', async () => {
+                if (!deferredPrompt) return;
+                try {
+                    deferredPrompt.prompt();
+                    const choice = await deferredPrompt.userChoice;
+                    if (choice && choice.outcome === 'accepted') {
+                        showStatus('themeStatus', 'Aplikasi dipasang');
+                    } else {
+                        showStatus('themeStatus', 'Instalasi dibatalkan');
+                    }
+                } catch (err) {
+                    console.error('Install prompt failed', err);
+                    showStatus('themeStatus', 'Gagal menjalankan instalasi');
+                }
+                deferredPrompt = null;
+                installBtn.classList.add('hidden');
+                if (installInfo) installInfo.textContent = '';
+            });
+
+            window.addEventListener('appinstalled', () => {
+                showStatus('themeStatus', 'Aplikasi berhasil dipasang');
+                deferredPrompt = null;
+                if (installBtn) installBtn.classList.add('hidden');
+                if (installInfo) installInfo.textContent = '';
+            });
+        })();
     </script>
 </body>
 
