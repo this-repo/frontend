@@ -793,6 +793,23 @@
             transform: none !important;
             visibility: visible !important;
         }
+
+        /* Ensure left sidebar and navigation remain visible in lite mode */
+        html.lite-mode aside,
+        html.lite-mode .sidebar-nav,
+        html.lite-mode .settings-logo,
+        html.lite-mode .nav-btn {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        /* Keep sidebar width so layout doesn't collapse */
+        html.lite-mode aside {
+            min-width: 220px !important;
+            width: 220px !important;
+        }
     </style>
 
     <style>
