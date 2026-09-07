@@ -25,64 +25,363 @@
             }
         }
     </script>
+    <style>
+        * {
+            scrollbar-width: thin;
+        }
+
+        body {
+            animation: appFadeIn 0.45s ease;
+        }
+
+        @keyframes appFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ---- Animated mesh gradient backdrop ---- */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(29, 185, 84, 0.28), transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(14, 165, 233, 0.22), transparent 45%),
+                radial-gradient(circle at 50% 95%, rgba(168, 85, 247, 0.20), transparent 50%);
+            background-size: 200% 200%;
+            animation: meshDrift 22s ease-in-out infinite;
+        }
+
+        .dark body::before {
+            background:
+                radial-gradient(circle at 15% 20%, rgba(29, 185, 84, 0.16), transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(14, 165, 233, 0.13), transparent 45%),
+                radial-gradient(circle at 50% 95%, rgba(168, 85, 247, 0.12), transparent 50%);
+        }
+
+        @keyframes meshDrift {
+
+            0%,
+            100% {
+                background-position: 0% 0%, 100% 0%, 50% 100%;
+            }
+
+            50% {
+                background-position: 25% 25%, 75% 20%, 40% 85%;
+            }
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---- Kartu section: glass panel ---- */
+        .settings-card {
+            position: relative;
+            border-radius: 22px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 10px 34px rgba(0, 0, 0, 0.07);
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+            transition: box-shadow 0.25s ease, transform 0.25s ease;
+        }
+
+        .settings-card:hover {
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.10);
+        }
+
+        .dark .settings-card {
+            background: rgba(24, 24, 27, 0.65);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 34px rgba(0, 0, 0, 0.4);
+        }
+
+        .dark .settings-card:hover {
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55);
+        }
+
+        .settings-card:nth-of-type(1) {
+            animation-delay: 0.05s;
+        }
+
+        .settings-card:nth-of-type(2) {
+            animation-delay: 0.12s;
+        }
+
+        .settings-card:nth-of-type(3) {
+            animation-delay: 0.19s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ikon lingkaran kecil di judul tiap kartu */
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: linear-gradient(135deg, rgba(29, 185, 84, 0.18), rgba(14, 165, 233, 0.14));
+            flex-shrink: 0;
+        }
+
+        /* ---- Tombol utama (hijau): gradient animasi + shimmer sweep ---- */
+        button[class*="bg-spotify-green"] {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1DB954 0%, #17c964 50%, #0ea5e9 100%) !important;
+            background-size: 200% 200%;
+            animation: gradientShift 7s ease infinite;
+            box-shadow: 0 4px 16px rgba(29, 185, 84, 0.32);
+            transition: box-shadow 0.25s ease, transform 0.15s ease;
+        }
+
+        button[class*="bg-spotify-green"]:hover {
+            box-shadow: 0 8px 22px rgba(29, 185, 84, 0.48);
+        }
+
+        button[class*="bg-spotify-green"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -75%;
+            width: 45%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.6s ease;
+            pointer-events: none;
+        }
+
+        button[class*="bg-spotify-green"]:hover::before {
+            left: 130%;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Tombol netral/sekunder: lift halus saat hover */
+        button[class*="rounded-full"] {
+            transition: transform 0.2s cubic-bezier(.2, .8, .2, 1), box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        button[class*="rounded-full"]:not([class*="bg-spotify-green"]):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Tombol tema aktif: cincin hijau */
+        .theme-btn-active {
+            box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.55) !important;
+        }
+
+        /* ---- Modal ---- */
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes popOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+        }
+
+        .modal-pop {
+            animation: popIn 0.22s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .modal-pop-out {
+            animation: popOut 0.18s ease forwards;
+        }
+
+        #confirmHistoryModal:not(.hidden) {
+            animation: fadeInOverlay 0.2s ease;
+        }
+
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Status pesan: slide+fade halus */
+        .status-msg:not(.hidden) {
+            animation: fadeInUp 0.25s ease-out;
+        }
+
+        /* Header ikon logo glow */
+        .settings-logo {
+            filter: drop-shadow(0 0 8px rgba(29, 185, 84, 0.5));
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 6px rgba(29, 185, 84, 0.4));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 14px rgba(29, 185, 84, 0.75));
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(29, 185, 84, 0.35);
+            border-radius: 9999px;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100 dark:bg-spotify-darker text-gray-900 dark:text-white font-sans min-h-screen p-6">
+<body class="bg-gray-100 dark:bg-spotify-darker text-gray-900 dark:text-white font-sans min-h-screen p-4 md:p-8 transition-colors duration-300">
     <audio id="settingsAudioPlayer" preload="auto" class="hidden"></audio>
     <main class="max-w-2xl mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Pengaturan MiniPlayer</h1>
 
-        <section class="mb-6 bg-white dark:bg-spotify-card p-4 rounded-lg shadow-sm">
-            <h2 class="font-semibold mb-2">Tema</h2>
-            <p class="text-sm text-gray-600 dark:text-spotify-light mb-3">Pilih tema tampilan aplikasi.</p>
-            <div class="flex gap-3">
-                <button id="setDark" type="button"
-                    class="px-4 py-2 bg-spotify-green text-white rounded-full font-semibold hover:scale-105 transition">Mode
-                    Gelap</button>
-                <button id="setLight" type="button"
-                    class="px-4 py-2 bg-gray-200 text-gray-900 rounded-full font-semibold hover:scale-105 transition">Mode
-                    Terang</button>
+        <div class="flex items-center gap-3 mb-6">
+            <svg class="settings-logo w-9 h-9 text-spotify-green flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"
+                aria-hidden="true">
+                <path
+                    d="M12 8a4 4 0 100 8 4 4 0 000-8zm8.94 4.06l-1.42-1.42c.07-.33.12-.66.12-1.01s-.05-.68-.12-1.01l1.42-1.42-2-2-1.42 1.42c-.33-.07-.66-.12-1.01-.12s-.68.05-1.01.12L13.95 3h-3.9L9.4 4.2c-.33-.07-.66-.12-1.01-.12s-.68.05-1.01.12L5.96 3 3.94 5l1.42 1.42C5.29 6.5 5.24 6.83 5.24 7.18s.05.68.12 1.01L3.94 9.61l2 2 1.42-1.42c.33.07.66.12 1.01.12s.68-.05 1.01-.12L9.05 15h3.9l.59-1.2c.33.07.66.12 1.01.12s.68-.05 1.01-.12L18.04 17l2-2-1.1-1.1z" />
+            </svg>
+            <div>
+                <h1 class="text-2xl font-bold leading-tight">Pengaturan</h1>
+                <p class="text-xs text-gray-600 dark:text-spotify-light">Atur tampilan &amp; penyimpanan MiniPlayer
+                    kamu</p>
             </div>
-            <p id="themeStatus" class="mt-3 text-sm text-green-600 dark:text-green-400 hidden">Tema diperbarui.</p>
+        </div>
+
+        <section class="settings-card mb-5 p-4 md:p-5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="settings-icon">🎨</div>
+                <div>
+                    <h2 class="font-semibold">Tema</h2>
+                    <p class="text-xs text-gray-600 dark:text-spotify-light">Pilih tema tampilan aplikasi</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button id="setDark" type="button"
+                    class="px-4 py-2 bg-spotify-green text-white rounded-full font-semibold hover:scale-105 transition">🌙
+                    Mode Gelap</button>
+                <button id="setLight" type="button"
+                    class="px-4 py-2 bg-gray-200 dark:bg-spotify-hover text-gray-900 dark:text-white rounded-full font-semibold hover:scale-105 transition">☀️
+                    Mode Terang</button>
+                <button id="setAuto" type="button"
+                    class="px-4 py-2 bg-gray-200 dark:bg-spotify-hover text-gray-900 dark:text-white rounded-full font-semibold hover:scale-105 transition">🖥️
+                    Ikuti Sistem</button>
+            </div>
+            <p id="themeStatus" class="status-msg mt-3 text-sm text-green-600 dark:text-green-400 hidden">Tema
+                diperbarui.</p>
         </section>
 
-        <section class="mb-6 bg-white dark:bg-spotify-card p-4 rounded-lg shadow-sm">
-            <h2 class="font-semibold mb-2">Cache & Offline</h2>
-            <p class="text-sm text-gray-600 dark:text-spotify-light mb-3">Bersihkan cache yang disimpan oleh service
-                worker untuk mengambil versi terbaru dari server.</p>
-            <div class="flex gap-3">
+        <section class="settings-card mb-5 p-4 md:p-5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="settings-icon">🗑️</div>
+                <div>
+                    <h2 class="font-semibold">Cache &amp; Offline</h2>
+                    <p class="text-xs text-gray-600 dark:text-spotify-light">Bersihkan cache service worker untuk versi
+                        terbaru</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-3">
                 <button id="clearCache" type="button"
                     class="px-4 py-2 bg-red-500 text-white rounded-full font-semibold hover:opacity-95 transition">Kosongkan
                     Cache</button>
                 <button id="unregisterSW" type="button"
-                    class="px-4 py-2 bg-gray-300 text-gray-900 rounded-full font-semibold hover:opacity-95 transition">Unregister
+                    class="px-4 py-2 bg-gray-300 dark:bg-spotify-hover text-gray-900 dark:text-white rounded-full font-semibold hover:opacity-95 transition">Unregister
                     SW</button>
                 <button id="clearHistory" type="button"
                     class="px-4 py-2 bg-red-600 text-white rounded-full font-semibold hover:opacity-95 transition">Hapus
                     Riwayat</button>
             </div>
-            <p id="cacheStatus" class="mt-3 text-sm text-green-600 dark:text-green-400 hidden">Cache dikosongkan.</p>
+            <p id="cacheStatus" class="status-msg mt-3 text-sm text-green-600 dark:text-green-400 hidden">Cache
+                dikosongkan.</p>
         </section>
 
-        <section class="mb-6 bg-white dark:bg-spotify-card p-4 rounded-lg shadow-sm">
-            <h2 class="font-semibold mb-2">Aplikasi</h2>
-            <p class="text-sm text-gray-600 dark:text-spotify-light mb-3">Pasang MiniPlayer sebagai aplikasi pada
-                perangkat Anda.</p>
-            <div class="flex gap-3 items-center">
+        <section class="settings-card mb-5 p-4 md:p-5">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="settings-icon">📱</div>
+                <div>
+                    <h2 class="font-semibold">Aplikasi</h2>
+                    <p class="text-xs text-gray-600 dark:text-spotify-light">Pasang MiniPlayer sebagai aplikasi di
+                        perangkatmu</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-3 items-center">
                 <button id="installFromSettingsBtn" type="button"
                     class="px-4 py-2 bg-spotify-green text-white rounded-full font-semibold hover:scale-105 transition hidden">Pasang
                     Aplikasi</button>
                 <button id="checkInstallBtn" type="button"
-                    class="px-4 py-2 bg-gray-200 text-gray-900 rounded-full font-semibold hover:scale-105 transition">Periksa
+                    class="px-4 py-2 bg-gray-200 dark:bg-spotify-hover text-gray-900 dark:text-white rounded-full font-semibold hover:scale-105 transition">Periksa
                     Kesiapan</button>
                 <button id="installInstructionsBtn" type="button"
-                    class="px-4 py-2 bg-gray-100 text-gray-900 rounded-full font-semibold hover:scale-105 transition">Cara
+                    class="px-4 py-2 bg-gray-100 dark:bg-spotify-hover text-gray-900 dark:text-white rounded-full font-semibold hover:scale-105 transition">Cara
                     Pasang</button>
             </div>
             <p id="installInfo" class="mt-3 text-sm text-gray-600 dark:text-spotify-light"></p>
             <div id="installInstructions" class="mt-3 text-sm text-gray-700 dark:text-spotify-light hidden">
                 <p>Jika tombol pasang tidak muncul, coba langkah berikut:</p>
-                <ol class="list-decimal ml-5 mt-2">
+                <ol class="list-decimal ml-5 mt-2 space-y-1">
                     <li>Pastikan membuka lewat <strong>HTTPS</strong> atau <strong>localhost</strong>.</li>
                     <li>Pastikan Service Worker terdaftar (Kembali ke Beranda lalu tunggu pesan 'ServiceWorker
                         registered' di console).</li>
@@ -93,33 +392,58 @@
             </div>
         </section>
 
-        <a href="./index.html" class="inline-block mt-3 text-sm text-spotify-green hover:underline">Kembali ke
-            MiniPlayer</a>
+        <a href="./index.html"
+            class="inline-flex items-center gap-1.5 mt-2 text-sm text-spotify-green hover:underline font-medium">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Kembali ke MiniPlayer
+        </a>
     </main>
 
     <!-- Confirmation modal for clearing history -->
-    <div id="confirmHistoryModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 p-4"
+    <div id="confirmHistoryModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-sm p-4"
         role="dialog" aria-modal="true" aria-labelledby="confirmHistoryTitle">
-        <div class="bg-white dark:bg-spotify-card rounded-lg p-4 max-w-md w-full">
+        <div class="modal-pop bg-white dark:bg-spotify-card rounded-2xl p-5 max-w-md w-full shadow-2xl">
             <h3 id="confirmHistoryTitle" class="text-lg font-semibold mb-2">Konfirmasi Hapus Riwayat</h3>
             <p class="text-sm text-gray-600 dark:text-spotify-light mb-4">Apakah Anda yakin ingin menghapus riwayat
                 pemutaran? Tindakan ini tidak dapat dikembalikan.</p>
             <div class="flex justify-end gap-3">
                 <button id="cancelClearHistory" type="button"
-                    class="px-4 py-2 bg-gray-200 text-gray-900 rounded-md">Batal</button>
+                    class="px-4 py-2 bg-gray-200 dark:bg-spotify-hover text-gray-900 dark:text-white rounded-full font-semibold">Batal</button>
                 <button id="confirmClearHistory" type="button"
-                    class="px-4 py-2 bg-red-600 text-white rounded-md">Hapus</button>
+                    class="px-4 py-2 bg-red-600 text-white rounded-full font-semibold">Hapus</button>
             </div>
         </div>
     </div>
 
     <script>
-            // apply saved theme from localStorage on load
+            // apply saved theme from localStorage on load (mendukung mode 'auto' mengikuti sistem)
+            const THEME_MODE_KEY = 'themeMode';
+            function getSystemPrefersDark() {
+                return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            }
             (function () {
                 try {
-                    const theme = localStorage.getItem('theme') || 'dark';
+                    const savedTheme = localStorage.getItem('theme');
+                    const savedMode = localStorage.getItem(THEME_MODE_KEY);
+                    if (!savedTheme && !savedMode) {
+                        localStorage.setItem(THEME_MODE_KEY, 'auto');
+                    }
+                    const mode = localStorage.getItem(THEME_MODE_KEY) || 'auto';
+                    const theme = mode === 'auto' ? (getSystemPrefersDark() ? 'dark' : 'light') : (savedTheme || 'dark');
                     if (theme === 'dark') document.documentElement.classList.add('dark');
                     else document.documentElement.classList.remove('dark');
+
+                    if (window.matchMedia) {
+                        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                            if ((localStorage.getItem(THEME_MODE_KEY) || 'auto') === 'auto') {
+                                if (e.matches) document.documentElement.classList.add('dark');
+                                else document.documentElement.classList.remove('dark');
+                                updateThemeButtonStates();
+                            }
+                        });
+                    }
                 } catch (e) {
                     /* ignore */
                 }
@@ -185,6 +509,22 @@
             setTimeout(() => el.classList.add('hidden'), 3000);
         }
 
+        // Tandai tombol tema yang sedang aktif (visual saja, tidak mengubah logika)
+        function updateThemeButtonStates() {
+            try {
+                const mode = localStorage.getItem(THEME_MODE_KEY) || 'auto';
+                const isDark = document.documentElement.classList.contains('dark');
+                const btnDark = document.getElementById('setDark');
+                const btnLight = document.getElementById('setLight');
+                const btnAuto = document.getElementById('setAuto');
+                [btnDark, btnLight, btnAuto].forEach(b => b && b.classList.remove('theme-btn-active'));
+                if (mode === 'auto' && btnAuto) btnAuto.classList.add('theme-btn-active');
+                else if (isDark && btnDark) btnDark.classList.add('theme-btn-active');
+                else if (!isDark && btnLight) btnLight.classList.add('theme-btn-active');
+            } catch (e) { /* ignore */ }
+        }
+        updateThemeButtonStates();
+
         settingsAudio.addEventListener('timeupdate', savePlaybackStateForSettings);
         settingsAudio.addEventListener('play', savePlaybackStateForSettings);
         settingsAudio.addEventListener('pause', savePlaybackStateForSettings);
@@ -194,17 +534,32 @@
 
         document.getElementById('setDark').addEventListener('click', () => {
             localStorage.setItem('theme', 'dark');
+            localStorage.setItem(THEME_MODE_KEY, 'manual');
             // notify other tabs
             localStorage.setItem('theme_updated_at', Date.now());
             showStatus('themeStatus', 'Mode gelap diaktifkan');
             document.documentElement.classList.add('dark');
+            updateThemeButtonStates();
         });
 
         document.getElementById('setLight').addEventListener('click', () => {
             localStorage.setItem('theme', 'light');
+            localStorage.setItem(THEME_MODE_KEY, 'manual');
             localStorage.setItem('theme_updated_at', Date.now());
             showStatus('themeStatus', 'Mode terang diaktifkan');
             document.documentElement.classList.remove('dark');
+            updateThemeButtonStates();
+        });
+
+        document.getElementById('setAuto').addEventListener('click', () => {
+            localStorage.setItem(THEME_MODE_KEY, 'auto');
+            const isDark = getSystemPrefersDark();
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            localStorage.setItem('theme_updated_at', Date.now());
+            showStatus('themeStatus', 'Tema mengikuti sistem perangkat');
+            if (isDark) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+            updateThemeButtonStates();
         });
 
         document.getElementById('clearCache').addEventListener('click', async () => {
@@ -248,14 +603,28 @@
             if (!modal) return;
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+            const card = modal.querySelector('.modal-pop');
+            if (card) {
+                card.classList.remove('modal-pop', 'modal-pop-out');
+                void card.offsetWidth;
+                card.classList.add('modal-pop');
+            }
         });
 
         // Modal actions
         function closeConfirmationModal() {
             const modal = document.getElementById('confirmHistoryModal');
             if (!modal) return;
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            const card = modal.querySelector('.modal-pop');
+            if (card) {
+                card.classList.remove('modal-pop');
+                card.classList.add('modal-pop-out');
+            }
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                if (card) card.classList.remove('modal-pop-out');
+            }, 180);
         }
 
         document.getElementById('cancelClearHistory').addEventListener('click', () => {

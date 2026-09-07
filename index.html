@@ -256,6 +256,811 @@
         .button-transition:hover {
             transform: scale(1.05);
         }
+
+        /* ===== Softer, livelier UI ===== */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .song-item {
+            border-radius: 14px !important;
+        }
+
+        #quickPicks>div,
+        #recentlyPlayedList>div {
+            border-radius: 16px !important;
+        }
+
+        .hover-lift {
+            transition: transform 0.25s cubic-bezier(.2, .8, .2, 1), box-shadow 0.25s ease, background 0.2s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+        }
+
+        .dark .hover-lift:hover {
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-section {
+            animation: fadeInUp 0.35s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-pop {
+            animation: popIn 0.25s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        /* Mini equalizer "now playing" indicator */
+        .eq-bars {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 14px;
+            width: 14px;
+        }
+
+        .eq-bars span {
+            width: 3px;
+            background: #1DB954;
+            border-radius: 2px;
+            animation: eqBounce 0.85s ease-in-out infinite;
+        }
+
+        .eq-bars span:nth-child(1) {
+            animation-delay: -0.7s;
+        }
+
+        .eq-bars span:nth-child(2) {
+            animation-delay: -0.35s;
+        }
+
+        .eq-bars span:nth-child(3) {
+            animation-delay: 0s;
+        }
+
+        @keyframes eqBounce {
+
+            0%,
+            100% {
+                height: 3px;
+            }
+
+            50% {
+                height: 13px;
+            }
+        }
+
+        /* Sidebar nav */
+        .nav-btn {
+            border-radius: 12px;
+            padding: 0.55rem 0.75rem;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(29, 185, 84, 0.1);
+            transform: translateX(2px);
+        }
+
+        .nav-btn.nav-active {
+            color: #1DB954 !important;
+            background: rgba(29, 185, 84, 0.12);
+        }
+
+        /* Pill badges (speed / sleep timer) */
+        .pill-badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            background: rgba(29, 185, 84, 0.14);
+            color: #1DB954;
+            font-weight: 700;
+            transition: background 0.2s ease, transform 0.15s ease;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .pill-badge:hover {
+            background: rgba(29, 185, 84, 0.25);
+            transform: scale(1.05);
+        }
+
+        /* Softer card shadows overall */
+        #playerBar {
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .dark #playerBar {
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Heart pop animation on like */
+        @keyframes heartPop {
+            0% {
+                transform: scale(1);
+            }
+
+            40% {
+                transform: scale(1.35);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .heart-pop {
+            animation: heartPop 0.3s ease-out;
+        }
+
+        /* Toast refresh */
+        .toast-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 9999px !important;
+        }
+
+        /* ===== v2: livelier micro-interactions ===== */
+        .song-item:hover,
+        #quickPicks>div:hover,
+        #recentlyPlayedList>div:hover,
+        .playlist-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.10);
+        }
+
+        .dark .song-item:hover,
+        .dark #quickPicks>div:hover,
+        .dark #recentlyPlayedList>div:hover,
+        .dark .playlist-card:hover {
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Soft radial glow accent */
+        .radial-glow {
+            position: absolute;
+            border-radius: 9999px;
+            filter: blur(60px);
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(29, 185, 84, 0.35), transparent 70%);
+            animation: glowDrift 10s ease-in-out infinite;
+        }
+
+        .dark .radial-glow {
+            background: radial-gradient(circle, rgba(29, 185, 84, 0.22), transparent 70%);
+        }
+
+        @keyframes glowDrift {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(20px, -14px) scale(1.12);
+            }
+        }
+
+        /* Pulsing ring around cover art while playing */
+        .now-playing-glow {
+            animation: glowPulse 2.2s ease-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.45);
+            }
+
+            70% {
+                box-shadow: 0 0 0 18px rgba(29, 185, 84, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(29, 185, 84, 0);
+            }
+        }
+
+        /* Mini "fake" visualizer bars for Now Playing screen */
+        .np-vis {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+        }
+
+        .np-vis span {
+            width: 4px;
+            border-radius: 2px;
+            background: linear-gradient(180deg, #1DB954, #17a34a);
+            animation: eqBounce 1.1s ease-in-out infinite;
+        }
+
+        .np-vis span:nth-child(1) {
+            animation-delay: -1.0s;
+        }
+
+        .np-vis span:nth-child(2) {
+            animation-delay: -0.7s;
+        }
+
+        .np-vis span:nth-child(3) {
+            animation-delay: -0.4s;
+        }
+
+        .np-vis span:nth-child(4) {
+            animation-delay: -0.9s;
+        }
+
+        .np-vis span:nth-child(5) {
+            animation-delay: -0.2s;
+        }
+
+        .np-vis.paused span {
+            animation-play-state: paused;
+            height: 3px !important;
+        }
+
+        /* Playlist cards */
+        .playlist-card {
+            transition: all 0.25s cubic-bezier(.2, .8, .2, 1);
+            border-radius: 16px;
+        }
+
+        /* Search suggestions dropdown */
+        #searchSuggestions {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
+            z-index: 40;
+            border: 1px solid #e5e7eb;
+        }
+
+        .dark #searchSuggestions {
+            background: #181818;
+            border-color: #3e3e3e;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+        }
+
+        .search-suggestion-item {
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .search-suggestion-item:hover {
+            background: rgba(29, 185, 84, 0.1);
+        }
+
+        /* Floating player bar */
+        #playerBar.floating {
+            border-radius: 20px;
+            box-shadow: 0 -6px 0 rgba(0, 0, 0, 0);
+        }
+
+        /* Swipe hint fade */
+        .swipe-hint {
+            opacity: 0.55;
+        }
+
+        /* ===== v3: animasi tambahan ===== */
+
+        /* Efek tekan (press feedback) di hampir semua tombol interaktif */
+        button:not(.no-press):active,
+        .song-item:active,
+        .playlist-card:active {
+            transform: scale(0.95);
+        }
+
+        #playerBar button:active {
+            transform: scale(0.85);
+        }
+
+        /* Stagger fade-in untuk item daftar (dipakai lewat JS: style="animation-delay:...") */
+        .stagger-item {
+            opacity: 0;
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+
+        /* Now Playing: overlay masuk & keluar */
+        @keyframes overlayFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes overlayFadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes overlaySlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(28px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes overlaySlideDown {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(18px) scale(0.98);
+            }
+        }
+
+        #nowPlayingOverlay.overlay-anim {
+            animation: overlayFadeIn 0.3s ease;
+        }
+
+        #nowPlayingOverlay.overlay-anim .np-content-inner {
+            animation: overlaySlideUp 0.35s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        #nowPlayingOverlay.overlay-exit {
+            animation: overlayFadeOut 0.2s ease forwards;
+        }
+
+        #nowPlayingOverlay.overlay-exit .np-content-inner {
+            animation: overlaySlideDown 0.2s ease forwards;
+        }
+
+        /* Modal keluar (fade+scale down) */
+        @keyframes modalPopOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+        }
+
+        .modal-pop-out {
+            animation: modalPopOut 0.18s ease forwards;
+        }
+
+        /* Search suggestions dropdown masuk */
+        #searchSuggestions:not(.hidden) {
+            animation: fadeInUp 0.2s ease-out;
+        }
+
+        /* Mobile more-menu masuk */
+        #mobileMoreMenu:not(.hidden) {
+            animation: popIn 0.18s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        /* Progress bar thumb sedikit membesar saat lagu diputar */
+        #progressBar,
+        #npProgressBar {
+            transition: filter 0.2s ease;
+        }
+
+        /* Play/Pause tombol utama sedikit "bounce" saat berganti status */
+        @keyframes iconBounce {
+            0% {
+                transform: scale(0.6);
+            }
+
+            60% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .icon-bounce {
+            animation: iconBounce 0.3s cubic-bezier(.2, .8, .2, 1);
+        }
+    </style>
+
+    <style>
+        /* ================= v4: ROMBAK UI — MODERN & BERANIMASI ================= */
+
+        /* ---- Animated mesh gradient backdrop (di belakang semua panel) ---- */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(29, 185, 84, 0.28), transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(14, 165, 233, 0.22), transparent 45%),
+                radial-gradient(circle at 50% 95%, rgba(168, 85, 247, 0.20), transparent 50%);
+            background-size: 200% 200%;
+            animation: meshDrift 22s ease-in-out infinite;
+        }
+
+        .dark body::before {
+            background:
+                radial-gradient(circle at 15% 20%, rgba(29, 185, 84, 0.16), transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(14, 165, 233, 0.13), transparent 45%),
+                radial-gradient(circle at 50% 95%, rgba(168, 85, 247, 0.12), transparent 50%);
+        }
+
+        @keyframes meshDrift {
+
+            0%,
+            100% {
+                background-position: 0% 0%, 100% 0%, 50% 100%;
+            }
+
+            50% {
+                background-position: 25% 25%, 75% 20%, 40% 85%;
+            }
+        }
+
+        /* ---- Sidebar jadi panel kaca mengambang ---- */
+        aside {
+            margin: 12px 0 12px 12px !important;
+            border-radius: 26px !important;
+            border: 1px solid rgba(0, 0, 0, 0.06) !important;
+            background: rgba(255, 255, 255, 0.78) !important;
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            z-index: 1;
+        }
+
+        .dark aside {
+            background: rgba(20, 20, 24, 0.68) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        /* Logo: gradient text + glow pulsing di belakang ikon */
+        aside .flex.items-center.gap-2.mb-8 {
+            position: relative;
+        }
+
+        aside .flex.items-center.gap-2.mb-8 svg {
+            filter: drop-shadow(0 0 10px rgba(29, 185, 84, 0.55));
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 6px rgba(29, 185, 84, 0.4));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 14px rgba(29, 185, 84, 0.75));
+            }
+        }
+
+        aside .flex.items-center.gap-2.mb-8 span {
+            background: linear-gradient(90deg, #1DB954, #0ea5e9 60%, #a855f7);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientTextMove 6s linear infinite;
+        }
+
+        @keyframes gradientTextMove {
+            0% {
+                background-position: 0% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        /* ---- Nav aktif: pill gradient bergeser mulus ---- */
+        .nav-btn {
+            position: relative;
+        }
+
+        .nav-btn.nav-active {
+            background: linear-gradient(90deg, rgba(29, 185, 84, 0.18), rgba(14, 165, 233, 0.10)) !important;
+            box-shadow: inset 3px 0 0 0 #1DB954;
+        }
+
+        .nav-btn.nav-active svg {
+            animation: iconBounce 0.35s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        /* ---- Header jadi bar kaca mengambang ---- */
+        main {
+            background: rgba(243, 244, 246, 0.72) !important;
+            backdrop-filter: blur(6px);
+        }
+
+        .dark main {
+            background: rgba(10, 10, 12, 0.62) !important;
+        }
+
+        header {
+            margin: 12px 12px 0 12px !important;
+            border-radius: 22px !important;
+            border: 1px solid rgba(0, 0, 0, 0.05) !important;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06) !important;
+        }
+
+        .dark header {
+            border-color: rgba(255, 255, 255, 0.07) !important;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35) !important;
+        }
+
+        /* Search input: ring gradient animasi saat fokus */
+        header input#searchInput {
+            transition: box-shadow 0.3s ease, transform 0.2s ease, background 0.3s ease;
+        }
+
+        header input#searchInput:focus {
+            transform: scale(1.012);
+            box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.35), 0 10px 26px rgba(29, 185, 84, 0.18);
+        }
+
+        /* ---- Tombol utama (hijau): gradient animasi + shimmer sweep ---- */
+        button[class*="bg-spotify-green"] {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1DB954 0%, #17c964 50%, #0ea5e9 100%) !important;
+            background-size: 200% 200%;
+            animation: gradientShift 7s ease infinite;
+            box-shadow: 0 4px 16px rgba(29, 185, 84, 0.35);
+            transition: box-shadow 0.25s ease, transform 0.15s ease;
+        }
+
+        button[class*="bg-spotify-green"]:hover {
+            box-shadow: 0 8px 22px rgba(29, 185, 84, 0.5);
+        }
+
+        button[class*="bg-spotify-green"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -75%;
+            width: 45%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.6s ease;
+            pointer-events: none;
+        }
+
+        button[class*="bg-spotify-green"]:hover::before {
+            left: 130%;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Tombol sekunder (Acak dkk): lift halus */
+        button[class*="bg-gray-200"][class*="rounded-full"] {
+            transition: transform 0.2s cubic-bezier(.2, .8, .2, 1), box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        button[class*="bg-gray-200"][class*="rounded-full"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        /* ---- Cover art: zoom halus saat hover ---- */
+        .song-item img,
+        .playlist-card img {
+            transition: transform 0.35s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .song-item:hover img {
+            transform: scale(1.12);
+        }
+
+        .playlist-card:hover .aspect-square {
+            transform: scale(1.04) rotate(-1deg);
+        }
+
+        .playlist-card .aspect-square {
+            transition: transform 0.3s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        /* ---- Badge pill: pulsa halus saat berisi ---- */
+        .pill-badge:not(.hidden) {
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(29, 185, 84, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 5px rgba(29, 185, 84, 0);
+            }
+        }
+
+        /* ---- Player bar: aksen gradient bergerak di tepi atas ---- */
+        #playerBar {
+            overflow: hidden;
+        }
+
+        #playerBar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1DB954, #0ea5e9, #a855f7, #1DB954);
+            background-size: 300% 100%;
+            animation: gradientShift 6s linear infinite;
+        }
+
+        /* ---- Now Playing: hiasan glow di belakang cover ---- */
+        .np-glow-blob {
+            position: absolute;
+            border-radius: 9999px;
+            filter: blur(70px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ---- Scrollbar bertema (WebKit) ---- */
+        main::-webkit-scrollbar,
+        #queuePanel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        main::-webkit-scrollbar-thumb,
+        #queuePanel::-webkit-scrollbar-thumb {
+            background: rgba(29, 185, 84, 0.35);
+            border-radius: 9999px;
+        }
+
+        main::-webkit-scrollbar-thumb:hover,
+        #queuePanel::-webkit-scrollbar-thumb:hover {
+            background: rgba(29, 185, 84, 0.6);
+        }
+
+        /* ---- Mobile: aside tersembunyi, main tanpa margin kiri berlebih ---- */
+        @media (max-width: 767px) {
+            header {
+                margin: 8px 8px 0 8px !important;
+                border-radius: 18px !important;
+            }
+        }
+
+        /* ---- Sidebar nav: masuk berurutan saat load ---- */
+        .sidebar-nav .nav-btn {
+            opacity: 0;
+            animation: fadeInUp 0.45s ease-out forwards;
+        }
+
+        .sidebar-nav .nav-btn:nth-child(1) {
+            animation-delay: 0.04s;
+        }
+
+        .sidebar-nav .nav-btn:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+
+        .sidebar-nav .nav-btn:nth-child(3) {
+            animation-delay: 0.12s;
+        }
+
+        .sidebar-nav .nav-btn:nth-child(4) {
+            animation-delay: 0.16s;
+        }
+
+        .sidebar-nav .nav-btn:nth-child(5) {
+            animation-delay: 0.20s;
+        }
+
+        .sidebar-nav .nav-btn:nth-child(6) {
+            animation-delay: 0.24s;
+        }
+
+        /* ---- Aplikasi fade-in halus saat pertama dimuat ---- */
+        body {
+            animation: appFadeIn 0.45s ease;
+        }
+
+        @keyframes appFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ---- Toast: aksen gradient di tepi kiri ---- */
+        .toast-item {
+            border-left: 3px solid #1DB954;
+        }
+
+        /* ---- Skeleton shimmer utk loading state ---- */
+        .skeleton-shimmer {
+            position: relative;
+            overflow: hidden;
+            background: rgba(120, 120, 120, 0.15);
+        }
+
+        .skeleton-shimmer::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            animation: shimmerSweep 1.4s infinite;
+        }
+
+        @keyframes shimmerSweep {
+            100% {
+                transform: translateX(100%);
+            }
+        }
     </style>
 </head>
 
@@ -273,9 +1078,9 @@
                 </svg>
                 <span class="text-xl font-bold">MiniPlayer</span>
             </div>
-            <nav class="space-y-4 sidebar-nav">
-                <button type="button" onclick="showWelcome()"
-                    class="flex items-center gap-3 font-semibold hover:text-spotify-green transition w-full text-left"
+            <nav class="space-y-2 sidebar-nav">
+                <button type="button" id="navHomeBtn" onclick="showWelcome()"
+                    class="nav-btn nav-active flex items-center gap-3 font-semibold w-full text-left"
                     aria-label="Beranda">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
@@ -283,17 +1088,18 @@
                     </svg>
                     Beranda
                 </button>
-                <button type="button" onclick="toggleQueuePanel()"
-                    class="flex items-center gap-3 font-semibold hover:text-spotify-green transition w-full text-left"
+                <button type="button" id="navQueueBtn" onclick="toggleQueuePanel()"
+                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left"
                     aria-label="Buka Antrian">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
                             d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" />
                     </svg>
                     Antrian
+                    <span id="queueCountBadge" class="ml-auto pill-badge hidden">0</span>
                 </button>
-                <button type="button" onclick="showFavorites()"
-                    class="flex items-center gap-3 font-semibold hover:text-spotify-green transition w-full text-left"
+                <button type="button" id="navFavoritesBtn" onclick="showFavorites()"
+                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left"
                     aria-label="Lagu Favorit">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
@@ -301,8 +1107,17 @@
                     </svg>
                     Favorit
                 </button>
-                <button type="button" onclick="window.location.href='./settings.html'"
-                    class="flex items-center gap-3 font-semibold hover:text-spotify-green transition w-full text-left"
+                <button type="button" id="navPlaylistsBtn" onclick="showPlaylists()"
+                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left"
+                    aria-label="Playlist Saya">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
+                    </svg>
+                    Playlist
+                </button>
+                <button type="button" id="navSettingsBtn" onclick="window.location.href='./settings.html'"
+                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left"
                     aria-label="Pengaturan">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
@@ -310,9 +1125,29 @@
                     </svg>
                     Pengaturan
                 </button>
+                <button type="button" id="navShortcutsBtn" onclick="toggleShortcutsModal()"
+                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left"
+                    aria-label="Pintasan Keyboard">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Bantuan
+                </button>
             </nav>
             <div class="mt-auto pt-6 pb-2 border-t border-gray-300 dark:border-gray-800">
                 <!-- Settings moved to global settings page; no theme toggle here anymore -->
+                <div class="flex items-center gap-2 mb-3">
+                    <button type="button" onclick="exportBackup()" data-tooltip="Simpan favorit, playlist & riwayat ke file"
+                        class="flex-1 text-xs font-semibold px-2 py-2 rounded-xl bg-gray-100 dark:bg-spotify-hover hover:bg-spotify-green hover:text-white transition">⬇️
+                        Ekspor</button>
+                    <button type="button" onclick="document.getElementById('importFileInput').click()"
+                        data-tooltip="Pulihkan dari file backup"
+                        class="flex-1 text-xs font-semibold px-2 py-2 rounded-xl bg-gray-100 dark:bg-spotify-hover hover:bg-spotify-green hover:text-white transition">⬆️
+                        Impor</button>
+                    <input type="file" id="importFileInput" accept="application/json" class="hidden"
+                        onchange="importBackup(event)">
+                </div>
                 <a href="https://github.com/this-repo" target="_blank" rel="noopener noreferrer"
                     class="flex items-center gap-3 font-semibold hover:text-spotify-green transition w-full text-left">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -345,6 +1180,7 @@
                                     d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                             </svg>
                         </button>
+                        <div id="searchSuggestions" class="hidden"></div>
                     </div>
                     <div class="flex items-center gap-2">
                         <!-- Mobile more menu (ellipsis) contains Queue and Settings. Theme control moved to settings.html -->
@@ -370,6 +1206,9 @@
                                     id="mobileMenuQueue">Antrian</button>
                                 <button type="button"
                                     class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-spotify-hover"
+                                    id="mobileMenuPlaylists">Playlist</button>
+                                <button type="button"
+                                    class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-spotify-hover"
                                     id="mobileMenuSettings">Pengaturan</button>
                             </div>
                         </div>
@@ -383,14 +1222,21 @@
 
             <div class="p-4 md:p-6 pb-40 md:pb-32 max-w-7xl mx-auto">
 
-                <div id="welcomeSection">
-                    <h1 class="text-2xl md:text-3xl font-bold mb-1 md:mb-2">Selamat Datang 👋</h1>
+                <div id="welcomeSection" class="relative">
+                    <div class="radial-glow w-72 h-72 -top-16 -left-16" aria-hidden="true"></div>
+                    <h1 class="text-2xl md:text-3xl font-bold mb-1 md:mb-2 relative">Selamat Datang 👋</h1>
                     <p class="text-xs md:text-sm text-gray-600 dark:text-spotify-light mb-6">Cari atau pilih lagu
                         favoritmu dari daftar di bawah.</p>
 
                     <div id="recentlyPlayedSection" class="mb-8 hidden">
                         <h2 class="text-lg md:text-xl font-bold mb-4">🕒 Baru Didengar</h2>
                         <div id="recentlyPlayedList"
+                            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"></div>
+                    </div>
+
+                    <div id="mostPlayedSection" class="mb-8 hidden">
+                        <h2 class="text-lg md:text-xl font-bold mb-4">🔥 Paling Sering Diputar</h2>
+                        <div id="mostPlayedList"
                             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4"></div>
                     </div>
 
@@ -413,10 +1259,25 @@
                 </div>
 
                 <div id="musicListSection" class="hidden">
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                         <h2 class="text-lg md:text-xl font-bold">Daftar Lagu</h2>
-                        <button type="button" onclick="showWelcome()"
-                            class="text-sm text-spotify-green hover:underline">Kembali</button>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="playAllSongs(musicFilteredList)"
+                                class="text-xs md:text-sm bg-spotify-green text-white font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">▶
+                                Putar Semua</button>
+                            <button type="button" onclick="shufflePlayAllSongs(musicFilteredList)"
+                                class="text-xs md:text-sm bg-gray-200 dark:bg-spotify-hover font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">🔀
+                                Acak</button>
+                            <button type="button" onclick="showWelcome()"
+                                class="text-sm text-spotify-green hover:underline">Kembali</button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+                        <div id="musicGenreChips" class="flex flex-wrap gap-2 flex-1"></div>
+                        <select id="musicYearFilter" onchange="setMusicYearFilter(this.value)"
+                            class="text-xs px-3 py-1.5 rounded-full bg-gray-200 dark:bg-spotify-hover border-none focus:ring-2 focus:ring-spotify-green">
+                            <option value="">Semua Tahun</option>
+                        </select>
                     </div>
                     <div id="musicSongList" class="space-y-1"></div>
                     <div id="musicPagination" class="mt-4 hidden">
@@ -434,17 +1295,97 @@
                 </div>
 
                 <div id="favoritesSection" class="hidden">
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                         <h2 class="text-lg md:text-xl font-bold">❤️ Lagu Favorit</h2>
-                        <span id="favCount" class="text-xs md:text-sm text-gray-600 dark:text-spotify-light"></span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="playAllSongs(favorites)"
+                                class="text-xs md:text-sm bg-spotify-green text-white font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">▶
+                                Putar Semua</button>
+                            <button type="button" onclick="shufflePlayAllSongs(favorites)"
+                                class="text-xs md:text-sm bg-gray-200 dark:bg-spotify-hover font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">🔀
+                                Acak</button>
+                            <span id="favCount" class="text-xs md:text-sm text-gray-600 dark:text-spotify-light"></span>
+                        </div>
                     </div>
                     <div id="favoritesList" class="space-y-1"></div>
                 </div>
 
-                <div id="loadingState" class="hidden text-center py-12">
-                    <div class="inline-block w-8 h-8 border-2 border-spotify-green border-t-transparent rounded-full animate-spin"
-                        aria-hidden="true"></div>
-                    <p class="mt-4 text-sm text-gray-600 dark:text-spotify-light">Mencari lagu...</p>
+                <div id="playlistsSection" class="hidden">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                        <h2 class="text-lg md:text-xl font-bold">📀 Playlist Saya</h2>
+                        <button type="button" onclick="createPlaylistPrompt()"
+                            class="text-xs md:text-sm bg-spotify-green text-white font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">+
+                            Buat Playlist</button>
+                    </div>
+                    <div id="playlistsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+                    </div>
+                </div>
+
+                <div id="playlistDetailSection" class="hidden">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                        <div class="min-w-0">
+                            <button type="button" onclick="showPlaylists()"
+                                class="text-xs text-spotify-green hover:underline mb-1">← Kembali ke Playlist</button>
+                            <h2 id="playlistDetailTitle" class="text-lg md:text-xl font-bold truncate">Playlist</h2>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="playAllPlaylist()"
+                                class="text-xs md:text-sm bg-spotify-green text-white font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">▶
+                                Putar Semua</button>
+                            <button type="button" onclick="shufflePlaylist()"
+                                class="text-xs md:text-sm bg-gray-200 dark:bg-spotify-hover font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">🔀
+                                Acak</button>
+                            <button type="button" onclick="deletePlaylist()"
+                                class="text-xs md:text-sm text-red-500 hover:text-red-600 font-semibold px-3 py-1.5 rounded-full hover:bg-red-500/10 transition">🗑
+                                Hapus</button>
+                        </div>
+                    </div>
+                    <div id="playlistDetailList" class="space-y-1"></div>
+                </div>
+
+                <div id="artistSection" class="hidden">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                        <div class="min-w-0">
+                            <button type="button" onclick="showWelcome()"
+                                class="text-xs text-spotify-green hover:underline mb-1">← Kembali</button>
+                            <h2 id="artistSectionTitle" class="text-lg md:text-xl font-bold truncate">Artis</h2>
+                            <p id="artistSectionCount" class="text-xs text-gray-500 dark:text-spotify-light"></p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="playAllArtistSongs()"
+                                class="text-xs md:text-sm bg-spotify-green text-white font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">▶
+                                Putar Semua</button>
+                            <button type="button" onclick="shuffleArtistSongs()"
+                                class="text-xs md:text-sm bg-gray-200 dark:bg-spotify-hover font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">🔀
+                                Acak</button>
+                        </div>
+                    </div>
+                    <div id="artistSongList" class="space-y-1"></div>
+                </div>
+
+                <div id="loadingState" class="hidden text-center py-6 space-y-2 max-w-2xl mx-auto">
+                    <div class="flex items-center gap-3 p-2.5 rounded-xl">
+                        <div class="skeleton-shimmer w-11 h-11 rounded-lg flex-shrink-0"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="skeleton-shimmer h-3 rounded w-2/3"></div>
+                            <div class="skeleton-shimmer h-2.5 rounded w-1/3"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-2.5 rounded-xl">
+                        <div class="skeleton-shimmer w-11 h-11 rounded-lg flex-shrink-0"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="skeleton-shimmer h-3 rounded w-1/2"></div>
+                            <div class="skeleton-shimmer h-2.5 rounded w-1/4"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-2.5 rounded-xl">
+                        <div class="skeleton-shimmer w-11 h-11 rounded-lg flex-shrink-0"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="skeleton-shimmer h-3 rounded w-3/5"></div>
+                            <div class="skeleton-shimmer h-2.5 rounded w-2/5"></div>
+                        </div>
+                    </div>
+                    <p class="pt-2 text-sm text-gray-600 dark:text-spotify-light">🔎 Mencari lagu...</p>
                 </div>
                 <div id="emptyState" class="hidden text-center py-12">
                     <p class="text-gray-600 dark:text-spotify-light text-base">Tidak ada hasil ditemukan</p>
@@ -481,10 +1422,94 @@
         </div>
     </div>
 
+    <div id="shortcutsModal"
+        class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-[60] hidden items-center justify-center p-4">
+        <div
+            class="modal-pop bg-white dark:bg-spotify-card border border-gray-300 dark:border-gray-800 rounded-2xl p-5 md:p-6 w-full max-w-sm relative shadow-2xl">
+            <button type="button" onclick="toggleShortcutsModal()" aria-label="Tutup"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </button>
+            <h3 class="text-lg font-bold mb-4">⌨️ Pintasan Keyboard</h3>
+            <ul class="space-y-2.5 text-sm">
+                <li class="flex items-center justify-between"><span class="text-gray-600 dark:text-spotify-light">Putar
+                        / Jeda</span><span class="pill-badge">Space</span></li>
+                <li class="flex items-center justify-between"><span
+                        class="text-gray-600 dark:text-spotify-light">Lagu Selanjutnya</span><span
+                        class="pill-badge">→</span></li>
+                <li class="flex items-center justify-between"><span
+                        class="text-gray-600 dark:text-spotify-light">Lagu Sebelumnya</span><span
+                        class="pill-badge">←</span></li>
+                <li class="flex items-center justify-between"><span class="text-gray-600 dark:text-spotify-light">Fokus
+                        Pencarian</span><span class="pill-badge">Ctrl + F</span></li>
+                <li class="flex items-center justify-between"><span
+                        class="text-gray-600 dark:text-spotify-light">Tutup Panel</span><span
+                        class="pill-badge">Esc</span></li>
+                <li class="flex items-center justify-between"><span
+                        class="text-gray-600 dark:text-spotify-light">Bantuan Ini</span><span
+                        class="pill-badge">?</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="sleepTimerModal"
+        class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-[60] hidden items-center justify-center p-4">
+        <div
+            class="modal-pop bg-white dark:bg-spotify-card border border-gray-300 dark:border-gray-800 rounded-2xl p-5 md:p-6 w-full max-w-sm relative shadow-2xl">
+            <button type="button" onclick="toggleSleepTimerModal()" aria-label="Tutup"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </button>
+            <h3 class="text-lg font-bold mb-1">⏰ Timer Tidur</h3>
+            <p id="sleepTimerStatus" class="text-xs text-gray-600 dark:text-spotify-light mb-4">Musik akan berhenti
+                otomatis setelah waktu yang dipilih.</p>
+            <div class="grid grid-cols-3 gap-2">
+                <button type="button" onclick="setSleepTimer(15)"
+                    class="py-2 rounded-xl bg-gray-100 dark:bg-spotify-hover hover:bg-spotify-green hover:text-white transition text-sm font-medium">15
+                    menit</button>
+                <button type="button" onclick="setSleepTimer(30)"
+                    class="py-2 rounded-xl bg-gray-100 dark:bg-spotify-hover hover:bg-spotify-green hover:text-white transition text-sm font-medium">30
+                    menit</button>
+                <button type="button" onclick="setSleepTimer(60)"
+                    class="py-2 rounded-xl bg-gray-100 dark:bg-spotify-hover hover:bg-spotify-green hover:text-white transition text-sm font-medium">60
+                    menit</button>
+            </div>
+            <button type="button" onclick="clearSleepTimer(true)"
+                class="mt-3 w-full py-2 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition text-sm font-semibold">Matikan
+                Timer</button>
+        </div>
+    </div>
+
+    <div id="addToPlaylistModal"
+        class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-[60] hidden items-center justify-center p-4">
+        <div
+            class="modal-pop bg-white dark:bg-spotify-card border border-gray-300 dark:border-gray-800 rounded-2xl p-5 md:p-6 w-full max-w-sm relative shadow-2xl">
+            <button type="button" onclick="closeAddToPlaylistModal()" aria-label="Tutup"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+            </button>
+            <h3 class="text-lg font-bold mb-1">📀 Tambah ke Playlist</h3>
+            <p class="text-xs text-gray-600 dark:text-spotify-light mb-4">Pilih playlist, atau buat yang baru.</p>
+            <div id="addToPlaylistList" class="space-y-1 max-h-60 overflow-y-auto"></div>
+            <button type="button" onclick="createPlaylistFromAddModal()"
+                class="mt-3 w-full py-2 rounded-xl bg-spotify-green text-white font-semibold hover:scale-[1.02] transition text-sm">+
+                Buat Playlist Baru</button>
+        </div>
+    </div>
+
     <div id="detailModal"
         class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div
-            class="bg-white dark:bg-spotify-card border border-gray-300 dark:border-gray-800 rounded-2xl p-5 md:p-6 w-full max-w-md relative shadow-2xl transition-colors duration-300">
+            class="modal-pop bg-white dark:bg-spotify-card border border-gray-300 dark:border-gray-800 rounded-2xl p-5 md:p-6 w-full max-w-md relative shadow-2xl transition-colors duration-300">
             <button type="button" onclick="closeDetailModal()" aria-label="Tutup Detail"
                 class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -502,7 +1527,10 @@
                     </svg>
                 </div>
                 <h3 id="modalTitle" class="text-xl font-bold truncate w-full mb-1">-</h3>
-                <p id="modalArtist" class="text-spotify-green text-sm font-medium mb-4 truncate w-full">-</p>
+                <p id="modalArtist"
+                    class="text-spotify-green text-sm font-medium mb-4 truncate w-full cursor-pointer hover:underline"
+                    onclick="closeDetailModal(); showArtistFromEncoded(encodeURIComponent(this.textContent || ''))">-
+                </p>
                 <div
                     class="w-full bg-gray-100 dark:bg-spotify-darker/60 rounded-lg p-3 grid grid-cols-2 gap-3 text-left text-xs md:text-sm">
                     <div><span class="text-gray-500 block">Album</span><span id="modalAlbum"
@@ -520,6 +1548,17 @@
                 <button type="button" onclick="addCurrentSongToQueueFromModal()"
                     class="mt-2 w-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2 rounded-full transition">Tambah
                     ke Antrian</button>
+                <button type="button" onclick="openAddToPlaylistModal()"
+                    class="mt-2 w-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2 rounded-full transition">Tambah
+                    ke Playlist</button>
+                <button type="button" onclick="shareCurrentModalSong()"
+                    class="mt-2 w-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2 rounded-full transition flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8.684 13.342a3 3 0 100-2.684m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    Bagikan
+                </button>
                 <button type="button" id="modalLikeBtn"
                     class="mt-2 w-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 font-bold py-2 rounded-full transition flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -534,7 +1573,9 @@
 
     <div id="nowPlayingOverlay"
         class="fixed inset-0 z-50 hidden flex-col items-center justify-center p-6 bg-white/95 dark:bg-black/90 backdrop-blur-xl transition-colors duration-300">
-        <div class="relative z-10 flex flex-col items-center max-w-lg w-full">
+        <div class="np-glow-blob w-96 h-96 bg-spotify-green/30 -top-10 -left-10" aria-hidden="true"></div>
+        <div class="np-glow-blob w-80 h-80 bg-blue-500/25 bottom-0 right-0" aria-hidden="true"></div>
+        <div class="np-content-inner relative z-10 flex flex-col items-center max-w-lg w-full">
             <button type="button" onclick="closeNowPlaying()" aria-label="Tutup Player Layar Penuh"
                 class="absolute -top-10 right-0 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -546,10 +1587,27 @@
             <div id="npCover"
                 class="w-56 h-56 md:w-72 md:h-72 rounded-2xl shadow-2xl overflow-hidden bg-gray-200 dark:bg-gray-800 relative">
                 <img id="npCoverImg" src="" alt="cover" class="w-full h-full object-cover spin-slow spin-paused" />
+                <div id="npHeartOverlay"
+                    class="hidden absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <svg class="w-24 h-24 text-white drop-shadow-2xl" fill="currentColor" viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <path
+                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                </div>
             </div>
+            <p class="swipe-hint text-[11px] text-gray-500 dark:text-spotify-light mt-2 md:hidden">← Geser untuk
+                ganti lagu • Ketuk 2x untuk suka →</p>
 
             <h2 id="npTitle" class="text-2xl font-bold mt-6 truncate w-full text-center">-</h2>
-            <p id="npArtist" class="text-spotify-green text-lg truncate w-full text-center">-</p>
+            <p id="npArtist" class="text-spotify-green text-lg truncate w-full text-center cursor-pointer hover:underline"
+                onclick="event.stopPropagation(); showArtistFromEncoded(encodeURIComponent(this.textContent || ''))">-</p>
+            <p id="npNextUp" class="text-xs text-gray-500 dark:text-spotify-light mt-1 truncate w-full text-center">
+            </p>
+            <div id="npVisualizer" class="np-vis paused h-5 mt-3" aria-hidden="true">
+                <span style="height:6px"></span><span style="height:14px"></span><span style="height:9px"></span><span
+                    style="height:16px"></span><span style="height:7px"></span>
+            </div>
 
             <div class="w-full mt-4">
                 <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-spotify-light">
@@ -625,11 +1683,18 @@
                     </svg>
                 </button>
             </div>
+
+            <div class="flex items-center gap-3 mt-5">
+                <button type="button" id="npSpeedBtn" onclick="cyclePlaybackSpeed()" aria-label="Kecepatan Putar"
+                    class="pill-badge" data-tooltip="Kecepatan putar">1x</button>
+                <button type="button" id="npSleepBtn" onclick="toggleSleepTimerModal()" aria-label="Timer Tidur"
+                    class="pill-badge" data-tooltip="Timer tidur">⏰ Timer</button>
+            </div>
         </div>
     </div>
 
     <div id="playerBar"
-        class="fixed bottom-0 left-0 right-0 bg-white dark:bg-spotify-card border-t border-gray-300 dark:border-gray-800 px-3 md:px-6 py-2 md:py-3 z-40 transform translate-y-full transition-all duration-300">
+        class="floating fixed bottom-2 left-2 right-2 md:bottom-4 md:left-4 md:right-4 bg-white/95 dark:bg-spotify-card/95 backdrop-blur-md border border-gray-200 dark:border-gray-800 px-3 md:px-6 py-2 md:py-3 z-40 transform translate-y-[150%] transition-all duration-300 shadow-xl">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-2 md:gap-4 max-w-7xl mx-auto">
 
             <div class="flex items-center gap-3 w-full sm:w-1/4 min-w-0 justify-between sm:justify-start">
@@ -735,8 +1800,8 @@
             </div>
 
             <div class="hidden sm:flex items-center justify-end gap-2 w-1/4">
-                <button type="button" id="volumeBtn" aria-label="Volume"
-                    class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                <button type="button" id="volumeBtn" onclick="toggleMute()" aria-label="Volume"
+                    class="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white button-transition"
                     data-tooltip="Volume">
                     <svg id="volumeIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
@@ -771,10 +1836,32 @@
         const RECENT_MAX = 20;
         let favorites = [];
         const PLAYBACK_STATE_KEY = 'miniPlayerPlaybackState';
+
+        // New feature state
+        const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 1.75, 2, 0.75];
+        let playbackSpeedIndex = 0;
+        let sleepTimerId = null;
+        let sleepTimerEndAt = null;
+        let sleepTimerCountdownId = null;
+        let lastVolumeBeforeMute = 80;
+        let isMuted = false;
         // Pagination for full music list
         let musicPageSize = 20;
         let musicCurrentPage = 1;
         let musicTotalPages = 1;
+
+        // Playlists & search history (v2 features)
+        let playlists = [];
+        let activePlaylistId = null;
+        let activePlaylistSongs = [];
+        let searchHistory = [];
+        const SEARCH_HISTORY_MAX = 8;
+        let playCounts = {};
+
+        // Music list filters (genre/year)
+        let musicFilteredList = [];
+        let musicFilterGenre = null;
+        let musicFilterYear = null;
 
         // DOM refs
         const searchInput = document.getElementById('searchInput');
@@ -847,6 +1934,32 @@
             );
         }
 
+        // ========== MODAL ANIMATION HELPERS ==========
+        function animateModalOpen(modalEl) {
+            if (!modalEl) return;
+            const card = modalEl.querySelector('.modal-pop');
+            if (card) {
+                card.classList.remove('modal-pop', 'modal-pop-out');
+                void card.offsetWidth; // restart animasi
+                card.classList.add('modal-pop');
+            }
+        }
+
+        function animateModalClose(modalEl, extraHiddenClasses, onDone) {
+            if (!modalEl) { if (onDone) onDone(); return; }
+            const card = modalEl.querySelector('.modal-pop');
+            if (card) {
+                card.classList.remove('modal-pop');
+                card.classList.add('modal-pop-out');
+            }
+            setTimeout(() => {
+                modalEl.classList.add('hidden');
+                if (extraHiddenClasses) extraHiddenClasses.forEach(c => modalEl.classList.remove(c));
+                if (card) card.classList.remove('modal-pop-out');
+                if (onDone) onDone();
+            }, 180);
+        }
+
         function getSafeImageUrl(url) {
             if (!url) return '';
             try {
@@ -879,6 +1992,32 @@
 
         // ========== TEMA ==========
         let currentTheme = localStorage.getItem('theme') || 'dark';
+        const THEME_MODE_KEY = 'themeMode';
+
+        function getSystemPrefersDark() {
+            return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+
+        function initThemeMode() {
+            const savedTheme = localStorage.getItem('theme');
+            const savedMode = localStorage.getItem(THEME_MODE_KEY);
+            if (!savedTheme && !savedMode) {
+                // Pengguna baru: ikuti tema sistem secara otomatis
+                localStorage.setItem(THEME_MODE_KEY, 'auto');
+            }
+            if ((localStorage.getItem(THEME_MODE_KEY) || 'auto') === 'auto') {
+                currentTheme = getSystemPrefersDark() ? 'dark' : 'light';
+            }
+            if (window.matchMedia) {
+                try {
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                        if ((localStorage.getItem(THEME_MODE_KEY) || 'auto') === 'auto') {
+                            applyTheme(e.matches ? 'dark' : 'light');
+                        }
+                    });
+                } catch (err) { /* older browsers: abaikan */ }
+            }
+        }
 
         function applyTheme(theme) {
             const isLight = theme === 'light';
@@ -972,7 +2111,7 @@
 
         function updatePlayerBarFromSong(song) {
             if (!song) return;
-            playerBar.classList.remove('translate-y-full');
+            playerBar.classList.remove('translate-y-[150%]');
             playerTitle.textContent = song.title || '-';
             playerArtist.textContent = song.artist || '-';
 
@@ -1051,6 +2190,10 @@
                 renderSongList(currentSongList);
             } else if (!favoritesSection.classList.contains('hidden')) {
                 renderFavorites();
+            } else if (!document.getElementById('playlistDetailSection').classList.contains('hidden')) {
+                renderSongList(activePlaylistSongs, 'playlistDetailList');
+            } else if (!document.getElementById('artistSection').classList.contains('hidden')) {
+                renderSongList(activeArtistSongs, 'artistSongList');
             }
             const modalLikeText = document.getElementById('modalLikeText');
             if (modalLikeText && !document.getElementById('detailModal').classList.contains('hidden')) {
@@ -1060,9 +2203,10 @@
         }
 
         function showFavorites() {
-            welcomeSection.classList.add('hidden');
-            searchResults.classList.add('hidden');
+            hideAllSections();
             favoritesSection.classList.remove('hidden');
+            favoritesSection.classList.add('fade-in-section');
+            setActiveNav('navFavoritesBtn');
             renderFavorites();
         }
 
@@ -1076,7 +2220,7 @@
             favoritesList.innerHTML = favorites.map((song, index) => {
                 const safeCover = getSafeImageUrl(song.cover);
                 return `
-                <div class="song-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group hover:bg-gray-200 dark:hover:bg-white/10" onclick="playFavorite(${index})">
+                <div class="song-item stagger-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group hover:bg-gray-200 dark:hover:bg-white/10" style="animation-delay:${Math.min(index, 20) * 0.03}s" onclick="playFavorite(${index})">
                     <div class="flex items-center gap-3 min-w-0 flex-1">
                         <span class="text-xs text-gray-500 dark:text-spotify-light w-4 text-center">${index + 1}</span>
                         <div class="w-9 h-9 rounded bg-gray-200 dark:bg-gray-800 flex-shrink-0 overflow-hidden">
@@ -1084,7 +2228,7 @@
                         </div>
                         <div class="min-w-0">
                             <p class="text-sm font-medium truncate text-gray-900 dark:text-white">${escapeHTML(song.title)}</p>
-                            <p class="text-xs text-gray-600 dark:text-spotify-light truncate">${escapeHTML(song.artist)}</p>
+                            <p class="text-xs text-gray-600 dark:text-spotify-light truncate hover:underline hover:text-spotify-green w-fit" onclick="event.stopPropagation(); showArtistFromEncoded('${encodeURIComponent(song.artist || '')}')">${escapeHTML(song.artist)}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
@@ -1140,14 +2284,14 @@
             recentlyPlayedList.innerHTML = recentlyPlayed.map((song, i) => {
                 const safeCover = getSafeImageUrl(song.cover);
                 return `
-                <div class="song-item flex items-center justify-between bg-white dark:bg-spotify-card hover:bg-gray-200 dark:hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group shadow-sm dark:shadow-none" onclick="playRecent(${i})">
+                <div class="song-item stagger-item flex items-center justify-between bg-white dark:bg-spotify-card hover:bg-gray-200 dark:hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group shadow-sm dark:shadow-none" style="animation-delay:${i * 0.04}s" onclick="playRecent(${i})">
                     <div class="flex items-center gap-3 min-w-0 flex-1">
                         <div class="w-11 h-11 rounded bg-gray-200 dark:bg-gray-800 flex-shrink-0 overflow-hidden">
                             ${safeCover ? `<img src="${escapeHTML(safeCover)}" alt="${escapeHTML(song.title || song.artist || 'cover')}" loading="lazy" class="w-full h-full object-cover">` : ''}
                         </div>
                         <div class="min-w-0 pr-2">
                             <p class="text-xs md:text-sm font-medium text-gray-900 dark:text-white truncate">${escapeHTML(song.title)}</p>
-                            <p class="text-[11px] text-gray-600 dark:text-spotify-light truncate">${escapeHTML(song.artist)}</p>
+                            <p class="text-[11px] text-gray-600 dark:text-spotify-light truncate hover:underline hover:text-spotify-green" onclick="event.stopPropagation(); showArtistFromEncoded('${encodeURIComponent(song.artist || '')}')">${escapeHTML(song.artist)}</p>
                         </div>
                     </div>
                     <span class="text-xs text-gray-500 dark:text-spotify-light hidden sm:inline">${getSongDurationText(song)}</span>
@@ -1160,6 +2304,75 @@
             if (!song) return;
             currentSongList = [song];
             playSong(0);
+        }
+
+        // ========== MOST PLAYED (paling sering diputar) ==========
+        function loadPlayCounts() {
+            try {
+                const data = localStorage.getItem('playCounts');
+                playCounts = data ? JSON.parse(data) : {};
+            } catch { playCounts = {}; }
+        }
+
+        function savePlayCounts() {
+            localStorage.setItem('playCounts', JSON.stringify(playCounts));
+        }
+
+        function incrementPlayCount(song) {
+            if (!song || !song.url) return;
+            playCounts[song.url] = (playCounts[song.url] || 0) + 1;
+            savePlayCounts();
+        }
+
+        function getMostPlayed(limit = 8) {
+            const entries = Object.entries(playCounts).filter(([, count]) => count > 0);
+            entries.sort((a, b) => b[1] - a[1]);
+            const result = [];
+            for (const [url] of entries) {
+                const song = defaultSongsList.find(s => s.url === url) ||
+                    recentlyPlayed.find(s => s.url === url) ||
+                    favorites.find(s => s.url === url);
+                if (song) result.push(song);
+                if (result.length >= limit) break;
+            }
+            return result;
+        }
+
+        function renderMostPlayed() {
+            const section = document.getElementById('mostPlayedSection');
+            const list = document.getElementById('mostPlayedList');
+            if (!section || !list) return;
+            const topSongs = getMostPlayed(8);
+            if (topSongs.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            section.classList.remove('hidden');
+            list.innerHTML = topSongs.map((song, i) => {
+                const safeCover = getSafeImageUrl(song.cover);
+                return `
+                <div class="song-item stagger-item flex items-center justify-between bg-white dark:bg-spotify-card hover:bg-gray-200 dark:hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group shadow-sm dark:shadow-none" style="animation-delay:${i * 0.04}s" onclick="playMostPlayed(${i})">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-11 h-11 rounded bg-gray-200 dark:bg-gray-800 flex-shrink-0 overflow-hidden relative">
+                            ${safeCover ? `<img src="${escapeHTML(safeCover)}" alt="${escapeHTML(song.title || song.artist || 'cover')}" loading="lazy" class="w-full h-full object-cover">` : ''}
+                            <span class="absolute bottom-0 right-0 bg-spotify-green text-white text-[9px] font-bold px-1 rounded-tl">${playCounts[song.url] || 0}x</span>
+                        </div>
+                        <div class="min-w-0 pr-2">
+                            <p class="text-xs md:text-sm font-medium text-gray-900 dark:text-white truncate">${escapeHTML(song.title)}</p>
+                            <p class="text-[11px] text-gray-600 dark:text-spotify-light truncate hover:underline hover:text-spotify-green" onclick="event.stopPropagation(); showArtistFromEncoded('${encodeURIComponent(song.artist || '')}')">${escapeHTML(song.artist)}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-spotify-light hidden sm:inline">${getSongDurationText(song)}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function playMostPlayed(index) {
+            const topSongs = getMostPlayed(8);
+            const song = topSongs[index];
+            if (!song) return;
+            currentSongList = topSongs;
+            playSong(index);
         }
 
         // ========== QUEUE ==========
@@ -1175,7 +2388,20 @@
             }
         }
 
+        function updateQueueBadge() {
+            const badge = document.getElementById('queueCountBadge');
+            if (!badge) return;
+            if (queue.length > 0) {
+                badge.textContent = queue.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
         function renderQueue() {
+            updateQueueBadge();
+            updateNextUpLabel();
             if (queue.length === 0) {
                 queueList.innerHTML = '<p class="text-gray-500 dark:text-spotify-light text-sm">Antrian kosong</p>';
                 if (queueSortable) queueSortable.destroy();
@@ -1265,6 +2491,7 @@
                 case 'default': list = defaultSongsList; break;
                 case 'current': list = currentSongList; break;
                 case 'favorites': list = favorites; break;
+                case 'playlist': list = activePlaylistSongs; break;
                 default: list = currentSongList;
             }
             return list && list[index] ? list[index] : null;
@@ -1273,8 +2500,8 @@
         // ========== NOW PLAYING ==========
         function openNowPlaying() {
             if (!audio.src) return;
-            nowPlayingOverlay.classList.remove('hidden');
-            nowPlayingOverlay.classList.add('flex');
+            nowPlayingOverlay.classList.remove('hidden', 'overlay-exit');
+            nowPlayingOverlay.classList.add('flex', 'overlay-anim');
             const song = currentSongList[currentSongIndex];
             if (song) {
                 npTitle.textContent = song.title;
@@ -1290,11 +2517,16 @@
             npDuration.textContent = durationEl.textContent;
             updateNpPlayPause();
             updateNpShuffleRepeat();
+            updateNextUpLabel();
         }
 
         function closeNowPlaying() {
-            nowPlayingOverlay.classList.add('hidden');
-            nowPlayingOverlay.classList.remove('flex');
+            nowPlayingOverlay.classList.remove('overlay-anim');
+            nowPlayingOverlay.classList.add('overlay-exit');
+            setTimeout(() => {
+                nowPlayingOverlay.classList.add('hidden');
+                nowPlayingOverlay.classList.remove('flex', 'overlay-exit');
+            }, 200);
         }
 
         function updateNpPlayPause() {
@@ -1321,7 +2553,7 @@
             const song = currentSongList[index];
             if (!song) return;
 
-            playerBar.classList.remove('translate-y-full');
+            playerBar.classList.remove('translate-y-[150%]');
             playerTitle.textContent = song.title;
             playerArtist.textContent = song.artist;
 
@@ -1335,10 +2567,12 @@
             updateLikeIcon(song);
 
             audio.src = song.url;
+            audio.playbackRate = PLAYBACK_SPEEDS[playbackSpeedIndex];
 
             audio.play().then(() => {
                 setPlayingState(true);
                 addToRecentlyPlayed(song);
+                incrementPlayCount(song);
                 updateMediaSession(song);
 
                 if ('Notification' in window && Notification.permission === 'granted') {
@@ -1356,6 +2590,7 @@
                     else npCoverImg.style.display = 'none';
                     updateNpPlayPause();
                 }
+                updateNextUpLabel();
             }).catch((err) => {
                 if (err.name === 'AbortError') {
                     console.warn("Playback interrupted by a new track.");
@@ -1370,10 +2605,15 @@
             if (!welcomeSection.classList.contains('hidden')) {
                 renderQuickPicks(defaultSongsList);
                 renderRecentlyPlayed();
+                renderMostPlayed();
             } else if (!searchResults.classList.contains('hidden')) {
                 renderSongList(currentSongList);
             } else if (!favoritesSection.classList.contains('hidden')) {
                 renderFavorites();
+            } else if (!document.getElementById('playlistDetailSection').classList.contains('hidden')) {
+                renderSongList(activePlaylistSongs, 'playlistDetailList');
+            } else if (!document.getElementById('artistSection').classList.contains('hidden')) {
+                renderSongList(activeArtistSongs, 'artistSongList');
             }
         }
 
@@ -1389,27 +2629,54 @@
 
         function setPlayingState(playing) {
             isPlaying = playing;
+            const npCoverEl = document.getElementById('npCover');
+            const npVisEl = document.getElementById('npVisualizer');
             if (playing) {
                 playIcon.classList.add('hidden');
                 pauseIcon.classList.remove('hidden');
                 mobilePlayIcon.classList.add('hidden');
                 mobilePauseIcon.classList.remove('hidden');
+                bounceIcon(pauseIcon);
+                bounceIcon(mobilePauseIcon);
+                if (npCoverEl) npCoverEl.classList.add('now-playing-glow');
+                if (npVisEl) npVisEl.classList.remove('paused');
                 if (!nowPlayingOverlay.classList.contains('hidden')) {
                     npPlayIcon.classList.add('hidden');
                     npPauseIcon.classList.remove('hidden');
                     npCoverImg.classList.remove('spin-paused');
+                    bounceIcon(npPauseIcon);
                 }
             } else {
                 playIcon.classList.remove('hidden');
                 pauseIcon.classList.add('hidden');
                 mobilePlayIcon.classList.remove('hidden');
                 mobilePauseIcon.classList.add('hidden');
+                bounceIcon(playIcon);
+                bounceIcon(mobilePlayIcon);
+                if (npCoverEl) npCoverEl.classList.remove('now-playing-glow');
+                if (npVisEl) npVisEl.classList.add('paused');
                 if (!nowPlayingOverlay.classList.contains('hidden')) {
                     npPlayIcon.classList.remove('hidden');
                     npPauseIcon.classList.add('hidden');
                     npCoverImg.classList.add('spin-paused');
+                    bounceIcon(npPlayIcon);
                 }
             }
+            refreshVisibleLists();
+        }
+
+        function bounceIcon(el) {
+            if (!el) return;
+            el.classList.remove('icon-bounce');
+            void el.offsetWidth; // restart animasi
+            el.classList.add('icon-bounce');
+        }
+
+        function getRandomIndexExcluding(length, excludeIndex) {
+            if (length <= 1) return 0;
+            let idx = Math.floor(Math.random() * length);
+            if (idx === excludeIndex) idx = (idx + 1) % length;
+            return idx;
         }
 
         function nextSong() {
@@ -1426,6 +2693,11 @@
                 playSong(currentSongIndex);
                 return;
             }
+            if (isShuffle && currentSongList.length > 1) {
+                const randIndex = getRandomIndexExcluding(currentSongList.length, currentSongIndex);
+                playSong(randIndex);
+                return;
+            }
             let nextIndex = currentSongIndex + 1;
             if (nextIndex >= currentSongList.length) {
                 if (repeatMode === 1) nextIndex = 0;
@@ -1436,9 +2708,31 @@
 
         function prevSong() {
             if (audio.currentTime > 3) { audio.currentTime = 0; return; }
+            if (isShuffle && currentSongList.length > 1) {
+                const randIndex = getRandomIndexExcluding(currentSongList.length, currentSongIndex);
+                playSong(randIndex);
+                return;
+            }
             let prevIndex = currentSongIndex - 1;
             if (prevIndex < 0) prevIndex = 0;
             playSong(prevIndex);
+        }
+
+        // ========== PLAY ALL / SHUFFLE PLAY ==========
+        function playAllSongs(list) {
+            if (!list || list.length === 0) { showToast('Tidak ada lagu untuk diputar'); return; }
+            currentSongList = [...list];
+            playSong(0);
+        }
+
+        function shufflePlayAllSongs(list) {
+            if (!list || list.length === 0) { showToast('Tidak ada lagu untuk diputar'); return; }
+            currentSongList = [...list];
+            isShuffle = true;
+            document.getElementById('shuffleBtn').style.color = '#1DB954';
+            updateNpShuffleRepeat();
+            const startIndex = Math.floor(Math.random() * currentSongList.length);
+            playSong(startIndex);
         }
 
         // ========== MEDIA SESSION ==========
@@ -1461,11 +2755,80 @@
 
         // ========== SEARCH ==========
         function handleSearch(query) {
+            hideSearchSuggestions();
             if (!query.trim()) { showWelcome(); return; }
             clearSearch.classList.remove('hidden');
             showLoading();
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => searchSongs(query), 400);
+        }
+
+        // ========== SEARCH HISTORY ==========
+        function loadSearchHistory() {
+            try {
+                const data = localStorage.getItem('searchHistory');
+                searchHistory = data ? JSON.parse(data) : [];
+            } catch { searchHistory = []; }
+        }
+
+        function saveSearchHistory() {
+            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        }
+
+        function addSearchHistory(query) {
+            const q = query.trim();
+            if (!q) return;
+            searchHistory = searchHistory.filter(item => item.toLowerCase() !== q.toLowerCase());
+            searchHistory.unshift(q);
+            if (searchHistory.length > SEARCH_HISTORY_MAX) searchHistory = searchHistory.slice(0, SEARCH_HISTORY_MAX);
+            saveSearchHistory();
+        }
+
+        function renderSearchSuggestions() {
+            const box = document.getElementById('searchSuggestions');
+            if (!box) return;
+            if (searchHistory.length === 0) { box.classList.add('hidden'); return; }
+            box.innerHTML = `
+                <div class="flex items-center justify-between px-3 py-2 text-xs text-gray-500 dark:text-spotify-light border-b border-gray-100 dark:border-gray-800">
+                    <span>Pencarian terakhir</span>
+                    <button type="button" onclick="event.stopPropagation(); clearSearchHistory()" class="hover:text-red-500">Hapus</button>
+                </div>` +
+                searchHistory.map(term => `
+                    <div class="search-suggestion-item flex items-center gap-2 px-3 py-2 text-sm" onclick="applySearchSuggestion('${escapeHTML(term).replace(/'/g, "\\'")}')">
+                        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3a9 9 0 00-9 9H1l3.89 3.89.07.14L9 12H6a7 7 0 1 1 2.05 4.95l-1.42 1.42A9 9 0 1 0 13 3zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                        <span class="truncate">${escapeHTML(term)}</span>
+                    </div>
+                `).join('');
+            box.classList.remove('hidden');
+        }
+
+        function applySearchSuggestion(term) {
+            searchInput.value = term;
+            hideSearchSuggestions();
+            handleSearch(term);
+        }
+
+        function hideSearchSuggestions() {
+            const box = document.getElementById('searchSuggestions');
+            if (box) box.classList.add('hidden');
+        }
+
+        function clearSearchHistory() {
+            searchHistory = [];
+            saveSearchHistory();
+            hideSearchSuggestions();
+            showToast('Riwayat pencarian dihapus');
+        }
+
+        // ========== NEXT UP PREVIEW ==========
+        function updateNextUpLabel() {
+            const el = document.getElementById('npNextUp');
+            if (!el) return;
+            let next = null;
+            if (queue.length > 0) next = queue[0];
+            else if (currentSongIndex > -1 && currentSongIndex + 1 < currentSongList.length) next = currentSongList[currentSongIndex + 1];
+            else if (repeatMode === 1 && currentSongList.length > 0) next = currentSongList[0];
+            el.textContent = next ? `Selanjutnya: ${next.title} — ${next.artist}` : '';
         }
 
         async function searchSongs(query) {
@@ -1475,6 +2838,7 @@
 
                 const result = await response.json();
                 currentSongList = result.data || result;
+                addSearchHistory(query);
 
                 if (currentSongList.length === 0) showEmpty();
                 else showResults(currentSongList);
@@ -1491,16 +2855,17 @@
                 const liked = isFavorite(song);
                 const safeCover = getSafeImageUrl(song.cover);
                 return `
-                <div class="song-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group hover:bg-gray-200 dark:hover:bg-white/10 ${currentSongIndex === globalIndex ? 'active' : ''}"
+                <div class="song-item stagger-item flex items-center justify-between px-3 py-2 rounded-md cursor-pointer group hover:bg-gray-200 dark:hover:bg-white/10 ${currentSongIndex === globalIndex ? 'active' : ''}"
+                     style="animation-delay:${Math.min(index, 20) * 0.03}s"
                      onclick="playSong(${globalIndex})">
                     <div class="flex items-center gap-3 min-w-0 flex-1">
-                        <span class="text-xs text-gray-500 dark:text-spotify-light w-4 text-center">${globalIndex + 1}</span>
+                        ${currentSongIndex === globalIndex ? eqIndicatorHTML(globalIndex + 1) : `<span class="text-xs text-gray-500 dark:text-spotify-light w-4 text-center">${globalIndex + 1}</span>`}
                         <div class="w-9 h-9 rounded bg-gray-200 dark:bg-gray-800 flex-shrink-0 overflow-hidden">
                             ${safeCover ? `<img src="${escapeHTML(safeCover)}" alt="${escapeHTML(song.title || song.artist || 'cover')}" loading="lazy" class="w-full h-full object-cover">` : ''}
                         </div>
                         <div class="min-w-0">
                             <p class="text-sm font-medium truncate ${currentSongIndex === globalIndex ? 'text-spotify-green' : 'text-gray-900 dark:text-white'}">${escapeHTML(song.title)}</p>
-                            <p class="text-xs text-gray-600 dark:text-spotify-light truncate">${escapeHTML(song.artist)}</p>
+                            <p class="text-xs text-gray-600 dark:text-spotify-light truncate hover:underline hover:text-spotify-green w-fit" onclick="event.stopPropagation(); showArtistFromEncoded('${encodeURIComponent(song.artist || '')}')">${escapeHTML(song.artist)}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
@@ -1577,7 +2942,8 @@
                 const liked = isFavorite(song);
                 const safeCover = getSafeImageUrl(song.cover);
                 return `
-                <div class="song-item flex items-center justify-between bg-white dark:bg-spotify-card hover:bg-gray-200 dark:hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group shadow-sm dark:shadow-none">
+                <div class="song-item stagger-item flex items-center justify-between bg-white dark:bg-spotify-card hover:bg-gray-200 dark:hover:bg-spotify-hover rounded-lg p-2.5 cursor-pointer group shadow-sm dark:shadow-none"
+                    style="animation-delay:${i * 0.04}s">
                     <div class="flex items-center gap-3 min-w-0 flex-1" onclick="playSongByUrl('${escapeHTML(song.url)}')">
                         <div class="w-11 h-11 rounded bg-gray-200 dark:bg-gray-800 flex-shrink-0 overflow-hidden relative">
                             ${safeCover ? `<img src="${escapeHTML(safeCover)}" alt="${escapeHTML(song.title || song.artist || 'cover')}" loading="lazy" class="w-full h-full object-cover">` :
@@ -1585,7 +2951,7 @@
                         </div>
                         <div class="min-w-0 pr-2">
                             <p class="text-xs md:text-sm font-medium text-gray-900 dark:text-white truncate">${escapeHTML(song.title)}</p>
-                            <p class="text-[11px] text-gray-600 dark:text-spotify-light truncate">${escapeHTML(song.artist)}</p>
+                            <p class="text-[11px] text-gray-600 dark:text-spotify-light truncate hover:underline hover:text-spotify-green w-fit" onclick="event.stopPropagation(); showArtistFromEncoded('${encodeURIComponent(song.artist || '')}')">${escapeHTML(song.artist)}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
@@ -1659,6 +3025,7 @@
                     if (window._modalListType === 'default') currentSongList = [...defaultSongsList];
                     else if (window._modalListType === 'current') currentSongList = [...currentSongList];
                     else if (window._modalListType === 'favorites') currentSongList = [...favorites];
+                    else if (window._modalListType === 'playlist') currentSongList = [...activePlaylistSongs];
                     playSong(window._modalIndex);
                 }
                 closeDetailModal();
@@ -1672,10 +3039,11 @@
             };
 
             document.getElementById('detailModal').classList.remove('hidden');
+            animateModalOpen(document.getElementById('detailModal'));
         }
 
         function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('hidden');
+            animateModalClose(document.getElementById('detailModal'));
         }
 
         function toggleFavoriteByIndex(index, listType) {
@@ -1684,61 +3052,365 @@
         }
 
         // ========== UI HELPERS ==========
-        function showWelcome() {
-            welcomeSection.classList.remove('hidden');
+        function hideAllSections() {
+            welcomeSection.classList.add('hidden');
             searchResults.classList.add('hidden');
             favoritesSection.classList.add('hidden');
+            document.getElementById('musicListSection').classList.add('hidden');
+            document.getElementById('playlistsSection').classList.add('hidden');
+            document.getElementById('playlistDetailSection').classList.add('hidden');
+            document.getElementById('artistSection').classList.add('hidden');
             loadingState.classList.add('hidden');
             emptyState.classList.add('hidden');
             errorState.classList.add('hidden');
+        }
+
+        function showWelcome() {
+            hideAllSections();
+            welcomeSection.classList.remove('hidden');
             clearSearch.classList.add('hidden');
+            welcomeSection.classList.add('fade-in-section');
+            setActiveNav('navHomeBtn');
             renderRecentlyPlayed();
+            renderMostPlayed();
             renderQuickPicks(defaultSongsList);
         }
 
         function showLoading() {
-            welcomeSection.classList.add('hidden');
-            searchResults.classList.add('hidden');
-            favoritesSection.classList.add('hidden');
+            hideAllSections();
             loadingState.classList.remove('hidden');
         }
 
         function showResults(songs) {
-            welcomeSection.classList.add('hidden');
-            favoritesSection.classList.add('hidden');
+            hideAllSections();
             searchResults.classList.remove('hidden');
-            loadingState.classList.add('hidden');
+            searchResults.classList.add('fade-in-section');
+            setActiveNav(null);
             resultCount.textContent = `${songs.length} lagu`;
             renderSongList(songs);
         }
 
         // Show full music list (Daftar Lagu)
         function listMusic() {
-            welcomeSection.classList.add('hidden');
-            searchResults.classList.add('hidden');
-            favoritesSection.classList.add('hidden');
+            hideAllSections();
+            setActiveNav(null);
             document.getElementById('musicListSection').classList.remove('hidden');
-            // Prepare pagination
-            currentSongList = [...defaultSongsList];
+            document.getElementById('musicListSection').classList.add('fade-in-section');
+            musicFilterGenre = null;
+            musicFilterYear = null;
+            buildMusicFilterUI();
+            applyMusicFilters();
+        }
+
+        function buildMusicFilterUI() {
+            const genres = [...new Set(defaultSongsList.map(s => s.genre).filter(Boolean))].sort();
+            const years = [...new Set(defaultSongsList.map(s => s.year).filter(Boolean))].sort((a, b) => b - a);
+
+            const chipsEl = document.getElementById('musicGenreChips');
+            if (chipsEl) {
+                chipsEl.innerHTML = `<button type="button" onclick="setMusicGenreFilter(null)" class="text-xs px-3 py-1 rounded-full transition ${!musicFilterGenre ? 'bg-spotify-green text-white' : 'bg-gray-200 dark:bg-spotify-hover hover:bg-gray-300 dark:hover:bg-gray-700'}">Semua Genre</button>` +
+                    genres.map(g => `<button type="button" onclick="setMusicGenreFilterEncoded('${encodeURIComponent(g)}')" class="text-xs px-3 py-1 rounded-full transition ${musicFilterGenre === g ? 'bg-spotify-green text-white' : 'bg-gray-200 dark:bg-spotify-hover hover:bg-gray-300 dark:hover:bg-gray-700'}">${escapeHTML(g)}</button>`).join('');
+            }
+
+            const yearSelect = document.getElementById('musicYearFilter');
+            if (yearSelect) {
+                yearSelect.innerHTML = `<option value="">Semua Tahun</option>` + years.map(y => `<option value="${escapeHTML(String(y))}">${escapeHTML(String(y))}</option>`).join('');
+                yearSelect.value = musicFilterYear || '';
+            }
+        }
+
+        function setMusicGenreFilterEncoded(encoded) {
+            setMusicGenreFilter(encoded ? decodeURIComponent(encoded) : null);
+        }
+
+        function setMusicGenreFilter(genre) {
+            musicFilterGenre = genre;
+            buildMusicFilterUI();
+            applyMusicFilters();
+        }
+
+        function setMusicYearFilter(value) {
+            musicFilterYear = value || null;
+            applyMusicFilters();
+        }
+
+        function applyMusicFilters() {
+            musicFilteredList = defaultSongsList.filter(song => {
+                if (musicFilterGenre && (song.genre || '') !== musicFilterGenre) return false;
+                if (musicFilterYear && String(song.year || '') !== String(musicFilterYear)) return false;
+                return true;
+            });
+            currentSongList = [...musicFilteredList];
             computeMusicPagination();
             renderMusicPage(1);
         }
 
+        // ========== ARTIST PAGE ==========
+        let activeArtistName = '';
+        let activeArtistSongs = [];
+
+        function showArtistFromEncoded(encoded) {
+            if (!encoded) return;
+            showArtist(decodeURIComponent(encoded));
+        }
+
+        function showArtist(artistName) {
+            if (!artistName || !artistName.trim()) return;
+            activeArtistName = artistName;
+            activeArtistSongs = defaultSongsList.filter(s => (s.artist || '').toLowerCase() === artistName.toLowerCase());
+            currentSongList = [...activeArtistSongs];
+            hideAllSections();
+            document.getElementById('artistSection').classList.remove('hidden');
+            document.getElementById('artistSection').classList.add('fade-in-section');
+            document.getElementById('artistSectionTitle').textContent = `🎤 ${artistName}`;
+            document.getElementById('artistSectionCount').textContent = `${activeArtistSongs.length} lagu`;
+            setActiveNav(null);
+            if (activeArtistSongs.length === 0) {
+                document.getElementById('artistSongList').innerHTML = '<p class="text-gray-500 dark:text-spotify-light text-sm">Tidak ada lagu lain dari artis ini.</p>';
+            } else {
+                renderSongList(activeArtistSongs, 'artistSongList');
+            }
+        }
+
+        function playAllArtistSongs() {
+            if (!activeArtistSongs || activeArtistSongs.length === 0) { showToast('Tidak ada lagu'); return; }
+            currentSongList = [...activeArtistSongs];
+            playSong(0);
+        }
+
+        function shuffleArtistSongs() {
+            if (!activeArtistSongs || activeArtistSongs.length === 0) { showToast('Tidak ada lagu'); return; }
+            shufflePlayAllSongs(activeArtistSongs);
+        }
+
+        // ========== PLAYLISTS ==========
+        function showPlaylists() {
+            hideAllSections();
+            document.getElementById('playlistsSection').classList.remove('hidden');
+            document.getElementById('playlistsSection').classList.add('fade-in-section');
+            setActiveNav('navPlaylistsBtn');
+            renderPlaylists();
+        }
+
+        function loadPlaylists() {
+            try {
+                const data = localStorage.getItem('playlists');
+                playlists = data ? JSON.parse(data) : [];
+            } catch { playlists = []; }
+        }
+
+        function savePlaylists() {
+            localStorage.setItem('playlists', JSON.stringify(playlists));
+        }
+
+        function renderPlaylists() {
+            const grid = document.getElementById('playlistsGrid');
+            if (playlists.length === 0) {
+                grid.innerHTML = '<p class="text-gray-500 dark:text-spotify-light col-span-full">Belum ada playlist. Buat satu untuk mulai mengumpulkan lagu favoritmu.</p>';
+                return;
+            }
+            grid.innerHTML = playlists.map((pl, i) => `
+                <div class="playlist-card stagger-item bg-white dark:bg-spotify-card shadow-sm dark:shadow-none p-3 cursor-pointer group" style="animation-delay:${i * 0.05}s" onclick="openPlaylist('${pl.id}')">
+                    <div class="w-full aspect-square rounded-xl bg-gradient-to-br from-spotify-green/70 to-emerald-700 flex items-center justify-center text-white text-3xl mb-2">📀</div>
+                    <p class="text-sm font-semibold truncate">${escapeHTML(pl.name)}</p>
+                    <p class="text-xs text-gray-500 dark:text-spotify-light">${pl.songs.length} lagu</p>
+                </div>
+            `).join('');
+        }
+
+        function createPlaylistPrompt() {
+            const name = (window.prompt('Nama playlist baru:') || '').trim();
+            if (!name) return;
+            const pl = { id: 'pl_' + Date.now() + '_' + Math.floor(Math.random() * 1000), name, songs: [] };
+            playlists.push(pl);
+            savePlaylists();
+            renderPlaylists();
+            showToast(`📀 Playlist "${escapeHTML(name)}" dibuat`);
+            return pl;
+        }
+
+        function openPlaylist(id) {
+            const pl = playlists.find(p => p.id === id);
+            if (!pl) return;
+            activePlaylistId = id;
+            activePlaylistSongs = pl.songs;
+            currentSongList = [...activePlaylistSongs];
+            hideAllSections();
+            document.getElementById('playlistDetailSection').classList.remove('hidden');
+            document.getElementById('playlistDetailSection').classList.add('fade-in-section');
+            document.getElementById('playlistDetailTitle').textContent = pl.name;
+            setActiveNav(null);
+            renderPlaylistDetail();
+        }
+
+        function renderPlaylistDetail() {
+            const container = document.getElementById('playlistDetailList');
+            currentSongList = [...activePlaylistSongs];
+            if (!activePlaylistSongs || activePlaylistSongs.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 dark:text-spotify-light text-sm">Playlist ini masih kosong. Tambahkan lagu lewat tombol "Tambah ke Playlist" di detail lagu.</p>';
+                return;
+            }
+            renderSongList(activePlaylistSongs, 'playlistDetailList');
+        }
+
+        function playAllPlaylist() {
+            if (!activePlaylistSongs || activePlaylistSongs.length === 0) { showToast('Playlist masih kosong'); return; }
+            playAllSongs(activePlaylistSongs);
+        }
+
+        function shufflePlaylist() {
+            if (!activePlaylistSongs || activePlaylistSongs.length === 0) { showToast('Playlist masih kosong'); return; }
+            shufflePlayAllSongs(activePlaylistSongs);
+        }
+
+        function deletePlaylist() {
+            const pl = playlists.find(p => p.id === activePlaylistId);
+            if (!pl) return;
+            if (!window.confirm(`Hapus playlist "${pl.name}"?`)) return;
+            playlists = playlists.filter(p => p.id !== activePlaylistId);
+            savePlaylists();
+            showToast('🗑 Playlist dihapus');
+            showPlaylists();
+        }
+
+        function removeSongFromActivePlaylist(index) {
+            const pl = playlists.find(p => p.id === activePlaylistId);
+            if (!pl) return;
+            pl.songs.splice(index, 1);
+            activePlaylistSongs = pl.songs;
+            savePlaylists();
+            renderPlaylistDetail();
+        }
+
+        // ---- Add-to-playlist modal ----
+        function openAddToPlaylistModal() {
+            if (!window._modalSong) return;
+            renderAddToPlaylistList();
+            const modal = document.getElementById('addToPlaylistModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            animateModalOpen(modal);
+        }
+
+        function closeAddToPlaylistModal() {
+            const modal = document.getElementById('addToPlaylistModal');
+            animateModalClose(modal, ['flex']);
+        }
+
+        function renderAddToPlaylistList() {
+            const container = document.getElementById('addToPlaylistList');
+            const song = window._modalSong;
+            if (!song) return;
+            if (playlists.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 dark:text-spotify-light text-sm">Belum ada playlist. Buat satu di bawah.</p>';
+                return;
+            }
+            container.innerHTML = playlists.map((pl) => {
+                const has = pl.songs.some(s => s.url === song.url);
+                return `
+                <div class="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-spotify-hover cursor-pointer" onclick="toggleSongInPlaylist('${pl.id}')">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium truncate">${escapeHTML(pl.name)}</p>
+                        <p class="text-xs text-gray-500 dark:text-spotify-light">${pl.songs.length} lagu</p>
+                    </div>
+                    <span class="text-xl ${has ? 'text-spotify-green' : 'text-gray-400'}">${has ? '✓' : '+'}</span>
+                </div>`;
+            }).join('');
+        }
+
+        function toggleSongInPlaylist(playlistId) {
+            const pl = playlists.find(p => p.id === playlistId);
+            const song = window._modalSong;
+            if (!pl || !song) return;
+            const idx = pl.songs.findIndex(s => s.url === song.url);
+            if (idx > -1) {
+                pl.songs.splice(idx, 1);
+                showToast(`Dihapus dari "${escapeHTML(pl.name)}"`);
+            } else {
+                pl.songs.push(song);
+                showToast(`Ditambahkan ke "${escapeHTML(pl.name)}"`);
+            }
+            savePlaylists();
+            renderAddToPlaylistList();
+            if (activePlaylistId === playlistId) {
+                activePlaylistSongs = pl.songs;
+                renderPlaylistDetail();
+            }
+        }
+
+        function createPlaylistFromAddModal() {
+            const pl = createPlaylistPrompt();
+            if (pl && window._modalSong) {
+                pl.songs.push(window._modalSong);
+                savePlaylists();
+                renderAddToPlaylistList();
+            }
+        }
+
+        // ========== BACKUP EXPORT / IMPORT ==========
+        function exportBackup() {
+            try {
+                const backup = { favorites, playlists, recentlyPlayed, exportedAt: new Date().toISOString() };
+                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'miniplayer-backup.json';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+                showToast('⬇️ Backup berhasil diunduh');
+            } catch (err) {
+                console.error('Gagal membuat backup:', err);
+                showToast('Gagal membuat backup');
+            }
+        }
+
+        function importBackup(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const data = JSON.parse(reader.result);
+                    if (Array.isArray(data.favorites)) { favorites = data.favorites; saveFavorites(); }
+                    if (Array.isArray(data.playlists)) { playlists = data.playlists; savePlaylists(); }
+                    if (Array.isArray(data.recentlyPlayed)) { recentlyPlayed = data.recentlyPlayed; saveRecentlyPlayed(); }
+                    showToast('⬆️ Data berhasil dipulihkan');
+                    refreshVisibleLists();
+                    renderRecentlyPlayed();
+                } catch (err) {
+                    console.error('Gagal memuat backup:', err);
+                    showToast('File backup tidak valid');
+                }
+                event.target.value = '';
+            };
+            reader.onerror = () => { showToast('Gagal membaca file'); event.target.value = ''; };
+            reader.readAsText(file);
+        }
+
         function computeMusicPagination() {
-            musicTotalPages = Math.max(1, Math.ceil((defaultSongsList ? defaultSongsList.length : 0) / musicPageSize));
+            const list = musicFilteredList;
+            musicTotalPages = Math.max(1, Math.ceil((list ? list.length : 0) / musicPageSize));
             const paginationEl = document.getElementById('musicPagination');
-            if (paginationEl) paginationEl.classList.toggle('hidden', (defaultSongsList.length <= musicPageSize));
+            if (paginationEl) paginationEl.classList.toggle('hidden', (!list || list.length <= musicPageSize));
         }
 
         function renderMusicPage(page) {
-            if (!defaultSongsList || defaultSongsList.length === 0) {
-                document.getElementById('musicSongList').innerHTML = '<p class="text-gray-500 dark:text-spotify-light">Tidak ada lagu tersedia.</p>';
+            const list = musicFilteredList;
+            if (!list || list.length === 0) {
+                document.getElementById('musicSongList').innerHTML = '<p class="text-gray-500 dark:text-spotify-light">Tidak ada lagu yang cocok dengan filter ini.</p>';
+                const info0 = document.getElementById('musicPaginationInfo');
+                const indicator0 = document.getElementById('musicPageIndicator');
+                if (info0) info0.textContent = '';
+                if (indicator0) indicator0.textContent = '';
                 return;
             }
-            musicTotalPages = Math.max(1, Math.ceil(defaultSongsList.length / musicPageSize));
+            musicTotalPages = Math.max(1, Math.ceil(list.length / musicPageSize));
             musicCurrentPage = Math.max(1, Math.min(page, musicTotalPages));
             const start = (musicCurrentPage - 1) * musicPageSize;
-            const slice = defaultSongsList.slice(start, start + musicPageSize);
+            const slice = list.slice(start, start + musicPageSize);
             // Render with baseIndex so play/add/favorite map to global indices
             renderSongList(slice, 'musicSongList', start);
 
@@ -1747,7 +3419,7 @@
             const indicator = document.getElementById('musicPageIndicator');
             const prevBtn = document.getElementById('musicPrevBtn');
             const nextBtn = document.getElementById('musicNextBtn');
-            if (info) info.textContent = `Menampilkan ${start + 1} - ${Math.min(start + musicPageSize, defaultSongsList.length)} dari ${defaultSongsList.length} lagu`;
+            if (info) info.textContent = `Menampilkan ${start + 1} - ${Math.min(start + musicPageSize, list.length)} dari ${list.length} lagu`;
             if (indicator) indicator.textContent = `Halaman ${musicCurrentPage} / ${musicTotalPages}`;
             if (prevBtn) prevBtn.disabled = musicCurrentPage <= 1;
             if (nextBtn) nextBtn.disabled = musicCurrentPage >= musicTotalPages;
@@ -1757,18 +3429,12 @@
         function musicPrevPage() { renderMusicPage(musicCurrentPage - 1); }
 
         function showEmpty() {
-            welcomeSection.classList.add('hidden');
-            favoritesSection.classList.add('hidden');
-            searchResults.classList.add('hidden');
-            loadingState.classList.add('hidden');
+            hideAllSections();
             emptyState.classList.remove('hidden');
         }
 
         function showError() {
-            welcomeSection.classList.add('hidden');
-            favoritesSection.classList.add('hidden');
-            searchResults.classList.add('hidden');
-            loadingState.classList.add('hidden');
+            hideAllSections();
             errorState.classList.remove('hidden');
         }
 
@@ -1782,6 +3448,160 @@
                 el.classList.add('out');
                 setTimeout(() => el.remove(), 300);
             }, 2500);
+        }
+
+        // ========== PLAYBACK SPEED ==========
+        function cyclePlaybackSpeed() {
+            playbackSpeedIndex = (playbackSpeedIndex + 1) % PLAYBACK_SPEEDS.length;
+            const rate = PLAYBACK_SPEEDS[playbackSpeedIndex];
+            audio.playbackRate = rate;
+            const label = `${rate}x`;
+            const btn = document.getElementById('npSpeedBtn');
+            if (btn) btn.textContent = label;
+            showToast(`Kecepatan putar: ${label}`);
+        }
+
+        // ========== MUTE TOGGLE ==========
+        function toggleMute() {
+            const volumeIcon = document.getElementById('volumeIcon');
+            if (!isMuted) {
+                lastVolumeBeforeMute = Number(volumeSlider.value) || 80;
+                volumeSlider.value = 0;
+                audio.volume = 0;
+                isMuted = true;
+                if (volumeIcon) volumeIcon.innerHTML = '<path d="M16.5 12A4.5 4.5 0 0014 8v2.17l2.45 2.45c.03-.2.05-.4.05-.62zM19 12c0 .82-.15 1.6-.41 2.34l1.53 1.53A8.937 8.937 0 0021 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 003.69-1.81L18.73 21 20 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+            } else {
+                volumeSlider.value = lastVolumeBeforeMute > 0 ? lastVolumeBeforeMute : 80;
+                audio.volume = volumeSlider.value / 100;
+                isMuted = false;
+                if (volumeIcon) volumeIcon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />';
+            }
+        }
+
+        // ========== SLEEP TIMER ==========
+        function toggleSleepTimerModal() {
+            const modal = document.getElementById('sleepTimerModal');
+            const isHidden = modal.classList.contains('hidden');
+            if (isHidden) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function setSleepTimer(minutes) {
+            clearSleepTimer(false);
+            const ms = minutes * 60 * 1000;
+            sleepTimerEndAt = Date.now() + ms;
+            sleepTimerId = setTimeout(() => {
+                audio.pause();
+                setPlayingState(false);
+                showToast('⏰ Timer tidur selesai — musik dihentikan');
+                clearSleepTimer(false);
+            }, ms);
+
+            const sleepBtn = document.getElementById('npSleepBtn');
+            const statusEl = document.getElementById('sleepTimerStatus');
+
+            const updateCountdownLabel = () => {
+                if (!sleepTimerEndAt) return;
+                const remaining = Math.max(0, sleepTimerEndAt - Date.now());
+                const mins = Math.floor(remaining / 60000);
+                const secs = Math.floor((remaining % 60000) / 1000);
+                const label = `⏰ ${mins}:${secs.toString().padStart(2, '0')}`;
+                if (sleepBtn) sleepBtn.textContent = label;
+                if (statusEl) statusEl.textContent = `Musik akan berhenti dalam ${mins} menit ${secs} detik.`;
+            };
+            updateCountdownLabel();
+            if (sleepTimerCountdownId) clearInterval(sleepTimerCountdownId);
+            sleepTimerCountdownId = setInterval(updateCountdownLabel, 1000);
+
+            showToast(`⏰ Timer tidur diatur: ${minutes} menit`);
+            toggleSleepTimerModal();
+        }
+
+        function clearSleepTimer(notify) {
+            if (sleepTimerId) { clearTimeout(sleepTimerId); sleepTimerId = null; }
+            if (sleepTimerCountdownId) { clearInterval(sleepTimerCountdownId); sleepTimerCountdownId = null; }
+            sleepTimerEndAt = null;
+            const sleepBtn = document.getElementById('npSleepBtn');
+            const statusEl = document.getElementById('sleepTimerStatus');
+            if (sleepBtn) sleepBtn.textContent = '⏰ Timer';
+            if (statusEl) statusEl.textContent = 'Musik akan berhenti otomatis setelah waktu yang dipilih.';
+            if (notify) {
+                showToast('Timer tidur dimatikan');
+                toggleSleepTimerModal();
+            }
+        }
+
+        // ========== KEYBOARD SHORTCUTS MODAL ==========
+        function toggleShortcutsModal() {
+            const modal = document.getElementById('shortcutsModal');
+            const isHidden = modal.classList.contains('hidden');
+            if (isHidden) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // ========== SHARE ==========
+        function shareCurrentModalSong() {
+            const song = window._modalSong;
+            if (!song) return;
+            const shareData = {
+                title: song.title || 'Lagu',
+                text: `Dengarkan "${song.title}" oleh ${song.artist} di MiniPlayer`,
+                url: song.url || window.location.href
+            };
+            if (navigator.share) {
+                navigator.share(shareData).catch(() => { /* dibatalkan pengguna */ });
+            } else if (navigator.clipboard && song.url) {
+                navigator.clipboard.writeText(song.url).then(() => {
+                    showToast('🔗 Tautan lagu disalin ke clipboard');
+                }).catch(() => showToast('Gagal menyalin tautan'));
+            } else {
+                showToast('Berbagi tidak didukung di perangkat ini');
+            }
+        }
+
+        // ========== SIDEBAR NAV ACTIVE STATE ==========
+        function setActiveNav(id) {
+            const navIds = ['navHomeBtn', 'navFavoritesBtn', 'navPlaylistsBtn'];
+            navIds.forEach(navId => {
+                const el = document.getElementById(navId);
+                if (el) el.classList.toggle('nav-active', navId === id);
+            });
+        }
+
+        // ========== MINI EQUALIZER INDICATOR ==========
+        function eqIndicatorHTML(fallbackNumber) {
+            if (isPlaying) {
+                return '<span class="eq-bars" aria-hidden="true"><span></span><span></span><span></span></span>';
+            }
+            return `<span class="text-xs text-gray-500 dark:text-spotify-light w-4 text-center">${fallbackNumber}</span>`;
+        }
+
+        function refreshVisibleLists() {
+            if (!welcomeSection.classList.contains('hidden')) {
+                renderQuickPicks(defaultSongsList);
+            } else if (!searchResults.classList.contains('hidden')) {
+                renderSongList(currentSongList);
+            } else if (!favoritesSection.classList.contains('hidden')) {
+                renderFavorites();
+            } else if (!document.getElementById('musicListSection').classList.contains('hidden')) {
+                renderMusicPage(musicCurrentPage);
+            } else if (!document.getElementById('playlistDetailSection').classList.contains('hidden')) {
+                renderSongList(activePlaylistSongs, 'playlistDetailList');
+            } else if (!document.getElementById('artistSection').classList.contains('hidden')) {
+                renderSongList(activeArtistSongs, 'artistSongList');
+            } else if (!document.getElementById('playlistsSection').classList.contains('hidden')) {
+                renderPlaylists();
+            }
         }
 
         // ========== EVENT LISTENERS ==========
@@ -1829,6 +3649,13 @@
 
             volumeSlider.addEventListener('input', () => {
                 audio.volume = volumeSlider.value / 100;
+                isMuted = Number(volumeSlider.value) === 0;
+                const volumeIcon = document.getElementById('volumeIcon');
+                if (volumeIcon) {
+                    volumeIcon.innerHTML = isMuted
+                        ? '<path d="M16.5 12A4.5 4.5 0 0014 8v2.17l2.45 2.45c.03-.2.05-.4.05-.62zM19 12c0 .82-.15 1.6-.41 2.34l1.53 1.53A8.937 8.937 0 0021 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 003.69-1.81L18.73 21 20 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>'
+                        : '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />';
+                }
             });
 
             audio.addEventListener('timeupdate', () => {
@@ -1889,6 +3716,9 @@
                     prevSong();
                 } else if (e.key === 'Escape') {
                     closeAllModals();
+                } else if (e.key === '?') {
+                    e.preventDefault();
+                    toggleShortcutsModal();
                 }
             });
 
@@ -1915,6 +3745,10 @@
                 const mobileMenuQueue = document.getElementById('mobileMenuQueue');
                 if (mobileMenuQueue) mobileMenuQueue.addEventListener('click', () => { toggleQueuePanel(); mobileMoreMenu.classList.add('hidden'); mobileMoreBtn.setAttribute('aria-expanded', 'false'); });
 
+                // Playlists button
+                const mobileMenuPlaylists = document.getElementById('mobileMenuPlaylists');
+                if (mobileMenuPlaylists) mobileMenuPlaylists.addEventListener('click', () => { showPlaylists(); mobileMoreMenu.classList.add('hidden'); mobileMoreBtn.setAttribute('aria-expanded', 'false'); });
+
                 // Settings button
                 const mobileMenuSettings = document.getElementById('mobileMenuSettings');
                 if (mobileMenuSettings) mobileMenuSettings.addEventListener('click', () => { window.location.href = './settings.html'; });
@@ -1929,18 +3763,111 @@
                     }
                 });
             }
+
+            // Search suggestions: show on focus, hide on outside click
+            searchInput.addEventListener('focus', () => {
+                if (!searchInput.value.trim()) renderSearchSuggestions();
+            });
+            document.addEventListener('click', (ev) => {
+                const box = document.getElementById('searchSuggestions');
+                if (!box) return;
+                if (!box.contains(ev.target) && ev.target !== searchInput) {
+                    box.classList.add('hidden');
+                }
+            });
+
+            // Close add-to-playlist modal by clicking backdrop
+            const addToPlaylistModalEl = document.getElementById('addToPlaylistModal');
+            if (addToPlaylistModalEl) {
+                addToPlaylistModalEl.addEventListener('click', (ev) => {
+                    if (ev.target === addToPlaylistModalEl) closeAddToPlaylistModal();
+                });
+            }
+
+            // Swipe gesture on Now Playing screen (mobile): swipe left/right to change track
+            (function setupSwipeGesture() {
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let touchActive = false;
+                nowPlayingOverlay.addEventListener('touchstart', (e) => {
+                    if (!e.touches || e.touches.length !== 1) return;
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                    touchActive = true;
+                }, { passive: true });
+                nowPlayingOverlay.addEventListener('touchend', (e) => {
+                    if (!touchActive) return;
+                    touchActive = false;
+                    const touch = e.changedTouches && e.changedTouches[0];
+                    if (!touch) return;
+                    const dx = touch.clientX - touchStartX;
+                    const dy = touch.clientY - touchStartY;
+                    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                        if (dx < 0) nextSong(); else prevSong();
+                    }
+                }, { passive: true });
+            })();
+
+            // Double-tap / double-click on cover art to like (with heart animation)
+            (function setupDoubleTapLike() {
+                const coverEl = document.getElementById('npCover');
+                if (!coverEl) return;
+                let lastTap = 0;
+                coverEl.addEventListener('click', () => {
+                    const now = Date.now();
+                    if (now - lastTap < 350) {
+                        likeCurrentSongDoubleTap();
+                        lastTap = 0;
+                    } else {
+                        lastTap = now;
+                    }
+                });
+            })();
+        }
+
+        function likeCurrentSongDoubleTap() {
+            const song = currentSongList[currentSongIndex];
+            if (!song) return;
+            if (!isFavorite(song)) {
+                toggleFavorite(song);
+            }
+            triggerHeartAnimation();
+        }
+
+        function triggerHeartAnimation() {
+            const overlay = document.getElementById('npHeartOverlay');
+            if (!overlay) return;
+            const svg = overlay.querySelector('svg');
+            overlay.classList.remove('hidden');
+            if (svg) {
+                svg.classList.remove('heart-pop');
+                void svg.offsetWidth; // reflow untuk restart animasi
+                svg.classList.add('heart-pop');
+            }
+            clearTimeout(window._heartOverlayTimeout);
+            window._heartOverlayTimeout = setTimeout(() => overlay.classList.add('hidden'), 700);
         }
 
         function closeAllModals() {
             if (!document.getElementById('detailModal').classList.contains('hidden')) closeDetailModal();
             if (!nowPlayingOverlay.classList.contains('hidden')) closeNowPlaying();
             if (queuePanel.classList.contains('open')) toggleQueuePanel();
+            const shortcutsModal = document.getElementById('shortcutsModal');
+            if (shortcutsModal && !shortcutsModal.classList.contains('hidden')) toggleShortcutsModal();
+            const sleepModal = document.getElementById('sleepTimerModal');
+            if (sleepModal && !sleepModal.classList.contains('hidden')) toggleSleepTimerModal();
+            const addPlaylistModal = document.getElementById('addToPlaylistModal');
+            if (addPlaylistModal && !addPlaylistModal.classList.contains('hidden')) closeAddToPlaylistModal();
+            hideSearchSuggestions();
         }
 
         // ========== INIT ==========
         function init() {
             loadFavorites();
             loadRecentlyPlayed();
+            loadPlaylists();
+            loadSearchHistory();
+            loadPlayCounts();
             loadDefaultSongs();
             setupEventListeners();
             audio.volume = 0.8;
@@ -1949,6 +3876,7 @@
                 Notification.requestPermission();
             }
 
+            initThemeMode();
             applyTheme(currentTheme);
             window.addEventListener('beforeunload', savePlaybackState);
             window.addEventListener('pagehide', savePlaybackState);
@@ -2003,6 +3931,8 @@
         window.addEventListener('storage', (e) => {
             if (!e.key) return;
             if (e.key === 'theme' || e.key === 'theme_updated_at') {
+                // Mode (auto/manual) sudah diatur oleh settings.html sebelum key ini berubah,
+                // jadi cukup terapkan ulang temanya di sini tanpa memaksa mode ke 'manual'.
                 const newTheme = localStorage.getItem('theme') || 'dark';
                 applyTheme(newTheme);
                 showToast('Tema diperbarui');
