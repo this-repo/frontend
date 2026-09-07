@@ -778,6 +778,21 @@
         html.lite-mode img {
             will-change: auto !important;
         }
+
+        /* Ensure elements that rely on entrance animations become visible in lite mode */
+        html.lite-mode .stagger-item,
+        html.lite-mode .settings-card,
+        html.lite-mode .fade-in-section,
+        html.lite-mode .modal-pop,
+        html.lite-mode header,
+        html.lite-mode main,
+        html.lite-mode .song-item,
+        html.lite-mode #quickPicks>div,
+        html.lite-mode #recentlyPlayedList>div {
+            opacity: 1 !important;
+            transform: none !important;
+            visibility: visible !important;
+        }
     </style>
 
     <style>
