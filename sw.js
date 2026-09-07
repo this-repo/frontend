@@ -1,5 +1,7 @@
 const CACHE_NAME = 'miniplayer-static-v1';
 const RUNTIME_CACHE = 'miniplayer-runtime-v1';
+const AUDIO_CACHE = 'miniplayer-audio-v1';
+const AUDIO_MAX_ENTRIES = 20; // keep most recent 20 audio files
 
 const PRECACHE_URLS = [
     './',
@@ -12,9 +14,29 @@ const PRECACHE_URLS = [
 self.addEventListener('install', (event) => {
     self.skipWaiting();
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS))
+        caches.open(CACHE_NAME).then(async (cache) => {
+            const results = await Promise.allSettled(
+                PRECACHE_URLS.map((url) => fetch(url).then((res) => {
+                    if (!res || res.status !== 200) throw new Error('Bad response');
+                    return cache.put(url, res);
+                }))
+            );
+            // ignore individual failures but ensure install doesn't hang
+            return results;
+        })
     );
 });
+
+// Trim a cache to at most `maxItems` by deleting oldest entries
+async function trimCache(cacheName, maxItems) {
+    const cache = await caches.open(cacheName);
+    const keys = await cache.keys();
+    if (keys.length <= maxItems) return;
+    const deleteCount = keys.length - maxItems;
+    for (let i = 0; i < deleteCount; i++) {
+        await cache.delete(keys[i]);
+    }
+}
 
 self.addEventListener('activate', (event) => {
     const expectedCaches = [CACHE_NAME, RUNTIME_CACHE];
@@ -31,6 +53,29 @@ self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
     const requestUrl = new URL(event.request.url);
 
+    // Handle audio requests with a bounded cache (cache-first, trim LRU)
+    const isAudio = event.request.destination === 'audio' || /\.(mp3|m4a|wav|ogg)$/i.test(requestUrl.pathname);
+    if (isAudio) {
+        event.respondWith(
+            caches.open(AUDIO_CACHE).then((cache) =>
+                cache.match(event.request).then((cached) => {
+                    if (cached) return cached;
+                    return fetch(event.request)
+                        .then((response) => {
+                            if (!response || response.status !== 200) return response;
+                            const copy = response.clone();
+                            cache.put(event.request, copy).then(() => trimCache(AUDIO_CACHE, AUDIO_MAX_ENTRIES));
+                            return response;
+                        })
+                        .catch(() => {
+                            return cached; // if network fails, return whatever cached (maybe undefined)
+                        });
+                })
+            )
+        );
+        return;
+    }
+
     // Network-first for API requests (try network, fallback to cache)
     if (requestUrl.pathname.includes('/api/')) {
         event.respondWith(
@@ -41,6 +86,23 @@ self.addEventListener('fetch', (event) => {
                     return response;
                 })
                 .catch(() => caches.match(event.request))
+        );
+        return;
+    }
+
+    // Network-first for navigation (HTML) to prefer fresh content
+    if (event.request.mode === 'navigate') {
+        event.respondWith(
+            fetch(event.request)
+                .then((response) => {
+                    if (response && response.status === 200) {
+                        const copy = response.clone();
+                        caches.open(RUNTIME_CACHE).then((cache) => cache.put(event.request, copy));
+                        return response;
+                    }
+                    return caches.match('./index.html');
+                })
+                .catch(() => caches.match('./index.html'))
         );
         return;
     }

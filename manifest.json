@@ -5,6 +5,26 @@
     "display": "standalone",
     "background_color": "#121212",
     "theme_color": "#121212",
+    "shortcuts": [
+        {
+            "name": "Now Playing",
+            "short_name": "NowPlaying",
+            "description": "Buka pemutar saat ini",
+            "url": "./index.html#nowplaying"
+        },
+        {
+            "name": "Search",
+            "short_name": "Search",
+            "description": "Cari lagu atau artis",
+            "url": "./index.html#search"
+        },
+        {
+            "name": "Library",
+            "short_name": "Library",
+            "description": "Buka koleksi lagu",
+            "url": "./index.html#library"
+        }
+    ],
     "icons": [
         {
             "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='12' fill='%231DB954'/><path d='M14 7v6a2 2 0 11-2 0V7h2z' fill='%23ffffff'/></svg>",

@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MiniPlayer - Spotify-like Music Player</title>
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#121212">
@@ -27,6 +27,27 @@
                 }
             }
         }
+    </script>
+
+    <script>
+            // Lite-mode detection: mark recommendation early so styles can react
+            (function () {
+                try {
+                    const lite = localStorage.getItem('liteMode');
+                    if (lite === 'true') {
+                        document.documentElement.classList.add('lite-mode');
+                    } else {
+                        const deviceMem = navigator.deviceMemory || 0;
+                        const hw = navigator.hardwareConcurrency || 0;
+                        const conn = navigator.connection || {};
+                        const eff = conn.effectiveType || '';
+                        const slowNetwork = /2g|slow-2g/.test(eff);
+                        if ((deviceMem && deviceMem <= 1) || (hw && hw <= 2) || slowNetwork) {
+                            document.documentElement.classList.add('lite-mode-recommended');
+                        }
+                    }
+                } catch (e) { /* ignore */ }
+            })();
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
@@ -705,6 +726,59 @@
             animation: iconBounce 0.3s cubic-bezier(.2, .8, .2, 1);
         }
     </style>
+    <style>
+        /* Lite mode: drastically reduce animations, shadows, and visual effects */
+        html.lite-mode *,
+        html.lite-mode *::before,
+        html.lite-mode *::after {
+            transition: none !important;
+            animation: none !important;
+        }
+
+        html.lite-mode .spin-slow {
+            animation: none !important;
+        }
+
+        html.lite-mode .eq-bars span,
+        html.lite-mode .np-vis span {
+            animation: none !important;
+            height: 6px !important;
+        }
+
+        html.lite-mode .radial-glow,
+        html.lite-mode .np-glow-blob,
+        html.lite-mode body::before {
+            display: none !important;
+        }
+
+        html.lite-mode #playerBar::before {
+            display: none !important;
+        }
+
+        html.lite-mode .toast-item {
+            animation: none !important;
+        }
+
+        html.lite-mode .song-item:hover,
+        html.lite-mode .playlist-card:hover,
+        html.lite-mode .hover-lift:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        html.lite-mode .skeleton-shimmer::after {
+            animation: none !important;
+        }
+
+        html.lite-mode .modal-pop {
+            animation: none !important;
+        }
+
+        html.lite-mode .np-cover img,
+        html.lite-mode img {
+            will-change: auto !important;
+        }
+    </style>
 
     <style>
         /* ================= v4: ROMBAK UI — MODERN & BERANIMASI ================= */
@@ -1066,6 +1140,10 @@
 
 <body
     class="bg-gray-100 dark:bg-spotify-darker text-gray-900 dark:text-white font-sans h-screen flex flex-col justify-between overflow-hidden transition-colors duration-300">
+    <div id="offlineIndicator"
+        class="hidden fixed top-0 left-0 right-0 z-50 text-center py-2 text-sm bg-yellow-400 text-black">
+        Anda offline — beberapa fitur mungkin terbatas
+    </div>
 
     <div class="flex flex-1 overflow-hidden relative">
 
@@ -1089,8 +1167,7 @@
                     Beranda
                 </button>
                 <button type="button" id="navQueueBtn" onclick="toggleQueuePanel()"
-                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left"
-                    aria-label="Buka Antrian">
+                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left" aria-label="Buka Antrian">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
                             d="M12 4v2h8V4h-8zm0 14h8v-2h-8v2zm0-6h8v-2h-8v2zm-6 0h2v-2H6v2zm0-6h2V4H6v2zm0 12h2v-2H6v2z" />
@@ -1099,8 +1176,7 @@
                     <span id="queueCountBadge" class="ml-auto pill-badge hidden">0</span>
                 </button>
                 <button type="button" id="navFavoritesBtn" onclick="showFavorites()"
-                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left"
-                    aria-label="Lagu Favorit">
+                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left" aria-label="Lagu Favorit">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
                             d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -1108,8 +1184,7 @@
                     Favorit
                 </button>
                 <button type="button" id="navPlaylistsBtn" onclick="showPlaylists()"
-                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left"
-                    aria-label="Playlist Saya">
+                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left" aria-label="Playlist Saya">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
                             d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
@@ -1117,8 +1192,7 @@
                     Playlist
                 </button>
                 <button type="button" id="navSettingsBtn" onclick="window.location.href='./settings.html'"
-                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left"
-                    aria-label="Pengaturan">
+                    class="nav-btn flex items-center gap-3 font-semibold w-full text-left" aria-label="Pengaturan">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path
                             d="M12 8a4 4 0 100 8 4 4 0 000-8zm8.94 4.06l-1.42-1.42c.07-.33.12-.66.12-1.01s-.05-.68-.12-1.01l1.42-1.42-2-2-1.42 1.42c-.33-.07-.66-.12-1.01-.12s-.68.05-1.01.12L13.95 3h-3.9L9.4 4.2c-.33-.07-.66-.12-1.01-.12s-.68.05-1.01.12L5.96 3 3.94 5l1.42 1.42C5.29 6.5 5.24 6.83 5.24 7.18s.05.68.12 1.01L3.94 9.61l2 2 1.42-1.42c.33.07.66.12 1.01.12s.68-.05 1.01-.12L9.05 15h3.9l.59-1.2c.33.07.66.12 1.01.12s.68-.05 1.01-.12L18.04 17l2-2-1.1-1.1z" />
@@ -1138,7 +1212,8 @@
             <div class="mt-auto pt-6 pb-2 border-t border-gray-300 dark:border-gray-800">
                 <!-- Settings moved to global settings page; no theme toggle here anymore -->
                 <div class="flex items-center gap-2 mb-3">
-                    <button type="button" onclick="exportBackup()" data-tooltip="Simpan favorit, playlist & riwayat ke file"
+                    <button type="button" onclick="exportBackup()"
+                        data-tooltip="Simpan favorit, playlist & riwayat ke file"
                         class="flex-1 text-xs font-semibold px-2 py-2 rounded-xl bg-gray-100 dark:bg-spotify-hover hover:bg-spotify-green hover:text-white transition">⬇️
                         Ekspor</button>
                     <button type="button" onclick="document.getElementById('importFileInput').click()"
@@ -1317,7 +1392,8 @@
                             class="text-xs md:text-sm bg-spotify-green text-white font-semibold px-3 py-1.5 rounded-full hover:scale-105 transition">+
                             Buat Playlist</button>
                     </div>
-                    <div id="playlistsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
+                    <div id="playlistsGrid"
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4">
                     </div>
                 </div>
 
@@ -1437,17 +1513,14 @@
             <ul class="space-y-2.5 text-sm">
                 <li class="flex items-center justify-between"><span class="text-gray-600 dark:text-spotify-light">Putar
                         / Jeda</span><span class="pill-badge">Space</span></li>
-                <li class="flex items-center justify-between"><span
-                        class="text-gray-600 dark:text-spotify-light">Lagu Selanjutnya</span><span
-                        class="pill-badge">→</span></li>
-                <li class="flex items-center justify-between"><span
-                        class="text-gray-600 dark:text-spotify-light">Lagu Sebelumnya</span><span
-                        class="pill-badge">←</span></li>
+                <li class="flex items-center justify-between"><span class="text-gray-600 dark:text-spotify-light">Lagu
+                        Selanjutnya</span><span class="pill-badge">→</span></li>
+                <li class="flex items-center justify-between"><span class="text-gray-600 dark:text-spotify-light">Lagu
+                        Sebelumnya</span><span class="pill-badge">←</span></li>
                 <li class="flex items-center justify-between"><span class="text-gray-600 dark:text-spotify-light">Fokus
                         Pencarian</span><span class="pill-badge">Ctrl + F</span></li>
-                <li class="flex items-center justify-between"><span
-                        class="text-gray-600 dark:text-spotify-light">Tutup Panel</span><span
-                        class="pill-badge">Esc</span></li>
+                <li class="flex items-center justify-between"><span class="text-gray-600 dark:text-spotify-light">Tutup
+                        Panel</span><span class="pill-badge">Esc</span></li>
                 <li class="flex items-center justify-between"><span
                         class="text-gray-600 dark:text-spotify-light">Bantuan Ini</span><span
                         class="pill-badge">?</span></li>
@@ -1600,8 +1673,10 @@
                 ganti lagu • Ketuk 2x untuk suka →</p>
 
             <h2 id="npTitle" class="text-2xl font-bold mt-6 truncate w-full text-center">-</h2>
-            <p id="npArtist" class="text-spotify-green text-lg truncate w-full text-center cursor-pointer hover:underline"
-                onclick="event.stopPropagation(); showArtistFromEncoded(encodeURIComponent(this.textContent || ''))">-</p>
+            <p id="npArtist"
+                class="text-spotify-green text-lg truncate w-full text-center cursor-pointer hover:underline"
+                onclick="event.stopPropagation(); showArtistFromEncoded(encodeURIComponent(this.textContent || ''))">-
+            </p>
             <p id="npNextUp" class="text-xs text-gray-500 dark:text-spotify-light mt-1 truncate w-full text-center">
             </p>
             <div id="npVisualizer" class="np-vis paused h-5 mt-3" aria-hidden="true">
@@ -1692,6 +1767,24 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function () {
+            const el = document.getElementById('offlineIndicator');
+            if (!el) return;
+            function updateOnlineStatus() {
+                if (navigator.onLine) {
+                    el.classList.add('hidden');
+                } else {
+                    el.classList.remove('hidden');
+                }
+            }
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            // run once on load
+            updateOnlineStatus();
+        })();
+    </script>
 
     <div id="playerBar"
         class="floating fixed bottom-2 left-2 right-2 md:bottom-4 md:left-4 md:right-4 bg-white/95 dark:bg-spotify-card/95 backdrop-blur-md border border-gray-200 dark:border-gray-800 px-3 md:px-6 py-2 md:py-3 z-40 transform translate-y-[150%] transition-all duration-300 shadow-xl">
@@ -1919,6 +2012,38 @@
         const queueOverlay = document.getElementById('queueOverlay');
         const queueList = document.getElementById('queueList');
         const toastContainer = document.getElementById('toastContainer');
+
+        // Apply saved lite-mode on load (in case head script didn't run or for SPA nav)
+        try {
+            if (localStorage.getItem('liteMode') === 'true') document.documentElement.classList.add('lite-mode');
+        } catch (e) { /* ignore */ }
+
+        // Listen for liteMode changes from other tabs
+        window.addEventListener('storage', (e) => {
+            if (!e.key) return;
+            if (e.key === 'liteMode') {
+                if (e.newValue === 'true') document.documentElement.classList.add('lite-mode');
+                else document.documentElement.classList.remove('lite-mode');
+            }
+        });
+
+        // If recommendation applied by head detection, show an actionable toast
+        if (document.documentElement.classList.contains('lite-mode-recommended')) {
+            const el = document.createElement('div');
+            el.className = 'toast-item';
+            el.textContent = 'Perangkat Anda terlihat lambat — aktifkan Lite Mode untuk pengalaman lebih lancar';
+            const btn = document.createElement('button');
+            btn.className = 'ml-3 px-3 py-1 rounded-full bg-spotify-green text-white text-xs';
+            btn.textContent = 'Aktifkan';
+            btn.onclick = () => {
+                localStorage.setItem('liteMode', 'true');
+                document.documentElement.classList.add('lite-mode');
+                el.classList.add('out');
+                setTimeout(() => el.remove(), 300);
+            };
+            el.appendChild(btn);
+            toastContainer.appendChild(el);
+        }
 
         // ========== SANITIZER & URL VALIDATOR ==========
         function escapeHTML(str) {
@@ -3921,6 +4046,42 @@
                 navigator.serviceWorker.register('./sw.js')
                     .then((reg) => {
                         console.log('ServiceWorker registered:', reg);
+
+                        function showUpdateAvailable(registration) {
+                            const el = document.createElement('div');
+                            el.className = 'toast-item';
+                            el.textContent = 'Update tersedia';
+                            const btn = document.createElement('button');
+                            btn.className = 'ml-3 px-3 py-1 rounded-full bg-spotify-green text-white text-xs';
+                            btn.textContent = 'Segarkan';
+                            btn.onclick = () => {
+                                btn.disabled = true;
+                                if (registration.waiting) {
+                                    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                                }
+                            };
+                            el.appendChild(btn);
+                            toastContainer.appendChild(el);
+                        }
+
+                        if (reg.waiting) {
+                            showUpdateAvailable(reg);
+                        }
+
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    showUpdateAvailable(reg);
+                                }
+                            });
+                        });
+
+                        navigator.serviceWorker.addEventListener('controllerchange', () => {
+                            // when the new service worker activates, reload to get fresh content
+                            window.location.reload();
+                        });
+
                     }).catch((err) => {
                         console.warn('ServiceWorker registration failed:', err);
                     });
