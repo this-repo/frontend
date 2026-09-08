@@ -57,21 +57,23 @@ self.addEventListener('fetch', (event) => {
     const isAudio = event.request.destination === 'audio' || /\.(mp3|m4a|wav|ogg)$/i.test(requestUrl.pathname);
     if (isAudio) {
         event.respondWith(
-            caches.open(AUDIO_CACHE).then((cache) =>
-                cache.match(event.request).then((cached) => {
-                    if (cached) return cached;
-                    return fetch(event.request)
-                        .then((response) => {
-                            if (!response || response.status !== 200) return response;
-                            const copy = response.clone();
-                            cache.put(event.request, copy).then(() => trimCache(AUDIO_CACHE, AUDIO_MAX_ENTRIES));
-                            return response;
-                        })
-                        .catch(() => {
-                            return cached; // if network fails, return whatever cached (maybe undefined)
-                        });
-                })
-            )
+            caches.open(AUDIO_CACHE).then(async (cache) => {
+                const cacheKey = requestUrl.href;
+                const cached = await cache.match(event.request) || await cache.match(cacheKey);
+                if (cached) return cached;
+
+                try {
+                    const response = await fetch(event.request);
+                    if (!response || !(response.status === 200 || response.status === 206)) return response;
+
+                    const copy = response.clone();
+                    await cache.put(cacheKey, copy);
+                    await trimCache(AUDIO_CACHE, AUDIO_MAX_ENTRIES);
+                    return response;
+                } catch (error) {
+                    return cached;
+                }
+            })
         );
         return;
     }

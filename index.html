@@ -1858,6 +1858,7 @@
         const RECENT_MAX = 20;
         let favorites = [];
         const PLAYBACK_STATE_KEY = 'miniPlayerPlaybackState';
+        const AUDIO_CACHE_NAME = 'miniplayer-audio-v1';
 
         // New feature state
         const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 1.75, 2, 0.75];
@@ -1942,7 +1943,17 @@
         const queueList = document.getElementById('queueList');
         const toastContainer = document.getElementById('toastContainer');
 
+        audio.addEventListener('canplay', () => {
+            if (audio && audio.src) {
+                cacheAudioUrl(audio.src);
+            }
+        });
 
+        audio.addEventListener('playing', () => {
+            if (audio && audio.src) {
+                cacheAudioUrl(audio.src);
+            }
+        });
 
         // ========== SANITIZER & URL VALIDATOR ==========
         function escapeHTML(str) {
@@ -2012,6 +2023,28 @@
             // Ambil durasi langsung dari data backend jika ada, selain itu '--:--'
             // Menghindari proses pemuatan audio besar-besaran
             return song && song.duration ? formatTime(song.duration) : '--:--';
+        }
+
+        async function cacheAudioUrl(url) {
+            if (!url || !('caches' in window)) return;
+            try {
+                const cache = await caches.open(AUDIO_CACHE_NAME);
+                const cached = await cache.match(url);
+                if (cached) return;
+
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response || !(response.ok || response.status === 206)) return;
+
+                await cache.put(url, response.clone());
+                const keys = await cache.keys();
+                if (keys.length > 20) {
+                    for (let i = 0; i < keys.length - 20; i++) {
+                        await cache.delete(keys[i]);
+                    }
+                }
+            } catch (error) {
+                console.warn('Gagal menyimpan lagu ke cache audio:', error);
+            }
         }
 
         // ========== TEMA ==========
@@ -2592,6 +2625,7 @@
 
             audio.src = song.url;
             audio.playbackRate = PLAYBACK_SPEEDS[playbackSpeedIndex];
+            cacheAudioUrl(song.url);
 
             audio.play().then(() => {
                 setPlayingState(true);
