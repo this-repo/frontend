@@ -336,26 +336,7 @@
                 diperbarui.</p>
         </section>
 
-        <section class="settings-card mb-5 p-4 md:p-5" id="performanceSection">
-            <div class="flex items-center gap-3 mb-3">
-                <div class="settings-icon">⚡</div>
-                <div>
-                    <h2 class="font-semibold">Performa & Animasi</h2>
-                    <p class="text-xs text-gray-600 dark:text-spotify-light">Kurangi animasi dan fitur visual berat
-                        untuk perangkat lambat.</p>
-                </div>
-            </div>
-            <div class="flex flex-wrap gap-3 items-center">
-                <button id="toggleLiteMode" type="button"
-                    class="px-4 py-2 bg-gray-200 dark:bg-spotify-hover text-gray-900 dark:text-white rounded-full font-semibold hover:scale-105 transition">Aktifkan
-                    Lite Mode</button>
-                <button id="autoEnableLite" type="button"
-                    class="px-4 py-2 bg-gray-100 dark:bg-spotify-hover text-gray-900 dark:text-white rounded-full font-semibold hover:scale-105 transition">Deteksi
-                    & Terapkan Jika Direkomendasikan</button>
-            </div>
-            <p id="performanceStatus" class="status-msg mt-3 text-sm text-green-600 dark:text-green-400 hidden">
-                Pengaturan performa diterapkan.</p>
-        </section>
+
 
         <section class="settings-card mb-5 p-4 md:p-5">
             <div class="flex items-center gap-3 mb-3">
@@ -621,62 +602,7 @@
             }
         });
 
-        // Lite mode (reduce animations / visual load) — toggle and auto-detect
-        function applyLiteModeFlag(enabled) {
-            try {
-                if (enabled) document.documentElement.classList.add('lite-mode');
-                else document.documentElement.classList.remove('lite-mode');
-                localStorage.setItem('liteMode', enabled ? 'true' : 'false');
-                showStatus('performanceStatus', enabled ? 'Lite Mode diaktifkan' : 'Lite Mode dinonaktifkan');
-                updateLiteButton();
-            } catch (e) { /* ignore */ }
-        }
 
-        function updateLiteButton() {
-            const btn = document.getElementById('toggleLiteMode');
-            if (!btn) return;
-            const enabled = localStorage.getItem('liteMode') === 'true';
-            if (enabled) {
-                btn.textContent = 'Nonaktifkan Lite Mode';
-                btn.classList.remove('bg-gray-200');
-                btn.classList.add('bg-spotify-green');
-            } else {
-                btn.textContent = 'Aktifkan Lite Mode';
-                btn.classList.remove('bg-spotify-green');
-                btn.classList.add('bg-gray-200');
-            }
-        }
-
-        const liteBtn = document.getElementById('toggleLiteMode');
-        if (liteBtn) {
-            liteBtn.addEventListener('click', () => {
-                const cur = localStorage.getItem('liteMode') === 'true';
-                applyLiteModeFlag(!cur);
-            });
-        }
-
-        const detectBtn = document.getElementById('autoEnableLite');
-        if (detectBtn) {
-            detectBtn.addEventListener('click', () => {
-                const deviceMem = navigator.deviceMemory || 0;
-                const hw = navigator.hardwareConcurrency || 0;
-                const conn = navigator.connection || {};
-                const eff = conn.effectiveType || '';
-                const slowNetwork = /2g|slow-2g/.test(eff);
-                if ((deviceMem && deviceMem <= 1) || (hw && hw <= 2) || slowNetwork) {
-                    applyLiteModeFlag(true);
-                } else {
-                    showStatus('performanceStatus', 'Perangkat terlihat cukup cepat — Lite Mode tidak diperlukan');
-                }
-            });
-        }
-
-        // Apply saved state on load
-        try {
-            const savedLite = localStorage.getItem('liteMode') === 'true';
-            if (savedLite) document.documentElement.classList.add('lite-mode');
-        } catch (e) { /* ignore */ }
-        updateLiteButton();
 
         // Clear playback history (recentlyPlayed) - open confirmation modal first
         document.getElementById('clearHistory').addEventListener('click', () => {

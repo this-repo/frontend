@@ -29,26 +29,7 @@
         }
     </script>
 
-    <script>
-            // Lite-mode detection: mark recommendation early so styles can react
-            (function () {
-                try {
-                    const lite = localStorage.getItem('liteMode');
-                    if (lite === 'true') {
-                        document.documentElement.classList.add('lite-mode');
-                    } else {
-                        const deviceMem = navigator.deviceMemory || 0;
-                        const hw = navigator.hardwareConcurrency || 0;
-                        const conn = navigator.connection || {};
-                        const eff = conn.effectiveType || '';
-                        const slowNetwork = /2g|slow-2g/.test(eff);
-                        if ((deviceMem && deviceMem <= 1) || (hw && hw <= 2) || slowNetwork) {
-                            document.documentElement.classList.add('lite-mode-recommended');
-                        }
-                    }
-                } catch (e) { /* ignore */ }
-            })();
-    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
@@ -726,113 +707,7 @@
             animation: iconBounce 0.3s cubic-bezier(.2, .8, .2, 1);
         }
     </style>
-    <style>
-        /* Lite mode: drastically reduce animations, shadows, and visual effects */
-        html.lite-mode *,
-        html.lite-mode *::before,
-        html.lite-mode *::after {
-            transition: none !important;
-            animation: none !important;
-        }
 
-        html.lite-mode .spin-slow {
-            animation: none !important;
-        }
-
-        html.lite-mode .eq-bars span,
-        html.lite-mode .np-vis span {
-            animation: none !important;
-            height: 6px !important;
-        }
-
-        html.lite-mode .radial-glow,
-        html.lite-mode .np-glow-blob,
-        html.lite-mode body::before {
-            display: none !important;
-        }
-
-        html.lite-mode #playerBar::before {
-            display: none !important;
-        }
-
-        html.lite-mode .toast-item {
-            animation: none !important;
-        }
-
-        html.lite-mode .song-item:hover,
-        html.lite-mode .playlist-card:hover,
-        html.lite-mode .hover-lift:hover {
-            transform: none !important;
-            box-shadow: none !important;
-        }
-
-        html.lite-mode .skeleton-shimmer::after {
-            animation: none !important;
-        }
-
-        html.lite-mode .modal-pop {
-            animation: none !important;
-        }
-
-        html.lite-mode .np-cover img,
-        html.lite-mode img {
-            will-change: auto !important;
-        }
-
-        /* Ensure elements that rely on entrance animations become visible in lite mode */
-        html.lite-mode .stagger-item,
-        html.lite-mode .settings-card,
-        html.lite-mode .fade-in-section,
-        html.lite-mode .modal-pop,
-        html.lite-mode header,
-        html.lite-mode main,
-        html.lite-mode .song-item,
-        html.lite-mode #quickPicks>div,
-        html.lite-mode #recentlyPlayedList>div {
-            opacity: 1 !important;
-            transform: none !important;
-            visibility: visible !important;
-        }
-
-        /* Ensure left sidebar and navigation remain visible in lite mode */
-        html.lite-mode aside,
-        html.lite-mode .sidebar-nav,
-        html.lite-mode .settings-logo,
-        html.lite-mode .nav-btn {
-            display: flex !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            transform: none !important;
-        }
-
-        /* Keep sidebar width so layout doesn't collapse */
-        html.lite-mode aside {
-            min-width: 220px !important;
-            width: 220px !important;
-        }
-
-        /* Stack layout vertically in lite mode so sidebar appears above main content
-           (useful for low-end devices / narrow screens) */
-        html.lite-mode .flex.flex-1 {
-            flex-direction: column !important;
-            align-items: stretch !important;
-        }
-
-        html.lite-mode aside {
-            width: 100% !important;
-            min-width: 0 !important;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-            border-radius: 12px !important;
-            padding-left: 12px !important;
-            padding-right: 12px !important;
-        }
-
-        html.lite-mode main {
-            width: 100% !important;
-            min-height: 200px;
-        }
-    </style>
 
     <style>
         /* ================= v4: ROMBAK UI — MODERN & BERANIMASI ================= */
@@ -1823,21 +1698,21 @@
     </div>
 
     <script>
-        (function () {
-            const el = document.getElementById('offlineIndicator');
-            if (!el) return;
-            function updateOnlineStatus() {
-                if (navigator.onLine) {
-                    el.classList.add('hidden');
-                } else {
-                    el.classList.remove('hidden');
+            (function () {
+                const el = document.getElementById('offlineIndicator');
+                if (!el) return;
+                function updateOnlineStatus() {
+                    if (navigator.onLine) {
+                        el.classList.add('hidden');
+                    } else {
+                        el.classList.remove('hidden');
+                    }
                 }
-            }
-            window.addEventListener('online', updateOnlineStatus);
-            window.addEventListener('offline', updateOnlineStatus);
-            // run once on load
-            updateOnlineStatus();
-        })();
+                window.addEventListener('online', updateOnlineStatus);
+                window.addEventListener('offline', updateOnlineStatus);
+                // run once on load
+                updateOnlineStatus();
+            })();
     </script>
 
     <div id="playerBar"
@@ -2067,37 +1942,7 @@
         const queueList = document.getElementById('queueList');
         const toastContainer = document.getElementById('toastContainer');
 
-        // Apply saved lite-mode on load (in case head script didn't run or for SPA nav)
-        try {
-            if (localStorage.getItem('liteMode') === 'true') document.documentElement.classList.add('lite-mode');
-        } catch (e) { /* ignore */ }
 
-        // Listen for liteMode changes from other tabs
-        window.addEventListener('storage', (e) => {
-            if (!e.key) return;
-            if (e.key === 'liteMode') {
-                if (e.newValue === 'true') document.documentElement.classList.add('lite-mode');
-                else document.documentElement.classList.remove('lite-mode');
-            }
-        });
-
-        // If recommendation applied by head detection, show an actionable toast
-        if (document.documentElement.classList.contains('lite-mode-recommended')) {
-            const el = document.createElement('div');
-            el.className = 'toast-item';
-            el.textContent = 'Perangkat Anda terlihat lambat — aktifkan Lite Mode untuk pengalaman lebih lancar';
-            const btn = document.createElement('button');
-            btn.className = 'ml-3 px-3 py-1 rounded-full bg-spotify-green text-white text-xs';
-            btn.textContent = 'Aktifkan';
-            btn.onclick = () => {
-                localStorage.setItem('liteMode', 'true');
-                document.documentElement.classList.add('lite-mode');
-                el.classList.add('out');
-                setTimeout(() => el.remove(), 300);
-            };
-            el.appendChild(btn);
-            toastContainer.appendChild(el);
-        }
 
         // ========== SANITIZER & URL VALIDATOR ==========
         function escapeHTML(str) {
