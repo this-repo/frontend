@@ -39,7 +39,7 @@ async function trimCache(cacheName, maxItems) {
 }
 
 self.addEventListener('activate', (event) => {
-    const expectedCaches = [CACHE_NAME, RUNTIME_CACHE];
+    const expectedCaches = [CACHE_NAME, RUNTIME_CACHE, AUDIO_CACHE];
     event.waitUntil(
         caches.keys().then((keys) =>
             Promise.all(
